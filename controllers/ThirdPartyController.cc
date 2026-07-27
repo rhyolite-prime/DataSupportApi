@@ -1,0 +1,189 @@
+#include "ThirdPartyController.h"
+
+#include "dto/smart_suite/AccountBalanceDto.h"
+#include "dto/smart_suite/ChangePinDto.h"
+#include "plugins/DataSupportServicePlugin.h"
+
+
+Task<ThirdPartyController::AuthResult> ThirdPartyController::authenticateRequest(HttpRequestPtr req) {
+    AuthResult result;
+    auto clientId = req->getHeader("ClientId");
+    auto clientSecret = req->getHeader("ClientSecret");
+
+    if (clientId.empty() || clientSecret.empty()) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "ClientId and ClientSecret Headers are absent !";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        result.errorResponse = resp;
+        co_return result;
+    }
+
+    auto plugin = drogon::app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &businessApiKeyService = plugin->getBusinessApiKeyService();
+
+    auto businessIdentity = co_await businessApiKeyService.validateApiCredentials(clientId, clientSecret);
+
+    if (!businessIdentity.isValid) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = businessIdentity.errorMessage.empty() ? "Invalid API credentials" : businessIdentity.errorMessage;
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k401Unauthorized);
+        result.errorResponse = resp;
+        co_return result;
+    }
+
+    result.isValid = true;
+    result.businessId = businessIdentity.businessId;
+    co_return result;
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::verifyCustomerAccount(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) {
+        co_return authResult.errorResponse;
+    }
+
+    std::string phoneNo = req->getParameter("phoneNo");
+
+    auto plugin = drogon::app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+
+    auto result = co_await smartSuiteBankingService.verifyCustomerAccount(authResult.businessId, phoneNo);
+
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+
+    co_return resp;
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::changePin(HttpRequestPtr req)
+{
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) {
+        co_return authResult.errorResponse;
+    }
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::smart_suite::ChangePinDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+
+    auto result = co_await smartSuiteBankingService.changePin(authResult.businessId, dto);
+
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::getMiniStatement(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) {
+        co_return authResult.errorResponse;
+    }
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::smart_suite::MiniStatementDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+
+    auto result = co_await smartSuiteBankingService.getMiniStatement(authResult.businessId, dto);
+
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::getAccountBalance(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) {
+        co_return authResult.errorResponse;
+    }
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::smart_suite::AccountBalanceDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+
+    auto result = co_await smartSuiteBankingService.getAccountBalance(authResult.businessId, dto);
+
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::initializeDepositViaUssd(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) {
+        co_return authResult.errorResponse;
+    }
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::smart_suite::UssdDepositDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+
+    auto result = co_await smartSuiteBankingService.initializeDepositViaUssd(authResult.businessId, dto);
+
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+
+}
+
+
+
+
+
