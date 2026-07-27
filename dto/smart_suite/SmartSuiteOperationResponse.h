@@ -13,6 +13,7 @@ namespace data_support::dto::smart_suite {
         int code {1};
         bool success {false};
         std::string checkoutUrl;
+        std::string transactionReference;
 
         [[nodiscard]]
         Json::Value toJson() const {
@@ -21,6 +22,9 @@ namespace data_support::dto::smart_suite {
             json["code"] = code;
             json["message"] = message;
             json["success"] = success;
+            if (!transactionReference.empty()) {
+                json["transactionReference"] = transactionReference;
+            }
             return json;
         }
 

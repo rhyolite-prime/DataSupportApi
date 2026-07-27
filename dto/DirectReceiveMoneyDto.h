@@ -168,16 +168,33 @@ namespace data_support::dto {
 
         static HubtelWebCheckoutResponse fromJson(const Json::Value &json) {
             HubtelWebCheckoutResponse res;
-            if (json.isMember("ResponseCode")) res.responseCode = json["ResponseCode"].asString();
-            if (json.isMember("Status")) res.status = json["Status"].asString();
+            // API returns camelCase: responseCode, status, data
+            if (json.isMember("responseCode")) res.responseCode = json["responseCode"].asString();
+            else if (json.isMember("ResponseCode")) res.responseCode = json["ResponseCode"].asString();
 
-            if (json.isMember("Data") && json["Data"].isObject()) {
-                const auto &d = json["Data"];
-                if (d.isMember("CheckoutUrl")) res.data.checkoutUrl = d["CheckoutUrl"].asString();
-                if (d.isMember("CheckoutId")) res.data.checkoutId = d["CheckoutId"].asString();
-                if (d.isMember("ClientReference")) res.data.clientReference = d["ClientReference"].asString();
-                if (d.isMember("Message")) res.data.message = d["Message"].asString();
-                if (d.isMember("CheckoutDirectUrl")) res.data.checkoutDirectUrl = d["CheckoutDirectUrl"].asString();
+            if (json.isMember("status")) res.status = json["status"].asString();
+            else if (json.isMember("Status")) res.status = json["Status"].asString();
+
+            const Json::Value *dataNode = nullptr;
+            if (json.isMember("data") && json["data"].isObject()) dataNode = &json["data"];
+            else if (json.isMember("Data") && json["Data"].isObject()) dataNode = &json["Data"];
+
+            if (dataNode) {
+                const auto &d = *dataNode;
+                if (d.isMember("checkoutUrl")) res.data.checkoutUrl = d["checkoutUrl"].asString();
+                else if (d.isMember("CheckoutUrl")) res.data.checkoutUrl = d["CheckoutUrl"].asString();
+
+                if (d.isMember("checkoutId")) res.data.checkoutId = d["checkoutId"].asString();
+                else if (d.isMember("CheckoutId")) res.data.checkoutId = d["CheckoutId"].asString();
+
+                if (d.isMember("clientReference")) res.data.clientReference = d["clientReference"].asString();
+                else if (d.isMember("ClientReference")) res.data.clientReference = d["ClientReference"].asString();
+
+                if (d.isMember("message")) res.data.message = d["message"].asString();
+                else if (d.isMember("Message")) res.data.message = d["Message"].asString();
+
+                if (d.isMember("checkoutDirectUrl")) res.data.checkoutDirectUrl = d["checkoutDirectUrl"].asString();
+                else if (d.isMember("CheckoutDirectUrl")) res.data.checkoutDirectUrl = d["CheckoutDirectUrl"].asString();
             }
             return res;
         }

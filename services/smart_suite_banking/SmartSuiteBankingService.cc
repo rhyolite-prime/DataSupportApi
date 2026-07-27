@@ -8,9 +8,13 @@
 #include "dto/smart_suite/SmartSuiteOperationResponse.h"
 #include "plugins/DataSupportServicePlugin.h"
 #include "utils/CryptoUtils.h"
+#include <chrono>
 #include <drogon/utils/Utilities.h>
 #include <iomanip>
-#include <chrono>
+
+#include "utils/IdGeneratorUtils.h"
+#include "utils/PhoneNumberFormatter.h"
+#include "utils/UrlUtils.h"
 
 namespace data_support::services {
 
@@ -50,8 +54,11 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
     std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
 
+    std::string formattedPhoneNo =
+        utils::PhoneNumberFormatter::formatPhoneNumber(phoneNo);
+
     Json::Value payload;
-    payload["v_PHONENO"] = phoneNo;
+    payload["v_PHONENO"] = formattedPhoneNo;
     payload["v_Amnt_ip"] = "";
     payload["v_transT"] = "P";
     payload["v_ACTYPE"] = "F";
@@ -66,18 +73,30 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [httpHost, httpPath] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(httpHost);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-
-    req->setPath("");
+    req->setPath(httpPath);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
     auto httpResp = co_await client->sendRequestCoro(req);
 
+
+    if (httpResp) {
+      LOG_INFO << "SmartSuite API verifyCustomerAccount status code: "
+               << httpResp->statusCode()
+               << ", body: " << std::string(httpResp->getBody());
+    } else {
+      LOG_ERROR << "SmartSuite API verifyCustomerAccount request failed (null "
+                   "response)";
+    }
+
     if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
                      httpResp->statusCode() == drogon::k201Created)) {
+
       const std::string responseStr = std::string(httpResp->getBody());
 
       Json::Value jsonResponse;
@@ -122,7 +141,8 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
   try {
 
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        mapper(dbClient);
 
     auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
@@ -134,15 +154,16 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
       LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
-      response.code = 2;
+      response.code = 1;
       response.message = "Failed to change PIN. Configuration error.";
       co_return response;
     }
 
     const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
     if (smartSuiteConfig.isNull()) {
-      response.code = 2;
-      response.message = "Failed to change PIN. Smart Suite configuration missing.";
+      response.code = 1;
+      response.message =
+          "Failed to change PIN. Smart Suite configuration missing.";
       co_return response;
     }
 
@@ -151,7 +172,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
 
     Json::Value payload;
-    payload["v_PHONENO"] = dto.getPhoneNo();
+    payload["v_PHONENO"] = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
     payload["v_Amnt_ip"] = "";
     payload["v_transT"] = "P";
     payload["v_ACTYPE"] = "F";
@@ -166,36 +187,42 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-    req->setPath("");
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
     auto httpResp = co_await client->sendRequestCoro(req);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
-                     httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
 
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
 
-        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(
+            jsonResponse);
 
         std::string respDescLower = result.getRespdesc();
-        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
+        std::transform(respDescLower.begin(), respDescLower.end(),
+                       respDescLower.begin(), ::tolower);
 
-        bool isSuccess = (result.getRespcode() == "1" && respDescLower == "success");
+        bool isSuccess =
+            (result.getRespcode() == "1" && respDescLower == "success");
 
-        response.message = isSuccess ? "PIN updated successfully" : "Failed to change PIN. Please try again.";
+        response.message = isSuccess
+                               ? "PIN updated successfully"
+                               : "Failed to change PIN. Please try again.";
 
         try {
           response.code = std::stoi(result.getRespcode());
         } catch (...) {
-          response.code = 2;
+          response.code = 1;
         }
         response.success = isSuccess;
 
@@ -204,7 +231,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     }
 
     response.message = "Failed to change PIN. Please try again.";
-    response.code = 2;
+    response.code = 1;
     response.success = false;
     co_return response;
 
@@ -212,7 +239,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     LOG_ERROR << "Error changing PIN: " << e.what();
 
     response.message = "Failed to change PIN. Please try again.";
-    response.code = 2;
+    response.code = 1;
     response.success = false;
     co_return response;
   }
@@ -226,8 +253,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        mapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
     auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
@@ -259,11 +285,10 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::transform(accountTypeUpper.begin(), accountTypeUpper.end(),
                    accountTypeUpper.begin(), ::toupper);
 
-    std::string serialNoStr =
-        (accountTypeUpper == "K") ? dto.getSerialNo() : "";
+    std::string serialNoStr = (accountTypeUpper == "K") ? dto.getSerialNo() : "";
 
     Json::Value payload;
-    payload["v_PHONENO"] = dto.getPhoneNo();
+    payload["v_PHONENO"] =  utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
     payload["v_Amnt_ip"] = "";
     payload["v_transT"] = "S";
     payload["v_ACTYPE"] = accountTypeUpper;
@@ -279,25 +304,36 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    LOG_INFO << "getMiniStatement -> baseUrl=[" << baseUrl
+             << "] host=[" << host << "] path=[" << path << "]";
+
+    auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-    req->setPath("");
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
     auto httpResp = co_await client->sendRequestCoro(req);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
-                     httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp) {
+      LOG_INFO << "SmartSuite API mini statement status code: "
+               << httpResp->statusCode()
+               << ", body: " << std::string(httpResp->getBody());
+    } else {
+      LOG_ERROR << "SmartSuite API mini statement request failed (null "
+                   "response)";
+    }
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
 
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
 
-        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(
-            jsonResponse);
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
 
         const auto &respData = result.getRespdataresults();
         if (!respData.isArray() || respData.empty()) {
@@ -356,8 +392,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::getAccountBalance(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::getAccountBalance(
     const std::string &businessId,
     const dto::smart_suite::AccountBalanceDto &dto) {
 
@@ -399,7 +434,8 @@ SmartSuiteBankingService::getAccountBalance(
                    accountTypeUpper.begin(), ::toupper);
 
     Json::Value payload;
-    payload["v_PHONENO"] = dto.getPhoneNo();
+    payload["v_PHONENO"] =
+        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
     payload["v_Amnt_ip"] = "";
     payload["v_transT"] = "B";
     payload["v_ACTYPE"] = accountTypeUpper;
@@ -414,12 +450,14 @@ SmartSuiteBankingService::getAccountBalance(
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-    req->setPath("");
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
     auto httpResp = co_await client->sendRequestCoro(req);
 
@@ -522,8 +560,7 @@ SmartSuiteBankingService::getAccountBalance(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::initializeDepositViaUssd(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::initializeDepositViaUssd(
     const std::string &businessId,
     const dto::smart_suite::UssdDepositDto &dto) {
 
@@ -615,8 +652,7 @@ SmartSuiteBankingService::initializeDepositViaUssd(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::initializeDepositViaWebCheckout(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::initializeDepositViaWebCheckout(
     const std::string &businessId,
     const dto::smart_suite::WebCheckoutDepositDto &dto) {
 
@@ -641,19 +677,17 @@ SmartSuiteBankingService::initializeDepositViaWebCheckout(
       co_return response;
     }
 
-    std::string encryptionKey =
-        configJson["SmartSuiteApi"]["EncryptionKey"].asString();
+    std::string encryptionKey = configJson["SmartSuiteApi"]["EncryptionKey"].asString();
     if (encryptionKey.length() < 32) {
       LOG_ERROR << "SmartSuiteApi EncryptionKey is missing or too short.";
-      response.message =
-          "Failed to initialize web checkout due to config error.";
+      response.message = "Failed to initialize web checkout due to config error.";
       response.code = 1;
       co_return response;
     }
 
-    std::string clientRef = drogon::utils::getUuid();
-    clientRef.erase(std::remove(clientRef.begin(), clientRef.end(), '-'),
-                    clientRef.end());
+    std::string clientRef = utils::IdGeneratorUtils::generateTimeStampReference();
+
+    clientRef.erase(std::remove(clientRef.begin(), clientRef.end(), '-'), clientRef.end());
 
     drogon_model::DataSupportDb::SmartSuiteTransactions transaction;
     transaction.setBusinessId(businessId);
@@ -666,11 +700,9 @@ SmartSuiteBankingService::initializeDepositViaWebCheckout(
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegrationService());
     transaction.setChildAccountNumber(dto.getKiddyAccountSerialNo());
-    transaction.setPin(
-        utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
+    transaction.setPin(utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
 
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>
-        txnMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>  txnMapper(dbClient);
     auto savedTxn = co_await txnMapper.insert(transaction);
 
     dto::WebCheckoutDto checkoutDto;
@@ -685,14 +717,11 @@ SmartSuiteBankingService::initializeDepositViaWebCheckout(
     auto plugin = drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
     auto &hubtelApi = plugin->getHubtelApi();
 
-    auto hubtelResponse =
-        co_await hubtelApi.initializeWebCheckout(businessId, checkoutDto);
+    auto hubtelResponse = co_await hubtelApi.initializeWebCheckout(businessId, checkoutDto);
 
     response.code = hubtelResponse.code;
     response.message = hubtelResponse.message;
-    response.success =
-        (hubtelResponse.code == 0 || hubtelResponse.code == 200 ||
-         hubtelResponse.code == 201);
+    response.success = (hubtelResponse.code == 0 || hubtelResponse.code == 200 || hubtelResponse.code == 201);
     response.checkoutUrl = hubtelResponse.checkoutUrl;
 
     co_return response;
@@ -706,8 +735,7 @@ SmartSuiteBankingService::initializeDepositViaWebCheckout(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::initializeFlexyWithdrawalToBank(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::initializeFlexyWithdrawalToBank(
     const std::string &businessId,
     const dto::smart_suite::FlexyWithdrawalToBankDto &dto) {
 
@@ -804,17 +832,18 @@ SmartSuiteBankingService::initializeFlexyWithdrawalToBank(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::initializeFlexyWithdrawalToMomo(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::initializeFlexyWithdrawalToMomo(
     const std::string &businessId,
     const dto::smart_suite::FlexyWithdrawalToMomoDto &dto) {
 
   dto::smart_suite::SmartSuiteOperationResponse response;
 
   try {
+
+    //attempt a flexy withdrawal first; if it succeeds go ahead with the rest of the ceremonies
+
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        bizMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
 
@@ -838,10 +867,81 @@ SmartSuiteBankingService::initializeFlexyWithdrawalToMomo(
       response.code = 1;
       co_return response;
     }
-
     std::string clientRef = drogon::utils::getUuid();
-    clientRef.erase(std::remove(clientRef.begin(), clientRef.end(), '-'),
-                    clientRef.end());
+    clientRef.erase(std::remove(clientRef.begin(), clientRef.end(), '-'), clientRef.end());
+
+    // 1. Attempt Flexy Withdrawal First
+    const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
+    std::string baseUrl = smartSuiteConfig["BaseUrl"].asString();
+    std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
+    std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
+
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    std::ostringstream timeStream;
+    timeStream << std::put_time(std::localtime(&now_c), "%Y%m%d%H%M%S");
+    std::string transRef = timeStream.str();
+
+    Json::Value ssPayload;
+    ssPayload["v_PHONENO"] = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getSenderMsisdn());
+    
+    std::ostringstream amountStream;
+    amountStream << dto.getAmount();
+    ssPayload["v_Amnt_ip"] = amountStream.str();
+    
+    ssPayload["v_transT"] = "WR";
+    ssPayload["v_ACTYPE"] = "F";
+    ssPayload["v_ACCR"] = "";
+    ssPayload["V_Pin"] = dto.getPin();
+    ssPayload["V_PinNew"] = "";
+    ssPayload["v_SERIALNO"] = "";
+    ssPayload["V_TRANSREF"] = transRef;
+    ssPayload["v_TELCOM"] = vTelcom;
+    ssPayload["v_APIKEY"] = vApiKey;
+
+    Json::StreamWriterBuilder writer;
+    writer["indentation"] = "";
+    std::string ssBody = Json::writeString(writer, ssPayload);
+
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+    auto client = drogon::HttpClient::newHttpClient(host);
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Post);
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+    req->setBody(ssBody);
+
+    auto httpResp = co_await client->sendRequestCoro(req, 60.0);
+    
+    bool ssSuccess = false;
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
+                     httpResp->statusCode() == drogon::k201Created)) {
+      const std::string responseStr = std::string(httpResp->getBody());
+      Json::Value jsonResponse;
+      std::istringstream respIss(responseStr);
+      if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
+        std::string respDescLower = result.getRespdesc();
+        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
+        ssSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        if (!ssSuccess && !result.getRespdesc().empty()) {
+            response.message = result.getRespdesc();
+        }
+      }
+    } else {
+        LOG_ERROR << "SmartSuite API request failed (Flexy Withdrawal)";
+    }
+
+    if (!ssSuccess) {
+       if (response.message.empty()) {
+           response.message = "Failed to withdraw from Flexy Account.";
+       }
+       response.code = 1;
+       response.success = false;
+       co_return response;
+    }
+
+    // Flexy Withdrawal succeeded, go ahead with the rest of the ceremonies
 
     drogon_model::DataSupportDb::SmartSuiteTransactions transaction;
     transaction.setBusinessId(businessId);
@@ -874,14 +974,11 @@ SmartSuiteBankingService::initializeFlexyWithdrawalToMomo(
     auto plugin = drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
     auto &hubtelApi = plugin->getHubtelApi();
 
-    auto hubtelResponse =
-        co_await hubtelApi.initializeDirectSendMomo(businessId, sendDto);
+    auto hubtelResponse = co_await hubtelApi.initializeDirectSendMomo(businessId, sendDto);
 
     response.code = hubtelResponse.code;
     response.message = hubtelResponse.message;
-    response.success =
-        (hubtelResponse.code == 0 || hubtelResponse.code == 200 ||
-         hubtelResponse.code == 201);
+    response.success = (hubtelResponse.code == 0 || hubtelResponse.code == 200 || hubtelResponse.code == 201);
 
     co_return response;
 
@@ -894,8 +991,7 @@ SmartSuiteBankingService::initializeFlexyWithdrawalToMomo(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::completeFlexyWithdrawalToBank(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::completeFlexyWithdrawalToBank(
     const std::string &businessId, const std::string &reference,
     const std::string &recipientName, bool isSuccessful) {
 
@@ -964,8 +1060,7 @@ SmartSuiteBankingService::completeFlexyWithdrawalToBank(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::completeFlexyWithdrawalToMomo(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::completeFlexyWithdrawalToMomo(
     const std::string &businessId, const std::string &reference,
     const std::string &recipientName, bool isSuccessful) {
 
@@ -1032,8 +1127,6 @@ SmartSuiteBankingService::completeFlexyWithdrawalToMomo(
     co_return response;
   }
 }
-
-
 
 drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::completeDeposit(const std::string &businessId,
                                           const std::string &reference,
@@ -1122,12 +1215,14 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
       writer["indentation"] = "";
       std::string body = Json::writeString(writer, payload);
 
-      auto client = drogon::HttpClient::newHttpClient(baseUrl);
+      auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+      auto client = drogon::HttpClient::newHttpClient(host);
       auto req = drogon::HttpRequest::newHttpRequest();
       req->setMethod(drogon::Post);
-      req->setPath("");
-      req->setBody(body);
-      req->addHeader("Content-Type", "application/json");
+      req->setPath(path);
+      req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+    req->setBody(body);
 
       auto httpResp = co_await client->sendRequestCoro(req, 20.0);
 
@@ -1184,11 +1279,13 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                 << reference << ". Attempting to reverse back to Mobile Money.";
 
       try {
-        auto plugin = drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
+        auto plugin =
+            drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
         auto &hubtelApi = plugin->getHubtelApi();
 
         dto::DirectSendMomoDto sendDto;
-        sendDto.setRecipientName(recipientName.empty() ? "Customer" : recipientName);
+        sendDto.setRecipientName(recipientName.empty() ? "Customer"
+                                                       : recipientName);
         sendDto.setRecipientMsisdn(transaction.getValueOfPhoneNo());
         sendDto.setCustomerEmail("");
         try {
@@ -1210,13 +1307,11 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                       "transaction "
                    << reference;
         } else {
-          LOG_ERROR
-              << "Failed to reverse back to Mobile Money for transaction "
-              << reference << ": " << hubtelResponse.message;
+          LOG_ERROR << "Failed to reverse back to Mobile Money for transaction "
+                    << reference << ": " << hubtelResponse.message;
         }
       } catch (const std::exception &e) {
-        LOG_ERROR << "Exception during reversal to Mobile Money: "
-                  << e.what();
+        LOG_ERROR << "Exception during reversal to Mobile Money: " << e.what();
       }
 
       response.message = "Failed to complete Deposit.";
@@ -1239,8 +1334,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::reverseTransaction(const std::string &businessId,
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::reverseTransaction(const std::string &businessId,
                                              const std::string &reference) {
 
   dto::smart_suite::SmartSuiteOperationResponse response;
@@ -1317,12 +1411,14 @@ SmartSuiteBankingService::reverseTransaction(const std::string &businessId,
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-    req->setPath("");
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
     auto httpResp = co_await client->sendRequestCoro(req, 60.0);
 
@@ -1383,8 +1479,7 @@ SmartSuiteBankingService::reverseTransaction(const std::string &businessId,
 }
 
 // withdrawal request...
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::kiddyWithdrawalRequest(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::kiddyWithdrawalRequest(
     const std::string &businessId,
     const dto::smart_suite::KiddyWithdrawalRequestDto &dto) {
 
@@ -1392,7 +1487,8 @@ SmartSuiteBankingService::kiddyWithdrawalRequest(
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        mapper(dbClient);
 
     auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
@@ -1405,14 +1501,16 @@ SmartSuiteBankingService::kiddyWithdrawalRequest(
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
       LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
       response.code = 1;
-      response.message = "Failed to initiate withdrawal request from Kiddy Account.";
+      response.message =
+          "Failed to initiate withdrawal request from Kiddy Account.";
       co_return response;
     }
 
     const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
     if (smartSuiteConfig.isNull()) {
       response.code = 1;
-      response.message = "Failed to initiate withdrawal request from Kiddy Account.";
+      response.message =
+          "Failed to initiate withdrawal request from Kiddy Account.";
       co_return response;
     }
 
@@ -1427,13 +1525,15 @@ SmartSuiteBankingService::kiddyWithdrawalRequest(
     std::string transRef = timeStream.str();
 
     Json::Value payload;
-    payload["v_PHONENO"] = dto.getPhoneNo();
-    
-    // Use std::ostringstream to avoid scientific notation and ensure it's a string
+    payload["v_PHONENO"] =
+        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
+
+    // Use std::ostringstream to avoid scientific notation and ensure it's a
+    // string
     std::ostringstream amountStream;
     amountStream << dto.getAmount();
     payload["v_Amnt_ip"] = amountStream.str();
-    
+
     payload["v_transT"] = "WR";
     payload["v_ACTYPE"] = "K";
     payload["v_ACCR"] = "";
@@ -1448,39 +1548,47 @@ SmartSuiteBankingService::kiddyWithdrawalRequest(
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-    req->setPath("");
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
     auto httpResp = co_await client->sendRequestCoro(req, 60.0);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
+                     httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
-        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
-        
-        std::string respDescLower = result.getRespdesc();
-        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(
+            jsonResponse);
 
-        bool isSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        std::string respDescLower = result.getRespdesc();
+        std::transform(respDescLower.begin(), respDescLower.end(),
+                       respDescLower.begin(), ::tolower);
+
+        bool isSuccess =
+            (result.getRespcode() == "0" && respDescLower == "success");
 
         if (isSuccess) {
-            std::ostringstream msg;
-            msg << "The withdrawal request for GHS " << amountStream.str() << " has been successfully submitted!";
-            response.message = msg.str();
+          std::ostringstream msg;
+          msg << "The withdrawal request for GHS " << amountStream.str()
+              << " has been successfully submitted!";
+          response.message = msg.str();
         } else {
-            response.message = "Failed to initiate withdrawal request from Kiddy Account.";
+          response.message =
+              "Failed to initiate withdrawal request from Kiddy Account.";
         }
 
         try {
-            response.code = std::stoi(result.getRespcode());
+          response.code = std::stoi(result.getRespcode());
         } catch (...) {
-            response.code = 1;
+          response.code = 1;
         }
         response.success = isSuccess;
 
@@ -1488,7 +1596,8 @@ SmartSuiteBankingService::kiddyWithdrawalRequest(
       }
     }
 
-    response.message = "Failed to initiate withdrawal request from Kiddy Account.";
+    response.message =
+        "Failed to initiate withdrawal request from Kiddy Account.";
     response.code = 1;
     response.success = false;
     co_return response;
@@ -1496,15 +1605,15 @@ SmartSuiteBankingService::kiddyWithdrawalRequest(
   } catch (const std::exception &e) {
     LOG_ERROR << "Error in KiddyWithdrawalRequest: " << e.what();
 
-    response.message = "Failed to initiate withdrawal request from Kiddy Account.";
+    response.message =
+        "Failed to initiate withdrawal request from Kiddy Account.";
     response.code = 1;
     response.success = false;
     co_return response;
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::savingsWithdrawalRequest(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::savingsWithdrawalRequest(
     const std::string &businessId,
     const dto::smart_suite::SavingsWithdrawalRequestDto &dto) {
 
@@ -1512,7 +1621,8 @@ SmartSuiteBankingService::savingsWithdrawalRequest(
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        mapper(dbClient);
 
     auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
@@ -1525,14 +1635,16 @@ SmartSuiteBankingService::savingsWithdrawalRequest(
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
       LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
       response.code = 1;
-      response.message = "Failed to initiate withdrawal request from Savings Account.";
+      response.message =
+          "Failed to initiate withdrawal request from Savings Account.";
       co_return response;
     }
 
     const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
     if (smartSuiteConfig.isNull()) {
       response.code = 1;
-      response.message = "Failed to initiate withdrawal request from Savings Account.";
+      response.message =
+          "Failed to initiate withdrawal request from Savings Account.";
       co_return response;
     }
 
@@ -1547,12 +1659,13 @@ SmartSuiteBankingService::savingsWithdrawalRequest(
     std::string transRef = timeStream.str();
 
     Json::Value payload;
-    payload["v_PHONENO"] = dto.getPhoneNo();
-    
+    payload["v_PHONENO"] =
+        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
+
     std::ostringstream amountStream;
     amountStream << dto.getAmount();
     payload["v_Amnt_ip"] = amountStream.str();
-    
+
     payload["v_transT"] = "WR";
     payload["v_ACTYPE"] = "U";
     payload["v_ACCR"] = "";
@@ -1567,39 +1680,47 @@ SmartSuiteBankingService::savingsWithdrawalRequest(
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-    req->setPath("");
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
     auto httpResp = co_await client->sendRequestCoro(req, 60.0);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
+                     httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
-        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
-        
-        std::string respDescLower = result.getRespdesc();
-        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(
+            jsonResponse);
 
-        bool isSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        std::string respDescLower = result.getRespdesc();
+        std::transform(respDescLower.begin(), respDescLower.end(),
+                       respDescLower.begin(), ::tolower);
+
+        bool isSuccess =
+            (result.getRespcode() == "0" && respDescLower == "success");
 
         if (isSuccess) {
-            std::ostringstream msg;
-            msg << "The withdrawal request for GHS " << amountStream.str() << " has been successfully submitted!";
-            response.message = msg.str();
+          std::ostringstream msg;
+          msg << "The withdrawal request for GHS " << amountStream.str()
+              << " has been successfully submitted!";
+          response.message = msg.str();
         } else {
-            response.message = "Failed to initiate withdrawal request from Savings Account.";
+          response.message =
+              "Failed to initiate withdrawal request from Savings Account.";
         }
 
         try {
-            response.code = std::stoi(result.getRespcode());
+          response.code = std::stoi(result.getRespcode());
         } catch (...) {
-            response.code = 1;
+          response.code = 1;
         }
         response.success = isSuccess;
 
@@ -1607,7 +1728,8 @@ SmartSuiteBankingService::savingsWithdrawalRequest(
       }
     }
 
-    response.message = "Failed to initiate withdrawal request from Savings Account.";
+    response.message =
+        "Failed to initiate withdrawal request from Savings Account.";
     response.code = 1;
     response.success = false;
     co_return response;
@@ -1615,7 +1737,8 @@ SmartSuiteBankingService::savingsWithdrawalRequest(
   } catch (const std::exception &e) {
     LOG_ERROR << "Error in SavingsWithdrawalRequest: " << e.what();
 
-    response.message = "Failed to initiate withdrawal request from Savings Account.";
+    response.message =
+        "Failed to initiate withdrawal request from Savings Account.";
     response.code = 1;
     response.success = false;
     co_return response;
@@ -1631,7 +1754,8 @@ SmartSuiteBankingService::flexyToKiddyTransfer(
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        mapper(dbClient);
 
     auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
@@ -1659,26 +1783,24 @@ SmartSuiteBankingService::flexyToKiddyTransfer(
     std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
     std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
 
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    std::ostringstream timeStream;
-    timeStream << std::put_time(std::localtime(&now_c), "%Y%m%d%H%M%S");
-    std::string transRef = timeStream.str();
+    std::string transactionRef =
+        utils::IdGeneratorUtils::generateTimeStampReference();
 
     Json::Value payload;
-    payload["v_PHONENO"] = dto.getPhoneNo();
-    
+    payload["v_PHONENO"] =
+        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
+
     std::ostringstream amountStream;
     amountStream << dto.getAmount();
     payload["v_Amnt_ip"] = amountStream.str();
-    
+
     payload["v_transT"] = "T";
     payload["v_ACTYPE"] = "K";
     payload["v_ACCR"] = "";
     payload["V_Pin"] = dto.getPin();
     payload["V_PinNew"] = "";
     payload["v_SERIALNO"] = dto.getSerialNo();
-    payload["V_TRANSREF"] = transRef;
+    payload["V_TRANSREF"] = transactionRef;
     payload["v_TELCOM"] = vTelcom;
     payload["v_APIKEY"] = vApiKey;
 
@@ -1686,39 +1808,46 @@ SmartSuiteBankingService::flexyToKiddyTransfer(
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
-    auto client = drogon::HttpClient::newHttpClient(baseUrl);
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
-    req->setPath("");
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
-    req->addHeader("Content-Type", "application/json");
 
-    auto httpResp = co_await client->sendRequestCoro(req, 60.0);
+    auto httpResp = co_await client->sendRequestCoro(req, 20.0);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
+                     httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
-        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
-        
-        std::string respDescLower = result.getRespdesc();
-        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(
+            jsonResponse);
 
-        bool isSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        std::string respDescLower = result.getRespdesc();
+        std::transform(respDescLower.begin(), respDescLower.end(),
+                       respDescLower.begin(), ::tolower);
+
+        bool isSuccess =
+            (result.getRespcode() == "0" && respDescLower == "success");
 
         if (isSuccess) {
-            std::ostringstream msg;
-            msg << "GHS " << amountStream.str() << " transferred to kiddy account successfully!";
-            response.message = msg.str();
+          std::ostringstream msg;
+          msg << "GHS " << amountStream.str()
+              << " transferred to kiddy account successfully!";
+          response.message = msg.str();
         } else {
-            response.message = "Failed to transfer funds.";
+          response.message = "Failed to transfer funds.";
         }
 
         try {
-            response.code = std::stoi(result.getRespcode());
+          response.code = std::stoi(result.getRespcode());
         } catch (...) {
-            response.code = 1;
+          response.code = 1;
         }
         response.success = isSuccess;
 
@@ -1741,13 +1870,152 @@ SmartSuiteBankingService::flexyToKiddyTransfer(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::interAccountTransfer(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
+SmartSuiteBankingService::interAccountTransfer(
     const std::string &businessId,
     const dto::smart_suite::InterAccountTransferDto &dto) {
 
-  // create db record
+  dto::smart_suite::SmartSuiteOperationResponse response;
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        mapper(dbClient);
+
+    auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
+      response.code = 1;
+      response.message = "Failed to transfer funds.";
+      co_return response;
+    }
+
+    const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
+    if (smartSuiteConfig.isNull()) {
+      response.code = 1;
+      response.message = "Failed to transfer funds.";
+      co_return response;
+    }
+
+    std::string baseUrl = smartSuiteConfig["BaseUrl"].asString();
+    std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
+    std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
+
+    std::string transactionRef =
+        utils::IdGeneratorUtils::generateTimeStampReference();
+
+    Json::Value payload;
+    payload["v_PHONENO"] =
+        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
+
+    std::ostringstream amountStream;
+    amountStream << dto.getAmount();
+    payload["v_Amnt_ip"] = amountStream.str();
+
+    payload["v_transT"] = "T";
+    payload["v_ACTYPE"] = "F";
+    payload["v_ACCR"] = dto.getDestinationAccount();
+    payload["V_Pin"] = dto.getPin();
+    payload["V_PinNew"] = "";
+    payload["v_SERIALNO"] = "";
+    payload["V_TRANSREF"] = transactionRef;
+    payload["v_TELCOM"] = vTelcom;
+    payload["v_APIKEY"] = vApiKey;
+
+    Json::StreamWriterBuilder writer;
+    writer["indentation"] = "";
+    std::string body = Json::writeString(writer, payload);
+
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+
+    auto client = drogon::HttpClient::newHttpClient(host);
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Post);
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+    req->setBody(body);
+
+    auto httpResp = co_await client->sendRequestCoro(req, 20.0);
+
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
+                     httpResp->statusCode() == drogon::k201Created)) {
+      const std::string responseStr = std::string(httpResp->getBody());
+
+      LOG_INFO << "InterAccountTransfer response: " << responseStr
+               << ", amount: " << dto.getAmount()
+               << ", destinationAccount: " << dto.getDestinationAccount();
+
+      Json::Value jsonResponse;
+      std::istringstream respIss(responseStr);
+      if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(
+            jsonResponse);
+
+        std::string respDesc = result.getRespdesc();
+        std::string respDescLower = respDesc;
+        std::transform(respDescLower.begin(), respDescLower.end(),
+                       respDescLower.begin(), ::tolower);
+
+        if (respDescLower == "destination account no found") {
+          response.message =
+              "Destination account '" + dto.getDestinationAccount() +
+              "' not found. Please verify the account number and try again.";
+          response.code = 1;
+          response.success = false;
+          co_return response;
+        }
+
+        bool isSuccess =
+            (result.getRespcode() == "0" && respDescLower == "success");
+
+        if (isSuccess) {
+          std::string acName = result.getAcname();
+          if (acName.empty()) {
+            acName = "recipient";
+          }
+          std::ostringstream msg;
+          msg << "GHS " << std::fixed << std::setprecision(2) << dto.getAmount()
+              << " transferred to " << acName << " ("
+              << dto.getDestinationAccount() << ") successfully!";
+          response.message = msg.str();
+        } else {
+          response.message = (result.getRespcode() != "0" && !respDesc.empty())
+                                 ? respDesc
+                                 : "Failed to transfer funds.";
+        }
+
+        try {
+          response.code = std::stoi(result.getRespcode());
+        } catch (...) {
+          response.code = 1;
+        }
+        response.success = isSuccess;
+        response.transactionReference = transactionRef;
+
+        co_return response;
+      }
+    }
+
+    response.message = "Failed to transfer funds.";
+    response.code = 1;
+    response.success = false;
+    co_return response;
+
+  } catch (const std::exception &e) {
+    LOG_ERROR << "Error in interAccountTransfer: " << e.what();
+
+    response.message = "Failed to transfer funds.";
+    response.code = 1;
+    response.success = false;
+    co_return response;
+  }
 }
-
-
 
 } // namespace data_support::services

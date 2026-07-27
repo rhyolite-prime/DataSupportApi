@@ -3,7 +3,7 @@
 //
 
 #include "BusinessAccountService.h"
-#include "models/BusinessAccount.h"
+#include "models/BusinessAccounts.h"
 #include <drogon/drogon.h>
 #include <drogon/orm/CoroMapper.h>
 #include "utils/JsonUtils.h"
@@ -14,7 +14,7 @@ drogon::Task<dto::BaseApiResponse> BusinessAccountService::getAll(int pageNo, in
     dto::BaseApiResponse response;
     try {
         auto dbClient = drogon::app().getDbClient();
-        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccount> mapper(dbClient);
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
         // Simple pagination
         auto accounts = co_await mapper.paginate(pageNo, pageSize).findAll();
@@ -38,9 +38,9 @@ drogon::Task<dto::BaseApiResponse> BusinessAccountService::create(const dto::Bus
     dto::BaseApiResponse response;
     try {
         auto dbClient = drogon::app().getDbClient();
-        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccount> mapper(dbClient);
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
-        drogon_model::DataSupportDb::BusinessAccount account;
+        drogon_model::DataSupportDb::BusinessAccounts account;
         account.setBusinessName(dto.getBusinessName());
         account.setAccountId(dto.getAccountId());
         account.setContactPersonName(dto.getContactPersonName());
@@ -75,7 +75,7 @@ drogon::Task<dto::BaseApiResponse> BusinessAccountService::update(const dto::Bus
     dto::BaseApiResponse response;
     try {
         auto dbClient = drogon::app().getDbClient();
-        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccount> mapper(dbClient);
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
         auto account = co_await mapper.findByPrimaryKey(id);
         
@@ -112,7 +112,7 @@ drogon::Task<dto::BaseApiResponse> BusinessAccountService::updateAccountStatus(c
     dto::BaseApiResponse response;
     try {
         auto dbClient = drogon::app().getDbClient();
-        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccount> mapper(dbClient);
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
         auto account = co_await mapper.findByPrimaryKey(id);
         account.setStatus(static_cast<int32_t>(status));
@@ -132,7 +132,7 @@ drogon::Task<dto::BaseApiResponse> BusinessAccountService::deleteAccount(const s
     dto::BaseApiResponse response;
     try {
         auto dbClient = drogon::app().getDbClient();
-        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccount> mapper(dbClient);
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
         co_await mapper.deleteByPrimaryKey(id);
 

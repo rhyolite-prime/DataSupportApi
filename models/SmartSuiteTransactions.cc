@@ -60,7 +60,7 @@ const std::vector<typename SmartSuiteTransactions::MetaData> SmartSuiteTransacti
 {"bank_code","std::string","character varying",15,0,0,0},
 {"bank_account_name","std::string","character varying",150,0,0,0},
 {"recipient_name","std::string","character varying",150,0,0,0},
-{"pin","std::string","character varying",20,0,0,0},
+{"pin","std::string","character varying",100,0,0,0},
 {"callback_url","std::string","character varying",150,0,0,0},
 {"created_at","::trantor::Date","timestamp with time zone",0,0,0,1},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
@@ -4125,11 +4125,11 @@ bool SmartSuiteTransactions::validJsonOfField(size_t index,
                 return false;
             }
             if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
+                .from_bytes(pJson.asCString()).size() > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
-                    " field (the maximum value is 20)";
+                    " field (the maximum value is 100)";
                 return false;
             }
             break;

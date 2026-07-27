@@ -4,7 +4,7 @@
 
 #include "BusinessApiKeyService.h"
 #include "models/BusinessApiKeys.h"
-#include "models/BusinessAccount.h"
+#include "models/BusinessAccounts.h"
 #include "utils/JsonUtils.h"
 #include "constants/ErrorCode.h"
 #include <drogon/drogon.h>
@@ -52,7 +52,7 @@ namespace data_support::services {
             std::string clientSecret = utils::IdGeneratorUtils::generateAlphanumericId(18);
 
             // 2. Hash Client Secret
-            std::string clientSecretHash = bcrypt::generateHash(clientSecret);
+            std::string clientSecretHash = bcrypt::generateHash(clientSecret,6);
 
             drogon_model::DataSupportDb::BusinessApiKeys apiKey;
             apiKey.setBusinessId(dto.getBusinessId());
@@ -213,9 +213,9 @@ namespace data_support::services {
 
             const std::string& businessId = apiKey.getValueOfBusinessId();
 
-            CoroMapper<drogon_model::DataSupportDb::BusinessAccount> accountMapper(dbClient);
+            CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> accountMapper(dbClient);
 
-            drogon_model::DataSupportDb::BusinessAccount account;
+            drogon_model::DataSupportDb::BusinessAccounts account;
 
             try {
                 account = co_await accountMapper.findByPrimaryKey(businessId);

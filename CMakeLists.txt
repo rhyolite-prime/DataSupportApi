@@ -43,6 +43,10 @@ add_executable(${PROJECT_NAME} main.cc
         utils/IdGeneratorUtils.cc
         utils/CryptoUtils.h
         utils/CryptoUtils.cc
+        utils/PhoneNumberFormatter.h
+        utils/PhoneNumberFormatter.cc
+        utils/UrlUtils.h
+        utils/UrlUtils.cc
         dto/smart_suite/ChangePinDto.h
         dto/smart_suite/MiniStatementDto.h
         dto/smart_suite/AccountBalanceDto.h

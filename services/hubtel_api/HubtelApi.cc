@@ -72,7 +72,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
     payload["Channel"] = provider;
     payload["Amount"] = dto.getAmount();
     
-    std::string callbackUrl = dto.getPrimaryCallbackUrl() + businessId;
+    std::string callbackUrl = dto.getPrimaryCallbackUrl() + "/" + businessId;
     if (callbackUrl.empty()) {
         callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/direct-receive-money/"+businessId;
     }
@@ -93,8 +93,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
         auto req = drogon::HttpRequest::newHttpRequest();
         req->setMethod(drogon::Post);
         req->setPath("/merchantaccount/merchants/" + posSalesAccountId + "/receive/mobilemoney");
+        req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
         req->setBody(body);
-        req->addHeader("Content-Type", "application/json");
         req->addHeader("Authorization", authHeader);
         
         client->sendRequest(req, [](drogon::ReqResult res, const drogon::HttpResponsePtr &httpResp) {
@@ -163,7 +163,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const st
         payload["returnUrl"] = dto.getReturnUrl();
         payload["merchantAccountNumber"] = merchantAccountNumber;
 
-        std::string callbackUrl = dto.getCallbackUrl() + businessId;
+        std::string callbackUrl = dto.getCallbackUrl() + "/" + businessId;
         if (callbackUrl.empty()) {
             callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/direct-receive-money/"+businessId;
         }
@@ -184,8 +184,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const st
         auto req = drogon::HttpRequest::newHttpRequest();
         req->setMethod(drogon::Post);
         req->setPath("/items/initiate");
+        req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
         req->setBody(body);
-        req->addHeader("Content-Type", "application/json");
         req->addHeader("Authorization", authHeader);
 
         auto httpResp = co_await client->sendRequestCoro(req);
@@ -376,8 +376,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendMomo(const
         auto req = drogon::HttpRequest::newHttpRequest();
         req->setMethod(drogon::Post);
         req->setPath("/api/merchants/" + prepaidAccountId + "/send/mobilemoney");
+        req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
         req->setBody(body);
-        req->addHeader("Content-Type", "application/json");
         req->addHeader("Authorization", authHeader);
         
         auto httpResp = co_await client->sendRequestCoro(req);
@@ -491,8 +491,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
         auto req = drogon::HttpRequest::newHttpRequest();
         req->setMethod(drogon::Post);
         req->setPath("/api/merchants/" + prepaidAccountId + "/send/bank/gh/" + bankCode);
+        req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
         req->setBody(body);
-        req->addHeader("Content-Type", "application/json");
         req->addHeader("Authorization", authHeader);
         
         auto httpResp = co_await client->sendRequestCoro(req);
