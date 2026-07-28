@@ -25,8 +25,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
   try {
 
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        mapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
     auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
@@ -83,16 +82,6 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     req->setBody(body);
 
     auto httpResp = co_await client->sendRequestCoro(req);
-
-
-    if (httpResp) {
-      LOG_INFO << "SmartSuite API verifyCustomerAccount status code: "
-               << httpResp->statusCode()
-               << ", body: " << std::string(httpResp->getBody());
-    } else {
-      LOG_ERROR << "SmartSuite API verifyCustomerAccount request failed (null "
-                   "response)";
-    }
 
     if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
                      httpResp->statusCode() == drogon::k201Created)) {
@@ -318,14 +307,6 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
     auto httpResp = co_await client->sendRequestCoro(req);
 
-    if (httpResp) {
-      LOG_INFO << "SmartSuite API mini statement status code: "
-               << httpResp->statusCode()
-               << ", body: " << std::string(httpResp->getBody());
-    } else {
-      LOG_ERROR << "SmartSuite API mini statement request failed (null "
-                   "response)";
-    }
     if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
 
@@ -434,8 +415,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                    accountTypeUpper.begin(), ::toupper);
 
     Json::Value payload;
-    payload["v_PHONENO"] =
-        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
+    payload["v_PHONENO"] = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
     payload["v_Amnt_ip"] = "";
     payload["v_transT"] = "B";
     payload["v_ACTYPE"] = accountTypeUpper;
@@ -469,12 +449,10 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
       std::istringstream respIss(responseStr);
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
 
-        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(
-            jsonResponse);
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
 
         std::string respDescLower = result.getRespdesc();
-        std::transform(respDescLower.begin(), respDescLower.end(),
-                       respDescLower.begin(), ::tolower);
+        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
 
         bool isSuccess =
             (result.getRespcode() == "0" && respDescLower == "success");
@@ -595,9 +573,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
       co_return response;
     }
 
-    std::string clientRef = drogon::utils::getUuid();
-    clientRef.erase(std::remove(clientRef.begin(), clientRef.end(), '-'),
-                    clientRef.end());
+    std::string clientRef = utils::IdGeneratorUtils::generateTimeStampReference();
 
     drogon_model::DataSupportDb::SmartSuiteTransactions transaction;
     transaction.setBusinessId(businessId);
@@ -611,11 +587,9 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setIntegratingService(dto.getIntegrationService());
     transaction.setProvider(dto.getProvider());
     transaction.setChildAccountNumber(dto.getKiddyAccountSerialNo());
-    transaction.setPin(
-        utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
+    transaction.setPin(utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
 
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>
-        txnMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions> txnMapper(dbClient);
     auto savedTxn = co_await txnMapper.insert(transaction);
 
     dto::DirectReceiveMoneyDto receiveDto;
@@ -741,12 +715,23 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
   dto::smart_suite::SmartSuiteOperationResponse response;
 
+  LOG_INFO << "[initializeFlexyWithdrawalToBank] START - businessId=[" << businessId
+           << "] senderMsisdn=[" << dto.getSenderMsisdn()
+           << "] amount=[" << dto.getAmount()
+           << "] bankName=[" << dto.getBankName()
+           << "] bankBranch=[" << dto.getBankBranch()
+           << "] bankAccountNumber=[" << dto.getBankAccountNumber()
+           << "] transactionType=[" << dto.getTransactionType() << "]";
+
   try {
+
+    // --- Step 1: Load business account and parse configuration ---
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 1: Fetching business account config for businessId=[" << businessId << "]";
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        bizMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 1: Business account config fetched successfully";
 
     Json::Value configJson;
     Json::CharReaderBuilder readerBuilder;
@@ -754,25 +739,113 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::istringstream iss(configStr);
 
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
-      LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
+      LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 1 FAILED: Could not parse ConfigurationData - " << errs;
       response.message = "Failed to initialize withdrawal to bank.";
       response.code = 1;
       co_return response;
     }
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 1: ConfigurationData parsed successfully";
 
-    std::string encryptionKey =
-        configJson["SmartSuiteApi"]["EncryptionKey"].asString();
+    // --- Step 2: Validate encryption key ---
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 2: Validating SmartSuite encryption key";
+    std::string encryptionKey = configJson["SmartSuiteApi"]["EncryptionKey"].asString();
     if (encryptionKey.length() < 32) {
-      LOG_ERROR << "SmartSuiteApi EncryptionKey is missing or too short.";
+      LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 2 FAILED: EncryptionKey is missing or too short (length=" << encryptionKey.length() << ", required>=32)";
       response.message = "Failed to initialize withdrawal due to config error.";
       response.code = 1;
       co_return response;
     }
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 2: Encryption key validated (length=" << encryptionKey.length() << ")";
 
-    std::string clientRef = drogon::utils::getUuid();
-    clientRef.erase(std::remove(clientRef.begin(), clientRef.end(), '-'),
-                    clientRef.end());
+    // --- Step 3: Generate client reference ---
+    std::string clientRef = utils::IdGeneratorUtils::generateTimeStampReference();
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 3: Generated clientRef=[" << clientRef << "]";
 
+    // --- Step 4: Build SmartSuite Flexy Withdrawal payload ---
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 4: Building SmartSuite Flexy Withdrawal (v_transT=W) payload";
+    const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
+    std::string baseUrl = smartSuiteConfig["BaseUrl"].asString();
+    std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
+    std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
+
+    std::string formattedPhone = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getSenderMsisdn());
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 4: SmartSuite baseUrl=[" << baseUrl
+             << "] formattedPhone=[" << formattedPhone
+             << "] vTelcom=[" << vTelcom << "]";
+
+    Json::Value ssPayload;
+    ssPayload["v_PHONENO"] = formattedPhone;
+    
+    std::ostringstream amountStream;
+    amountStream << dto.getAmount();
+    ssPayload["v_Amnt_ip"] = amountStream.str();
+    
+    ssPayload["v_transT"] = "W";
+    ssPayload["v_ACTYPE"] = "F";
+    ssPayload["v_ACCR"] = "";
+    ssPayload["V_Pin"] = dto.getPin();
+    ssPayload["V_PinNew"] = "";
+    ssPayload["v_SERIALNO"] = "";
+    ssPayload["V_TRANSREF"] = clientRef;
+    ssPayload["v_TELCOM"] = vTelcom;
+    ssPayload["v_APIKEY"] = vApiKey;
+
+    Json::StreamWriterBuilder writer;
+    writer["indentation"] = "";
+    std::string ssBody = Json::writeString(writer, ssPayload);
+
+    auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 4: SmartSuite request -> host=[" << host << "] path=[" << path << "]";
+
+    // --- Step 5: Send Flexy Withdrawal request to SmartSuite API ---
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 5: Sending Flexy Withdrawal request to SmartSuite API (timeout=20s)";
+    auto client = drogon::HttpClient::newHttpClient(host);
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Post);
+    req->setPath(path);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+    req->setBody(ssBody);
+
+    auto httpResp = co_await client->sendRequestCoro(req, 20.0);
+
+    // --- Step 6: Evaluate SmartSuite Flexy Withdrawal response ---
+    bool ssSuccess = false;
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
+      const std::string responseStr = std::string(httpResp->getBody());
+      LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 6: SmartSuite API responded with HTTP " << httpResp->statusCode()
+               << " body=[" << responseStr << "]";
+      Json::Value jsonResponse;
+      std::istringstream respIss(responseStr);
+
+      if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
+        std::string respDescLower = result.getRespdesc();
+        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
+        ssSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 6: SmartSuite respcode=[" << result.getRespcode()
+                 << "] respdesc=[" << result.getRespdesc()
+                 << "] ssSuccess=[" << (ssSuccess ? "true" : "false") << "]";
+      } else {
+        LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 6 FAILED: Could not parse SmartSuite JSON response - " << errs;
+      }
+    } else {
+      LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 6 FAILED: SmartSuite API HTTP request failed"
+                << (httpResp ? (" - HTTP status=" + std::to_string(httpResp->statusCode())) : " - no response received");
+    }
+
+    // --- Step 7: Abort if Flexy Withdrawal was unsuccessful ---
+    if (!ssSuccess) {
+      LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 7: Flexy Withdrawal FAILED for clientRef=[" << clientRef
+                << "]. Aborting — will NOT proceed to Hubtel SendToBank.";
+      response.message = "Failed to initiate withdrawal. Please try again later.";
+      response.code = 1;
+      response.success = false;
+      co_return response;
+    }
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 7: Flexy Withdrawal succeeded for clientRef=[" << clientRef << "]";
+
+    // --- Step 8: Persist transaction record ---
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 8: Saving PENDING transaction record to DB (clientRef=[" << clientRef << "])";
     drogon_model::DataSupportDb::SmartSuiteTransactions transaction;
     transaction.setBusinessId(businessId);
     transaction.setPhoneNo(dto.getSenderMsisdn());
@@ -783,48 +856,79 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setReference(clientRef);
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegratingService());
-    // Pin requires encryption
-    transaction.setPin(
-        utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
+    transaction.setBankAccountNumber(dto.getBankAccountNumber());
+    transaction.setBankBranch(dto.getBankBranch());
+    transaction.setBankName(dto.getBankName());
+    transaction.setBankCode("");
+    transaction.setPin(utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
 
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>
-        txnMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions> txnMapper(dbClient);
     auto savedTxn = co_await txnMapper.insert(transaction);
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 8: Transaction record saved successfully (id=[" << savedTxn.getValueOfId() << "])";
 
-    dto::DirectSendToBankDto sendDto;
-    sendDto.setBankName(dto.getBankName());
-    sendDto.setBankBranch(dto.getBankBranch());
-    sendDto.setBankBranchCode(dto.getBankBranchCode());
+    // --- Step 9: Build Hubtel DirectSendToBank payload ---
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 9: Building Hubtel DirectSendToBank request payload";
+    dto::DirectSendToBankDto sendToBankDto;
+    sendToBankDto.setBankName(dto.getBankName());
+    sendToBankDto.setBankBranch(dto.getBankBranch());
+    sendToBankDto.setBankBranchCode(dto.getBankBranchCode());
+
     try {
-      sendDto.setAmount(std::stod(dto.getAmount()));
+      sendToBankDto.setAmount(std::stod(dto.getAmount()));
     } catch (...) {
-      sendDto.setAmount(0.0);
+      LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 9: Could not parse amount to double (amount=[" << dto.getAmount() << "]) — defaulting to 0.0";
+      sendToBankDto.setAmount(0.0);
     }
-    sendDto.setBankAccountNumber(dto.getBankAccountNumber());
-    // No bank account name in FlexyWithdrawalToBankDto, use default/empty
-    sendDto.setBankAccountName("");
-    sendDto.setPrimaryCallbackUrl(dto.getPrimaryCallbackUrl());
-    sendDto.setDescription(dto.getDescription());
-    sendDto.setSenderMsisdn(dto.getSenderMsisdn());
-    sendDto.setRecipientPhoneNumber(dto.getSenderMsisdn()); // Best alternative
-    sendDto.setClientReference(clientRef);
+    sendToBankDto.setBankAccountNumber(dto.getBankAccountNumber());
+    sendToBankDto.setBankAccountName("");
+    sendToBankDto.setPrimaryCallbackUrl(dto.getPrimaryCallbackUrl());
+    sendToBankDto.setDescription(dto.getDescription());
+    sendToBankDto.setSenderMsisdn(dto.getSenderMsisdn());
+    sendToBankDto.setRecipientPhoneNumber(dto.getRecipientPhoneNo());
+    sendToBankDto.setClientReference(clientRef);
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 9: Hubtel payload ready - bankName=[" << dto.getBankName()
+             << "] bankBranch=[" << dto.getBankBranch()
+             << "] bankBranchCode=[" << dto.getBankBranchCode()
+             << "] bankAccountNumber=[" << dto.getBankAccountNumber()
+             << "] recipientPhoneNo=[" << dto.getRecipientPhoneNo()
+             << "] amount=[" << dto.getAmount()
+             << "] callbackUrl=[" << dto.getPrimaryCallbackUrl() << "]";
 
+    // --- Step 10: Send DirectSendToBank request to Hubtel ---
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 10: Dispatching Hubtel DirectSendToBank request for clientRef=[" << clientRef << "]";
     auto plugin = drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
     auto &hubtelApi = plugin->getHubtelApi();
 
-    auto hubtelResponse =
-        co_await hubtelApi.initializeDirectSendToBank(businessId, sendDto);
+    auto hubtelResponse = co_await hubtelApi.initializeDirectSendToBank(businessId, sendToBankDto);
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 10: Hubtel response received - code=[" << hubtelResponse.code
+             << "] message=[" << hubtelResponse.message << "]";
 
-    response.code = hubtelResponse.code;
-    response.message = hubtelResponse.message;
-    response.success =
-        (hubtelResponse.code == 0 || hubtelResponse.code == 200 ||
-         hubtelResponse.code == 201);
+    // --- Step 11: Evaluate Hubtel response and handle reversal if needed ---
+    bool hubtelSuccess = (hubtelResponse.code == 0 || hubtelResponse.code == 200 || hubtelResponse.code == 201);
+         
+    if (hubtelSuccess) {
+      LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 11: Hubtel DirectSendToBank SUCCEEDED for clientRef=[" << clientRef << "]. Withdrawal initiated.";
+      response.code = 0;
+      response.success = true;
+      response.message = "Withdrawal to bank has been initiated successfully.\nYou will be notified once the process is complete.";
+    } else {
+      LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 11: Hubtel DirectSendToBank FAILED for clientRef=[" << clientRef
+                << "] (code=[" << hubtelResponse.code << "] message=[" << hubtelResponse.message
+                << "]). Triggering Flexy reversal.";
+      co_await reverseTransaction(businessId, clientRef);
+      LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 11: Flexy reversal dispatched for clientRef=[" << clientRef << "]";
+      response.code = 1;
+      response.success = false;
+      response.message = "Failed to initiate withdrawal. Please try again later.";
+    }
 
+    LOG_INFO << "[initializeFlexyWithdrawalToBank] END - clientRef=[" << clientRef
+             << "] finalCode=[" << response.code
+             << "] success=[" << (response.success ? "true" : "false") << "]";
     co_return response;
 
   } catch (const std::exception &e) {
-    LOG_ERROR << "Error initializing bank withdrawal: " << e.what();
+    LOG_ERROR << "[initializeFlexyWithdrawalToBank] EXCEPTION: " << e.what();
     response.message = "Failed to initialize bank withdrawal.";
     response.code = 500;
     response.success = false;
@@ -838,14 +942,23 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
   dto::smart_suite::SmartSuiteOperationResponse response;
 
+  LOG_INFO << "[initializeFlexyWithdrawalToMomo] START - businessId=[" << businessId
+           << "] senderMsisdn=[" << dto.getSenderMsisdn()
+           << "] recipientMsisdn=[" << dto.getRecipientMsisdn()
+           << "] recipientName=[" << dto.getRecipientName()
+           << "] amount=[" << dto.getAmount()
+           << "] provider=[" << dto.getProvider()
+           << "] transactionType=[" << dto.getTransactionType() << "]";
+
   try {
 
-    //attempt a flexy withdrawal first; if it succeeds go ahead with the rest of the ceremonies
-
+    // --- Step 1: Load business account and parse configuration ---
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 1: Fetching business account config for businessId=[" << businessId << "]";
     auto dbClient = drogon::app().getDbClient();
     drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 1: Business account config fetched successfully";
 
     Json::Value configJson;
     Json::CharReaderBuilder readerBuilder;
@@ -853,49 +966,55 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::istringstream iss(configStr);
 
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
-      LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
+      LOG_ERROR << "[initializeFlexyWithdrawalToMomo] Step 1 FAILED: Could not parse ConfigurationData - " << errs;
       response.message = "Failed to initialize withdrawal to momo.";
       response.code = 1;
       co_return response;
     }
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 1: ConfigurationData parsed successfully";
 
+    // --- Step 2: Validate encryption key ---
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 2: Validating SmartSuite encryption key";
     std::string encryptionKey =
         configJson["SmartSuiteApi"]["EncryptionKey"].asString();
     if (encryptionKey.length() < 32) {
-      LOG_ERROR << "SmartSuiteApi EncryptionKey is missing or too short.";
+      LOG_ERROR << "[initializeFlexyWithdrawalToMomo] Step 2 FAILED: EncryptionKey is missing or too short (length=" << encryptionKey.length() << ", required>=32)";
       response.message = "Failed to initialize withdrawal due to config error.";
       response.code = 1;
       co_return response;
     }
-    std::string clientRef = drogon::utils::getUuid();
-    clientRef.erase(std::remove(clientRef.begin(), clientRef.end(), '-'), clientRef.end());
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 2: Encryption key validated (length=" << encryptionKey.length() << ")";
 
-    // 1. Attempt Flexy Withdrawal First
+    // --- Step 3: Generate client reference ---
+    std::string clientRef = utils::IdGeneratorUtils::generateTimeStampReference();
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 3: Generated clientRef=[" << clientRef << "]";
+
+    // --- Step 4: Build SmartSuite Flexy Withdrawal payload ---
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 4: Building SmartSuite Flexy Withdrawal (v_transT=WR) payload";
     const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
     std::string baseUrl = smartSuiteConfig["BaseUrl"].asString();
     std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
     std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
 
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    std::ostringstream timeStream;
-    timeStream << std::put_time(std::localtime(&now_c), "%Y%m%d%H%M%S");
-    std::string transRef = timeStream.str();
+    std::string formattedPhone = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getSenderMsisdn());
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 4: SmartSuite baseUrl=[" << baseUrl
+             << "] formattedPhone=[" << formattedPhone
+             << "] vTelcom=[" << vTelcom << "]";
 
     Json::Value ssPayload;
-    ssPayload["v_PHONENO"] = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getSenderMsisdn());
+    ssPayload["v_PHONENO"] = formattedPhone;
     
     std::ostringstream amountStream;
     amountStream << dto.getAmount();
     ssPayload["v_Amnt_ip"] = amountStream.str();
     
-    ssPayload["v_transT"] = "WR";
+    ssPayload["v_transT"] = "W";
     ssPayload["v_ACTYPE"] = "F";
     ssPayload["v_ACCR"] = "";
     ssPayload["V_Pin"] = dto.getPin();
     ssPayload["V_PinNew"] = "";
     ssPayload["v_SERIALNO"] = "";
-    ssPayload["V_TRANSREF"] = transRef;
+    ssPayload["V_TRANSREF"] = clientRef;
     ssPayload["v_TELCOM"] = vTelcom;
     ssPayload["v_APIKEY"] = vApiKey;
 
@@ -904,6 +1023,10 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::string ssBody = Json::writeString(writer, ssPayload);
 
     auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 4: SmartSuite request -> host=[" << host << "] path=[" << path << "]";
+
+    // --- Step 5: Send Flexy Withdrawal request to SmartSuite API ---
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 5: Sending Flexy Withdrawal request to SmartSuite API (timeout=60s)";
     auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Post);
@@ -911,12 +1034,14 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(ssBody);
 
-    auto httpResp = co_await client->sendRequestCoro(req, 60.0);
-    
+    auto httpResp = co_await client->sendRequestCoro(req);
+
+    // --- Step 6: Evaluate SmartSuite Flexy Withdrawal response ---
     bool ssSuccess = false;
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
-                     httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
+      LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 6: SmartSuite API responded with HTTP " << httpResp->statusCode()
+               << " body=[" << responseStr << "]";
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
@@ -924,25 +1049,36 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
         std::string respDescLower = result.getRespdesc();
         std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
         ssSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 6: SmartSuite respcode=[" << result.getRespcode()
+                 << "] respdesc=[" << result.getRespdesc()
+                 << "] ssSuccess=[" << (ssSuccess ? "true" : "false") << "]";
         if (!ssSuccess && !result.getRespdesc().empty()) {
-            response.message = result.getRespdesc();
+          response.message = result.getRespdesc();
+          LOG_ERROR << "[initializeFlexyWithdrawalToMomo] Step 6: SmartSuite failure detail: " << result.getRespdesc();
         }
+      } else {
+        LOG_ERROR << "[initializeFlexyWithdrawalToMomo] Step 6 FAILED: Could not parse SmartSuite JSON response - " << errs;
       }
     } else {
-        LOG_ERROR << "SmartSuite API request failed (Flexy Withdrawal)";
+      LOG_ERROR << "[initializeFlexyWithdrawalToMomo] Step 6 FAILED: SmartSuite API HTTP request failed"
+                << (httpResp ? (" - HTTP status=" + std::to_string(httpResp->statusCode())) : " - no response received");
     }
 
+    // --- Step 7: Abort if Flexy Withdrawal was unsuccessful ---
     if (!ssSuccess) {
-       if (response.message.empty()) {
-           response.message = "Failed to withdraw from Flexy Account.";
-       }
-       response.code = 1;
-       response.success = false;
-       co_return response;
+      LOG_ERROR << "[initializeFlexyWithdrawalToMomo] Step 7: Flexy Withdrawal FAILED for clientRef=[" << clientRef
+                << "]. Aborting — will NOT proceed to Hubtel SendToMomo.";
+      if (response.message.empty()) {
+        response.message = "Failed to withdraw from Flexy Account.";
+      }
+      response.code = 1;
+      response.success = false;
+      co_return response;
     }
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 7: Flexy Withdrawal succeeded for clientRef=[" << clientRef << "]";
 
-    // Flexy Withdrawal succeeded, go ahead with the rest of the ceremonies
-
+    // --- Step 8: Persist transaction record ---
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 8: Saving PENDING transaction record to DB (clientRef=[" << clientRef << "])";
     drogon_model::DataSupportDb::SmartSuiteTransactions transaction;
     transaction.setBusinessId(businessId);
     transaction.setPhoneNo(dto.getSenderMsisdn());
@@ -954,13 +1090,14 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegrationService());
     transaction.setChildAccountNumber(dto.getKiddyAccountSerialNo());
-    transaction.setPin(
-        utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
+    transaction.setPin(utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
 
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>
-        txnMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions> txnMapper(dbClient);
     auto savedTxn = co_await txnMapper.insert(transaction);
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 8: Transaction record saved successfully (id=[" << savedTxn.getValueOfId() << "])";
 
+    // --- Step 9: Build Hubtel DirectSendToMomo payload ---
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 9: Building Hubtel DirectSendToMomo request payload";
     dto::DirectSendMomoDto sendDto;
     sendDto.setRecipientName(dto.getRecipientName());
     sendDto.setRecipientMsisdn(dto.getRecipientMsisdn());
@@ -970,20 +1107,47 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     sendDto.setDescription(dto.getDescription());
     sendDto.setProvider(dto.getProvider());
     sendDto.setClientReference(clientRef);
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 9: Hubtel payload ready - recipientName=[" << dto.getRecipientName()
+             << "] recipientMsisdn=[" << dto.getRecipientMsisdn()
+             << "] provider=[" << dto.getProvider()
+             << "] amount=[" << dto.getAmount()
+             << "] callbackUrl=[" << dto.getPrimaryCallbackUrl() << "]";
 
+    // --- Step 10: Send DirectSendToMomo request to Hubtel ---
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 10: Dispatching Hubtel DirectSendToMomo request for clientRef=[" << clientRef << "]";
     auto plugin = drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
     auto &hubtelApi = plugin->getHubtelApi();
 
-    auto hubtelResponse = co_await hubtelApi.initializeDirectSendMomo(businessId, sendDto);
+    auto hubtelResponse = co_await hubtelApi.initializeDirectSendToMomo(businessId, sendDto);
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 10: Hubtel response received - code=[" << hubtelResponse.code
+             << "] message=[" << hubtelResponse.message << "]";
 
-    response.code = hubtelResponse.code;
-    response.message = hubtelResponse.message;
-    response.success = (hubtelResponse.code == 0 || hubtelResponse.code == 200 || hubtelResponse.code == 201);
+    // --- Step 11: Evaluate Hubtel response and handle reversal if needed ---
+    bool hubtelSuccess = (hubtelResponse.code == 0 || hubtelResponse.code == 200 || hubtelResponse.code == 201);
 
+    if (hubtelSuccess) {
+      LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 11: Hubtel DirectSendToMomo SUCCEEDED for clientRef=[" << clientRef << "]. Withdrawal initiated.";
+      response.code = 0;
+      response.success = true;
+      response.message = "Withdrawal to MoMo has been initiated successfully.\nYou will be notified once the process is complete.";
+    } else {
+      LOG_ERROR << "[initializeFlexyWithdrawalToMomo] Step 11: Hubtel DirectSendToMomo FAILED for clientRef=[" << clientRef
+                << "] (code=[" << hubtelResponse.code << "] message=[" << hubtelResponse.message
+                << "]). Triggering Flexy reversal.";
+      co_await reverseTransaction(businessId, clientRef);
+      LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 11: Flexy reversal dispatched for clientRef=[" << clientRef << "]";
+      response.code = 1;
+      response.success = false;
+      response.message = "Failed to initiate withdrawal. Please try again later.";
+    }
+
+    LOG_INFO << "[initializeFlexyWithdrawalToMomo] END - clientRef=[" << clientRef
+             << "] finalCode=[" << response.code
+             << "] success=[" << (response.success ? "true" : "false") << "]";
     co_return response;
 
   } catch (const std::exception &e) {
-    LOG_ERROR << "Error initializing momo withdrawal: " << e.what();
+    LOG_ERROR << "[initializeFlexyWithdrawalToMomo] EXCEPTION: " << e.what();
     response.message = "Failed to initialize momo withdrawal.";
     response.code = 500;
     response.success = false;
@@ -1140,12 +1304,10 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>
         txnMapper(dbClient);
 
-    auto criteria =
-        drogon::orm::Criteria(drogon_model::DataSupportDb::
+    auto criteria = drogon::orm::Criteria(drogon_model::DataSupportDb::
                                   SmartSuiteTransactions::Cols::_reference,
                               drogon::orm::CompareOperator::EQ, reference) &&
-        drogon::orm::Criteria(
-            drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_status,
+        drogon::orm::Criteria(drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_status,
             drogon::orm::CompareOperator::EQ, "PENDING");
 
     auto transactions = co_await txnMapper.findBy(criteria);
@@ -1183,11 +1345,9 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
       std::string accountType = transaction.getValueOfAccountType();
       std::string accountTypeUpper = accountType;
-      std::transform(accountTypeUpper.begin(), accountTypeUpper.end(),
-                     accountTypeUpper.begin(), ::toupper);
+      std::transform(accountTypeUpper.begin(), accountTypeUpper.end(), accountTypeUpper.begin(), ::toupper);
 
-      std::string decryptedPin = utils::CryptoUtils::decrypt(
-          transaction.getValueOfPin(), encryptionKey);
+      std::string decryptedPin = utils::CryptoUtils::decrypt(transaction.getValueOfPin(), encryptionKey);
 
       Json::Value payload;
       payload["v_PHONENO"] = transaction.getValueOfPhoneNo();
@@ -1222,7 +1382,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
       req->setMethod(drogon::Post);
       req->setPath(path);
       req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
-    req->setBody(body);
+      req->setBody(body);
 
       auto httpResp = co_await client->sendRequestCoro(req, 20.0);
 
@@ -1298,8 +1458,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
         sendDto.setProvider(transaction.getValueOfProvider());
         sendDto.setClientReference(reference + "_rev");
 
-        auto hubtelResponse =
-            co_await hubtelApi.initializeDirectSendMomo(businessId, sendDto);
+        auto hubtelResponse = co_await hubtelApi.initializeDirectSendToMomo(businessId, sendDto);
 
         if (hubtelResponse.code == 0 || hubtelResponse.code == 200 ||
             hubtelResponse.code == 201) {
@@ -1338,12 +1497,19 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                                              const std::string &reference) {
 
   dto::smart_suite::SmartSuiteOperationResponse response;
+
+  LOG_INFO << "[reverseTransaction] START - businessId=[" << businessId
+           << "] reference=[" << reference << "]";
+
   try {
+
+    // --- Step 1: Fetch business account config ---
+    LOG_INFO << "[reverseTransaction] Step 1: Fetching business account config for businessId=[" << businessId << "]";
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        bizMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
+    LOG_INFO << "[reverseTransaction] Step 1: Business account config fetched successfully";
 
     Json::Value configJson;
     Json::CharReaderBuilder readerBuilder;
@@ -1351,67 +1517,103 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::istringstream iss(configStr);
 
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
-      response.message =
-          "Failed to process deposit reversal. Please try again.";
+      LOG_ERROR << "[reverseTransaction] Step 1 FAILED: Could not parse ConfigurationData - " << errs;
+      response.message = "Failed to process deposit reversal. Please try again.";
+      response.code = 1;
+      response.success = false;
+      co_return response;
+    }
+    LOG_INFO << "[reverseTransaction] Step 1: ConfigurationData parsed successfully";
+
+    // --- Step 2: Extract config values ---
+    LOG_INFO << "[reverseTransaction] Step 2: Extracting SmartSuite API config values";
+    std::string baseUrl = configJson["SmartSuiteApi"]["BaseUrl"].asString();
+    std::string encryptionKey = configJson["SmartSuiteApi"]["EncryptionKey"].asString();
+    LOG_INFO << "[reverseTransaction] Step 2: baseUrl=[" << baseUrl
+             << "] encryptionKeyLength=[" << encryptionKey.length() << "]";
+
+    if (encryptionKey.length() < 32) {
+      LOG_ERROR << "[reverseTransaction] Step 2 FAILED: EncryptionKey is missing or too short (length="
+                << encryptionKey.length() << ", required>=32)";
+      response.message = "Failed to process deposit reversal. Please try again.";
       response.code = 1;
       response.success = false;
       co_return response;
     }
 
-    std::string baseUrl = configJson["SmartSuiteApi"]["BaseUrl"].asString();
-    std::string encryptionKey =
-        configJson["SmartSuiteApi"]["EncryptionKey"].asString();
-
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>
-        txnMapper(dbClient);
-    auto criteria = drogon::orm::Criteria(
-        drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_reference,
+    // --- Step 3: Look up the original transaction by reference ---
+    LOG_INFO << "[reverseTransaction] Step 3: Looking up transaction by reference=[" << reference << "]";
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions> txnMapper(dbClient);
+    auto criteria = drogon::orm::Criteria(drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_reference,
         drogon::orm::CompareOperator::EQ, reference);
     auto transactions = co_await txnMapper.findBy(criteria);
 
     if (transactions.empty()) {
-      response.message =
-          "Failed to process deposit reversal. Please try again.";
+      LOG_ERROR << "[reverseTransaction] Step 3 FAILED: No transaction found for reference=[" << reference << "]";
+      response.message = "Failed to process deposit reversal. Please try again.";
       response.code = 1;
       response.success = false;
       co_return response;
     }
+    LOG_INFO << "[reverseTransaction] Step 3: Found " << transactions.size()
+             << " transaction(s) for reference=[" << reference << "]";
 
     auto transaction = transactions[0];
+    LOG_INFO << "[reverseTransaction] Step 3: Using transaction id=[" << transaction.getValueOfId()
+             << "] phoneNo=[" << transaction.getValueOfPhoneNo()
+             << "] amount=[" << transaction.getValueOfAmount()
+             << "] accountType=[" << transaction.getValueOfAccountType()
+             << "] status=[" << transaction.getValueOfStatus() << "]";
 
+    // --- Step 4: Resolve account type and decrypt PIN ---
     std::string accountType = transaction.getValueOfAccountType();
     std::string accountTypeUpper = accountType;
-    std::transform(accountTypeUpper.begin(), accountTypeUpper.end(),
-                   accountTypeUpper.begin(), ::toupper);
+    std::transform(accountTypeUpper.begin(), accountTypeUpper.end(), accountTypeUpper.begin(), ::toupper);
+    LOG_INFO << "[reverseTransaction] Step 4: Resolved accountType=[" << accountTypeUpper << "]";
 
-    std::string decryptedPin =
-        utils::CryptoUtils::decrypt(transaction.getValueOfPin(), encryptionKey);
+    std::string decryptedPin = utils::CryptoUtils::decrypt(transaction.getValueOfPin(), encryptionKey);
+    LOG_INFO << "[reverseTransaction] Step 4: PIN decrypted successfully";
+
+    // --- Step 5: Build SmartSuite reversal payload ---
+    LOG_INFO << "[reverseTransaction] Step 5: Building SmartSuite reversal payload (V_transT=R)";
+
+    std::string serialNo = (accountTypeUpper == "K") ? transaction.getValueOfChildAccountNumber() : "";
+    bool hasTelcom = configJson["SmartSuiteApi"].isMember("v_TELCOM");
+    bool hasApiKey = configJson["SmartSuiteApi"].isMember("v_APIKEY");
 
     Json::Value payload;
-    payload["v_PHONENO"] = transaction.getValueOfPhoneNo();
+    payload["v_PHONENO"] = utils::PhoneNumberFormatter::formatPhoneNumber(transaction.getValueOfPhoneNo());
     payload["v_Amnt_ip"] = transaction.getValueOfAmount();
     payload["V_transT"] = "R";
     payload["v_ACTYPE"] = accountTypeUpper;
     payload["v_ACCR"] = "";
     payload["V_Pin"] = decryptedPin;
     payload["V_PinNew"] = "";
-    payload["v_SERIALNO"] = (accountTypeUpper == "K")
-                                ? transaction.getValueOfChildAccountNumber()
-                                : "";
+    payload["v_SERIALNO"] = serialNo;
     payload["V_TRANSREF"] = reference;
 
-    if (configJson["SmartSuiteApi"].isMember("v_TELCOM")) {
+    if (hasTelcom) {
       payload["v_TELCOM"] = configJson["SmartSuiteApi"]["v_TELCOM"].asString();
     }
-    if (configJson["SmartSuiteApi"].isMember("v_APIKEY")) {
+    if (hasApiKey) {
       payload["v_APIKEY"] = configJson["SmartSuiteApi"]["v_APIKEY"].asString();
     }
+
+    LOG_INFO << "[reverseTransaction] Step 5: Payload built - phoneNo=[" << transaction.getValueOfPhoneNo()
+             << "] amount=[" << transaction.getValueOfAmount()
+             << "] accountType=[" << accountTypeUpper
+             << "] serialNo=[" << serialNo
+             << "] hasTelcom=[" << (hasTelcom ? "true" : "false")
+             << "] hasApiKey=[" << (hasApiKey ? "true" : "false") << "]";
 
     Json::StreamWriterBuilder writer;
     writer["indentation"] = "";
     std::string body = Json::writeString(writer, payload);
 
+    // --- Step 6: Send reversal request to SmartSuite API ---
     auto [host, path] = utils::UrlUtils::parseUrl(baseUrl);
+    LOG_INFO << "[reverseTransaction] Step 6: Sending reversal request to SmartSuite API - host=[" << host
+             << "] path=[" << path << "] (timeout=60s)";
 
     auto client = drogon::HttpClient::newHttpClient(host);
     auto req = drogon::HttpRequest::newHttpRequest();
@@ -1422,14 +1624,17 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
     auto httpResp = co_await client->sendRequestCoro(req, 60.0);
 
+    // --- Step 7: Evaluate SmartSuite reversal response ---
     if (httpResp) {
       const std::string responseStr = std::string(httpResp->getBody());
+      LOG_INFO << "[reverseTransaction] Step 7: SmartSuite API responded with HTTP " << httpResp->statusCode()
+               << " body=[" << responseStr << "]";
+
       Json::Value jsonResp;
       std::istringstream respIss(responseStr);
 
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResp, &errs)) {
-        auto result =
-            dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResp);
+        auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResp);
 
         std::string accountTypeName;
         if (accountTypeUpper == "F")
@@ -1446,31 +1651,51 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
           accountTypeName = accountType;
 
         std::string respDescLower = result.getRespdesc();
-        std::transform(respDescLower.begin(), respDescLower.end(),
-                       respDescLower.begin(), ::tolower);
+        std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
 
+        LOG_INFO << "[reverseTransaction] Step 7: SmartSuite respcode=[" << result.getRespcode()
+                 << "] respdesc=[" << result.getRespdesc()
+                 << "] accountTypeName=[" << accountTypeName << "]";
+
+        // --- Step 8: Set response based on reversal outcome ---
         if (result.getRespcode() == "0" && respDescLower == "success") {
-          response.message = "Deposit reversal for " + accountTypeName +
-                             " account was successful!";
+          LOG_INFO << "[reverseTransaction] Step 8: Reversal SUCCEEDED for reference=[" << reference
+                   << "] accountType=[" << accountTypeName << "]";
+          response.message = "Deposit reversal for " + accountTypeName + " account was successful!";
           response.code = 0;
           response.success = true;
         } else {
-          response.message =
-              "Failed to reverse deposit for " + accountTypeName + " account.";
+          LOG_ERROR << "[reverseTransaction] Step 8: Reversal FAILED for reference=[" << reference
+                    << "] accountType=[" << accountTypeName
+                    << "] respcode=[" << result.getRespcode()
+                    << "] respdesc=[" << result.getRespdesc() << "]";
+          response.message = "Failed to reverse deposit for " + accountTypeName + " account.";
           response.code = result.getRespcode() == "0" ? 0 : 1;
           response.success = false;
         }
+
+        LOG_INFO << "[reverseTransaction] END - reference=[" << reference
+                 << "] finalCode=[" << response.code
+                 << "] success=[" << (response.success ? "true" : "false") << "]";
+
+        //update transaction status in smart_suite_transactions table to REVERSED
+
         co_return response;
+      } else {
+        LOG_ERROR << "[reverseTransaction] Step 7 FAILED: Could not parse SmartSuite JSON response - " << errs;
       }
+    } else {
+      LOG_ERROR << "[reverseTransaction] Step 7 FAILED: SmartSuite API returned no response for reference=[" << reference << "]";
     }
 
+    LOG_ERROR << "[reverseTransaction] Fallback: Unable to complete reversal for reference=[" << reference << "]";
     response.message = "Failed to process deposit reversal. Please try again.";
     response.code = 1;
     response.success = false;
     co_return response;
 
   } catch (const std::exception &e) {
-    LOG_ERROR << "Error in reverseTransaction: " << e.what();
+    LOG_ERROR << "[reverseTransaction] EXCEPTION for reference=[" << reference << "]: " << e.what();
     response.message = "Failed to process deposit reversal. Please try again.";
     response.code = 1;
     response.success = false;
@@ -1745,8 +1970,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::flexyToKiddyTransfer(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::flexyToKiddyTransfer(
     const std::string &businessId,
     const dto::smart_suite::KiddyWithdrawalRequestDto &dto) {
 
@@ -1870,8 +2094,7 @@ SmartSuiteBankingService::flexyToKiddyTransfer(
   }
 }
 
-drogon::Task<dto::smart_suite::SmartSuiteOperationResponse>
-SmartSuiteBankingService::interAccountTransfer(
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::interAccountTransfer(
     const std::string &businessId,
     const dto::smart_suite::InterAccountTransferDto &dto) {
 

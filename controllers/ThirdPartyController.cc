@@ -44,7 +44,6 @@ Task<ThirdPartyController::AuthResult> ThirdPartyController::authenticateRequest
     co_return result;
 }
 
-
 Task<HttpResponsePtr> ThirdPartyController::verifyCustomerAccount(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -63,7 +62,6 @@ Task<HttpResponsePtr> ThirdPartyController::verifyCustomerAccount(HttpRequestPtr
 
     co_return resp;
 }
-
 
 Task<HttpResponsePtr> ThirdPartyController::changePin(HttpRequestPtr req)
 {
@@ -94,7 +92,6 @@ Task<HttpResponsePtr> ThirdPartyController::changePin(HttpRequestPtr req)
     co_return resp;
 }
 
-
 Task<HttpResponsePtr> ThirdPartyController::getMiniStatement(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -123,7 +120,6 @@ Task<HttpResponsePtr> ThirdPartyController::getMiniStatement(HttpRequestPtr req)
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 }
-
 
 Task<HttpResponsePtr> ThirdPartyController::getAccountBalance(HttpRequestPtr req) {
 
@@ -155,7 +151,6 @@ Task<HttpResponsePtr> ThirdPartyController::getAccountBalance(HttpRequestPtr req
 
 }
 
-
 Task<HttpResponsePtr> ThirdPartyController::initializeDepositViaUssd(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -183,9 +178,9 @@ Task<HttpResponsePtr> ThirdPartyController::initializeDepositViaUssd(HttpRequest
 
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
+}
 
-
-}Task<HttpResponsePtr> ThirdPartyController::initializeDepositViaWebCheckout(HttpRequestPtr req) {
+Task<HttpResponsePtr> ThirdPartyController::initializeDepositViaWebCheckout(HttpRequestPtr req) {
     auto authResult = co_await authenticateRequest(req);
     if (!authResult.isValid) co_return authResult.errorResponse;
 
@@ -281,12 +276,80 @@ Task<HttpResponsePtr> ThirdPartyController::interAccountTransfer(HttpRequestPtr 
     co_return resp;
 }
 
-Task<HttpResponsePtr> ThirdPartyController::submitWithdrawalRequest(HttpRequestPtr req) {
-    data_support::dto::BaseApiResponse response;
-    response.success = false;
-    response.error["message"] = "Not Implemented Yet";
-    auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
-    resp->setStatusCode(k501NotImplemented);
+Task<HttpResponsePtr> ThirdPartyController::flexyToKiddyTransfer(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::smart_suite::KiddyWithdrawalRequestDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+    auto result = co_await smartSuiteBankingService.flexyToKiddyTransfer(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::submitKiddyWithdrawalRequest(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::smart_suite::KiddyWithdrawalRequestDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+    auto result = co_await smartSuiteBankingService.kiddyWithdrawalRequest(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+}
+
+Task<HttpResponsePtr> ThirdPartyController::submitSavingsWithdrawalRequest(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::smart_suite::SavingsWithdrawalRequestDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+    auto result = co_await smartSuiteBankingService.savingsWithdrawalRequest(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
 }
 

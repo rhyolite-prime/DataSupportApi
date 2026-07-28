@@ -44,8 +44,6 @@ namespace data_support::services {
 
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> completeFlexyWithdrawalToMomo(const std::string &businessId, const std::string &reference, const std::string &recipientName, bool isSuccessful);
 
-        drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> completeDepositViaWebCheckout(const std::string &businessId, const std::string &reference, bool isSuccessful);
-
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> completeDeposit(const std::string &businessId, const std::string &reference, const std::string &recipientName, bool isSuccessful);
 
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> reverseTransaction(const std::string &businessId, const std::string &reference);

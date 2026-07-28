@@ -21,7 +21,9 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   ADD_METHOD_TO(ThirdPartyController::initializeFlexyWithdrawalToBank,std::string(PREFIX) + "smart-suite/initialize-flexy-withdrawal-to-bank", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::initializeFlexyWithdrawalToMomo,std::string(PREFIX) + "smart-suite/initialize-flexy-withdrawal-to-momo", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::interAccountTransfer,std::string(PREFIX) + "smart-suite/inter-account-transfer", Post, Options);
-  ADD_METHOD_TO(ThirdPartyController::submitWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-withdrawal-request", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::flexyToKiddyTransfer,std::string(PREFIX) + "smart-suite/flexy-to-kiddy-transfer", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::submitKiddyWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-kiddy-withdrawal-request", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::submitSavingsWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-savings-withdrawal-request", Post, Options);
 
   //WAEC eVoucher
   METHOD_LIST_END
@@ -35,7 +37,9 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   Task<HttpResponsePtr> initializeFlexyWithdrawalToBank(HttpRequestPtr req);
   Task<HttpResponsePtr> initializeFlexyWithdrawalToMomo(HttpRequestPtr req);
   Task<HttpResponsePtr> interAccountTransfer(HttpRequestPtr req);
-  Task<HttpResponsePtr> submitWithdrawalRequest(HttpRequestPtr req);
+  Task<HttpResponsePtr> flexyToKiddyTransfer(HttpRequestPtr req);
+  Task<HttpResponsePtr> submitKiddyWithdrawalRequest(HttpRequestPtr req);
+  Task<HttpResponsePtr> submitSavingsWithdrawalRequest(HttpRequestPtr req);
 
   private:
   struct AuthResult {

@@ -20,7 +20,7 @@ namespace data_support::services {
 
         drogon::Task<dto::TransactionResponse> transactionStatusCheck(const std::string &businessId, const std::string &paymentReference);
 
-        drogon::Task<dto::TransactionResponse> initializeDirectSendMomo(const std::string &businessId, const dto::DirectSendMomoDto &dto);
+        drogon::Task<dto::TransactionResponse> initializeDirectSendToMomo(const std::string &businessId, const dto::DirectSendMomoDto &dto);
 
         drogon::Task<dto::TransactionResponse> initializeDirectSendToBank(const std::string &businessId, const dto::DirectSendToBankDto &dto);
 

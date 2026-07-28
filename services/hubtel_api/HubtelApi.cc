@@ -74,7 +74,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
     
     std::string callbackUrl = dto.getPrimaryCallbackUrl() + "/" + businessId;
     if (callbackUrl.empty()) {
-        callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/direct-receive-money/"+businessId;
+        callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/"+businessId;
     }
     payload["PrimaryCallbackUrl"] = callbackUrl;
     payload["Description"] = dto.getDescription();
@@ -165,7 +165,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const st
 
         std::string callbackUrl = dto.getCallbackUrl() + "/" + businessId;
         if (callbackUrl.empty()) {
-            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/direct-receive-money/"+businessId;
+            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/"+businessId;
         }
 
         payload["callbackUrl"] = callbackUrl;
@@ -303,7 +303,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::transactionStatusCheck(const s
 }
 
 
-drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendMomo(const std::string &businessId, const dto::DirectSendMomoDto &dto) {
+drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(const std::string &businessId, const dto::DirectSendMomoDto &dto) {
 
     dto::TransactionResponse response;
     response.clientReference = dto.getClientReference();
@@ -358,7 +358,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendMomo(const
         std::string callbackUrl = dto.getPrimaryCallbackUrl() + businessId;
 
         if (callbackUrl.empty()) {
-            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/direct-receive-money/"+businessId;
+            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/"+businessId;
         }
 
         payload["PrimaryCallbackUrl"] = callbackUrl;
@@ -449,6 +449,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
         std::transform(targetBankNameLower.begin(), targetBankNameLower.end(), targetBankNameLower.begin(), ::tolower);
 
         const auto &bankCodesList = hubtelConfig["BankCodes"];
+
         if (bankCodesList.isArray()) {
             for (const auto &b : bankCodesList) {
                 std::string currentBankChannel = b["BankChannel"].asString();
@@ -468,6 +469,11 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
         std::string password = hubtelConfig["ApiKeyOrPassword"].asString();
         std::string prepaidAccountId = hubtelConfig["PrepaidAccountId"].asString();
 
+        std::string callbackUrl = dto.getPrimaryCallbackUrl() + "/" + businessId;
+        if (callbackUrl.empty()) {
+            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-send-to-bank/"+businessId;
+        }
+
         Json::Value payload;
         payload["BankName"] = dto.getBankName();
         payload["BankBranch"] = dto.getBankBranch();
@@ -475,7 +481,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
         payload["BankAccountNumber"] = dto.getBankAccountNumber();
         payload["BankAccountName"] = dto.getBankAccountName();
         payload["Amount"] = dto.getAmount();
-        payload["PrimaryCallbackUrl"] = dto.getPrimaryCallbackUrl();
+        payload["PrimaryCallbackUrl"] = callbackUrl;
         payload["Description"] = dto.getDescription();
         payload["RecipientPhoneNumber"] = dto.getRecipientPhoneNumber();
         payload["ClientReference"] = dto.getClientReference();
