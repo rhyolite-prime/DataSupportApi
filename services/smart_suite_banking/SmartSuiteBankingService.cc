@@ -1846,8 +1846,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        mapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
     auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
@@ -1860,16 +1859,14 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
       LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
       response.code = 1;
-      response.message =
-          "Failed to initiate withdrawal request from Savings Account.";
+      response.message = "Failed to initiate withdrawal request from Savings Account.";
       co_return response;
     }
 
     const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
     if (smartSuiteConfig.isNull()) {
       response.code = 1;
-      response.message =
-          "Failed to initiate withdrawal request from Savings Account.";
+      response.message = "Failed to initiate withdrawal request from Savings Account.";
       co_return response;
     }
 
@@ -1877,15 +1874,10 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
     std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
 
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    std::ostringstream timeStream;
-    timeStream << std::put_time(std::localtime(&now_c), "%Y%m%d%H%M%S");
-    std::string transRef = timeStream.str();
+    std::string transRef = utils::IdGeneratorUtils::generateTimeStampReference();
 
     Json::Value payload;
-    payload["v_PHONENO"] =
-        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
+    payload["v_PHONENO"] = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
 
     std::ostringstream amountStream;
     amountStream << dto.getAmount();
@@ -1914,10 +1906,9 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
 
-    auto httpResp = co_await client->sendRequestCoro(req, 60.0);
+    auto httpResp = co_await client->sendRequestCoro(req);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
-                     httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
@@ -2131,8 +2122,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
     std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
 
-    std::string transactionRef =
-        utils::IdGeneratorUtils::generateTimeStampReference();
+    std::string transactionRef = utils::IdGeneratorUtils::generateTimeStampReference();
 
     Json::Value payload;
     payload["v_PHONENO"] =
