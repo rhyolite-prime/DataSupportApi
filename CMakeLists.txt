@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME} main.cc
         services/redis/RedisCacheManager.cc
         utils/codecvt_helper.h
         dto/BusinessApiKeyDto.h
+        dto/waec_voucher/WaecMerchantAuthDto.h
         dto/waec_voucher/WaecVoucherDto.h
         dto/smart_suite/FlexyWithdrawalToBankDto.h
         services/quartz/QuartzApi.h

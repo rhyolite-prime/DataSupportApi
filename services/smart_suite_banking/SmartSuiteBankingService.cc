@@ -1678,7 +1678,19 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                  << "] finalCode=[" << response.code
                  << "] success=[" << (response.success ? "true" : "false") << "]";
 
-        //update transaction status in smart_suite_transactions table to REVERSED
+        // --- Step 9: Update transaction status to REVERSED if reversal succeeded ---
+        if (response.success) {
+          try {
+            LOG_INFO << "[reverseTransaction] Step 9: Updating transaction status to REVERSED for reference=["
+                     << reference << "]";
+            transaction.setStatus("REVERSED");
+            co_await txnMapper.update(transaction);
+            LOG_INFO << "[reverseTransaction] Step 9: Transaction status updated to REVERSED successfully";
+          } catch (const std::exception &e) {
+            LOG_ERROR << "[reverseTransaction] Step 9 FAILED: Could not update transaction status to REVERSED - "
+                      << e.what();
+          }
+        }
 
         co_return response;
       } else {
