@@ -38,8 +38,6 @@ namespace drogon_model
 {
 namespace DataSupportDb
 {
-class WaecMerchants;
-class WaecVouchers;
 
 class WaecVoucherSales
 {
@@ -47,11 +45,13 @@ class WaecVoucherSales
     struct Cols
     {
         static const std::string _id;
+        static const std::string _business_id;
         static const std::string _voucher_id;
         static const std::string _merchant_id;
         static const std::string _buyer_phone;
         static const std::string _buyer_email;
         static const std::string _sale_type;
+        static const std::string _status;
         static const std::string _amount_paid;
         static const std::string _commission_earned;
         static const std::string _payment_reference;
@@ -116,6 +116,16 @@ class WaecVoucherSales
     void setId(const std::string &pId) noexcept;
     void setId(std::string &&pId) noexcept;
 
+    /**  For column business_id  */
+    ///Get the value of the column business_id, returns the default value if the column is null
+    const std::string &getValueOfBusinessId() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getBusinessId() const noexcept;
+    ///Set the value of the column business_id
+    void setBusinessId(const std::string &pBusinessId) noexcept;
+    void setBusinessId(std::string &&pBusinessId) noexcept;
+    void setBusinessIdToNull() noexcept;
+
     /**  For column voucher_id  */
     ///Get the value of the column voucher_id, returns the default value if the column is null
     const std::string &getValueOfVoucherId() const noexcept;
@@ -158,13 +168,21 @@ class WaecVoucherSales
 
     /**  For column sale_type  */
     ///Get the value of the column sale_type, returns the default value if the column is null
-    const std::string &getValueOfSaleType() const noexcept;
+    const int32_t &getValueOfSaleType() const noexcept;
     ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<std::string> &getSaleType() const noexcept;
+    const std::shared_ptr<int32_t> &getSaleType() const noexcept;
     ///Set the value of the column sale_type
-    void setSaleType(const std::string &pSaleType) noexcept;
-    void setSaleType(std::string &&pSaleType) noexcept;
+    void setSaleType(const int32_t &pSaleType) noexcept;
     void setSaleTypeToNull() noexcept;
+
+    /**  For column status  */
+    ///Get the value of the column status, returns the default value if the column is null
+    const int32_t &getValueOfStatus() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<int32_t> &getStatus() const noexcept;
+    ///Set the value of the column status
+    void setStatus(const int32_t &pStatus) noexcept;
+    void setStatusToNull() noexcept;
 
     /**  For column amount_paid  */
     ///Get the value of the column amount_paid, returns the default value if the column is null
@@ -205,21 +223,13 @@ class WaecVoucherSales
     void setCreatedAtToNull() noexcept;
 
 
-    static size_t getColumnNumber() noexcept {  return 10;  }
+    static size_t getColumnNumber() noexcept {  return 12;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
-    WaecMerchants getWaecMerchants(const drogon::orm::DbClientPtr &clientPtr) const;
-    void getWaecMerchants(const drogon::orm::DbClientPtr &clientPtr,
-                          const std::function<void(WaecMerchants)> &rcb,
-                          const drogon::orm::ExceptionCallback &ecb) const;
-    WaecVouchers getWaecVouchers(const drogon::orm::DbClientPtr &clientPtr) const;
-    void getWaecVouchers(const drogon::orm::DbClientPtr &clientPtr,
-                         const std::function<void(WaecVouchers)> &rcb,
-                         const drogon::orm::ExceptionCallback &ecb) const;
   private:
     friend drogon::orm::Mapper<WaecVoucherSales>;
     friend drogon::orm::BaseBuilder<WaecVoucherSales, true, true>;
@@ -236,11 +246,13 @@ class WaecVoucherSales
     ///For mysql or sqlite3
     void updateId(const uint64_t id);
     std::shared_ptr<std::string> id_;
+    std::shared_ptr<std::string> businessId_;
     std::shared_ptr<std::string> voucherId_;
     std::shared_ptr<std::string> merchantId_;
     std::shared_ptr<std::string> buyerPhone_;
     std::shared_ptr<std::string> buyerEmail_;
-    std::shared_ptr<std::string> saleType_;
+    std::shared_ptr<int32_t> saleType_;
+    std::shared_ptr<int32_t> status_;
     std::shared_ptr<std::string> amountPaid_;
     std::shared_ptr<std::string> commissionEarned_;
     std::shared_ptr<std::string> paymentReference_;
@@ -256,7 +268,7 @@ class WaecVoucherSales
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[10]={ false };
+    bool dirtyFlag_[12]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -274,42 +286,44 @@ class WaecVoucherSales
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
-        if(dirtyFlag_[0])
+        sql += "id,";
+        ++parametersCount;
+        if(!dirtyFlag_[0])
         {
-            sql += "id,";
-            ++parametersCount;
+            needSelection=true;
         }
         if(dirtyFlag_[1])
         {
-            sql += "voucher_id,";
+            sql += "business_id,";
             ++parametersCount;
         }
         if(dirtyFlag_[2])
         {
-            sql += "merchant_id,";
+            sql += "voucher_id,";
             ++parametersCount;
         }
         if(dirtyFlag_[3])
         {
-            sql += "buyer_phone,";
+            sql += "merchant_id,";
             ++parametersCount;
         }
         if(dirtyFlag_[4])
         {
-            sql += "buyer_email,";
+            sql += "buyer_phone,";
             ++parametersCount;
         }
         if(dirtyFlag_[5])
         {
-            sql += "sale_type,";
+            sql += "buyer_email,";
             ++parametersCount;
         }
-        if(dirtyFlag_[6])
+        sql += "sale_type,";
+        ++parametersCount;
+        if(!dirtyFlag_[6])
         {
-            sql += "amount_paid,";
-            ++parametersCount;
+            needSelection=true;
         }
-        sql += "commission_earned,";
+        sql += "status,";
         ++parametersCount;
         if(!dirtyFlag_[7])
         {
@@ -317,12 +331,23 @@ class WaecVoucherSales
         }
         if(dirtyFlag_[8])
         {
+            sql += "amount_paid,";
+            ++parametersCount;
+        }
+        sql += "commission_earned,";
+        ++parametersCount;
+        if(!dirtyFlag_[9])
+        {
+            needSelection=true;
+        }
+        if(dirtyFlag_[10])
+        {
             sql += "payment_reference,";
             ++parametersCount;
         }
         sql += "created_at,";
         ++parametersCount;
-        if(!dirtyFlag_[9])
+        if(!dirtyFlag_[11])
         {
             needSelection=true;
         }
@@ -342,6 +367,10 @@ class WaecVoucherSales
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
+        else
+        {
+            sql +="default,";
+        }
         if(dirtyFlag_[1])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
@@ -372,6 +401,10 @@ class WaecVoucherSales
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
+        else
+        {
+            sql +="default,";
+        }
         if(dirtyFlag_[7])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
@@ -387,6 +420,20 @@ class WaecVoucherSales
             sql.append(placeholderStr, n);
         }
         if(dirtyFlag_[9])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
+        }
+        if(dirtyFlag_[10])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        if(dirtyFlag_[11])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);

@@ -11,7 +11,7 @@
 #include <chrono>
 #include <drogon/utils/Utilities.h>
 #include <iomanip>
-
+#include "constants/StatusType.h"
 #include "utils/IdGeneratorUtils.h"
 #include "utils/PhoneNumberFormatter.h"
 #include "utils/UrlUtils.h"
@@ -53,8 +53,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::string vTelcom = smartSuiteConfig["v_TELCOM"].asString();
     std::string vApiKey = smartSuiteConfig["v_APIKEY"].asString();
 
-    std::string formattedPhoneNo =
-        utils::PhoneNumberFormatter::formatPhoneNumber(phoneNo);
+    std::string formattedPhoneNo = utils::PhoneNumberFormatter::formatPhoneNumber(phoneNo);
 
     Json::Value payload;
     payload["v_PHONENO"] = formattedPhoneNo;
@@ -83,8 +82,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
     auto httpResp = co_await client->sendRequestCoro(req);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
-                     httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
 
       const std::string responseStr = std::string(httpResp->getBody());
 
@@ -546,8 +544,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        bizMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
 
@@ -563,8 +560,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
       co_return response;
     }
 
-    std::string encryptionKey =
-        configJson["SmartSuiteApi"]["EncryptionKey"].asString();
+    std::string encryptionKey = configJson["SmartSuiteApi"]["EncryptionKey"].asString();
     if (encryptionKey.length() < 32) {
       LOG_ERROR << "SmartSuiteApi EncryptionKey is missing or too short (needs "
                    "32 chars).";
@@ -581,7 +577,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setAmount(std::to_string(dto.getAmount()));
     transaction.setAccountType(dto.getAccountType());
     transaction.setTransactionType(dto.getTransactionType());
-    transaction.setStatus("PENDING");
+    transaction.setStatus(constants::PaymentStatus::PENDING);
     transaction.setReference(clientRef);
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegrationService());
@@ -606,14 +602,11 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     auto plugin = drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
     auto &hubtelApi = plugin->getHubtelApi();
 
-    auto hubtelResponse =
-        co_await hubtelApi.initializeDirectReceiveMoney(businessId, receiveDto);
+    auto hubtelResponse = co_await hubtelApi.initializeDirectReceiveMoney(businessId, receiveDto);
 
     response.code = hubtelResponse.code;
     response.message = hubtelResponse.message;
-    response.success =
-        (hubtelResponse.code == 0 || hubtelResponse.code == 200 ||
-         hubtelResponse.code == 201); // Based on standard success codes
+    response.success = (hubtelResponse.code == 0 || hubtelResponse.code == 200 || hubtelResponse.code == 201); // Based on standard success codes
 
     co_return response;
 
@@ -634,8 +627,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        bizMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
 
@@ -669,7 +661,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setAmount(std::to_string(dto.getAmount()));
     transaction.setAccountType(dto.getAccountType());
     transaction.setTransactionType(dto.getTransactionType());
-    transaction.setStatus("PENDING");
+    transaction.setStatus(constants::PaymentStatus::PENDING);
     transaction.setReference(clientRef);
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegrationService());
@@ -679,7 +671,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>  txnMapper(dbClient);
     auto savedTxn = co_await txnMapper.insert(transaction);
 
-    dto::WebCheckoutDto checkoutDto;
+    dto::HubtelWebCheckoutDto checkoutDto;
     checkoutDto.phoneNo = dto.getPhoneNo();
     checkoutDto.totalAmount = dto.getAmount();
     checkoutDto.description = dto.getDescription();
@@ -852,7 +844,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setAmount(dto.getAmount());
     transaction.setAccountType(dto.getAccountType());
     transaction.setTransactionType(dto.getTransactionType());
-    transaction.setStatus("PENDING");
+    transaction.setStatus(constants::PaymentStatus::PENDING);
     transaction.setReference(clientRef);
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegratingService());
@@ -905,7 +897,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
     // --- Step 11: Evaluate Hubtel response and handle reversal if needed ---
     bool hubtelSuccess = (hubtelResponse.code == 0 || hubtelResponse.code == 200 || hubtelResponse.code == 201);
-         
+
     if (hubtelSuccess) {
       LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 11: Hubtel DirectSendToBank SUCCEEDED for clientRef=[" << clientRef << "]. Withdrawal initiated.";
       response.code = 0;
@@ -1085,7 +1077,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setAmount(std::to_string(dto.getAmount()));
     transaction.setAccountType(dto.getAccountType());
     transaction.setTransactionType(dto.getTransactionType());
-    transaction.setStatus("PENDING");
+    transaction.setStatus(constants::PaymentStatus::PENDING);
     transaction.setReference(clientRef);
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegrationService());
@@ -1172,7 +1164,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                               drogon::orm::CompareOperator::EQ, reference) &&
         drogon::orm::Criteria(
             drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_status,
-            drogon::orm::CompareOperator::EQ, "PENDING");
+            drogon::orm::CompareOperator::EQ, static_cast<int>(constants::PaymentStatus::PENDING));
 
     auto transactions = co_await txnMapper.findBy(criteria);
 
@@ -1186,7 +1178,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     auto transaction = transactions[0];
 
     if (isSuccessful) {
-      transaction.setStatus("SUCCESS");
+      transaction.setStatus(constants::PaymentStatus::SUCCESS);
       transaction.setRecipientName(recipientName);
 
       co_await txnMapper.update(transaction);
@@ -1235,13 +1227,11 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions>
         txnMapper(dbClient);
 
-    auto criteria =
-        drogon::orm::Criteria(drogon_model::DataSupportDb::
-                                  SmartSuiteTransactions::Cols::_reference,
+    auto criteria = drogon::orm::Criteria(drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_reference,
                               drogon::orm::CompareOperator::EQ, reference) &&
         drogon::orm::Criteria(
             drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_status,
-            drogon::orm::CompareOperator::EQ, "PENDING");
+            drogon::orm::CompareOperator::EQ, static_cast<int>(constants::PaymentStatus::PENDING));
 
     auto transactions = co_await txnMapper.findBy(criteria);
 
@@ -1255,7 +1245,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     auto transaction = transactions[0];
 
     if (isSuccessful) {
-      transaction.setStatus("SUCCESS");
+      transaction.setStatus(constants::PaymentStatus::SUCCESS);
       transaction.setRecipientName(recipientName);
 
       co_await txnMapper.update(transaction);
@@ -1308,7 +1298,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                                   SmartSuiteTransactions::Cols::_reference,
                               drogon::orm::CompareOperator::EQ, reference) &&
         drogon::orm::Criteria(drogon_model::DataSupportDb::SmartSuiteTransactions::Cols::_status,
-            drogon::orm::CompareOperator::EQ, "PENDING");
+            drogon::orm::CompareOperator::EQ, static_cast<int>(constants::PaymentStatus::PENDING));
 
     auto transactions = co_await txnMapper.findBy(criteria);
 
@@ -1410,11 +1400,10 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
             accountTypeName = accountType;
 
           std::string respDescLower = result.getRespdesc();
-          std::transform(respDescLower.begin(), respDescLower.end(),
-                         respDescLower.begin(), ::tolower);
+          std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
 
           if (result.getRespcode() == "0" && respDescLower == "success") {
-            transaction.setStatus("SUCCESS");
+            transaction.setStatus(constants::PaymentStatus::SUCCESS);
             if (!recipientName.empty()) {
               transaction.setRecipientName(recipientName);
             }
@@ -1622,7 +1611,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
 
-    auto httpResp = co_await client->sendRequestCoro(req, 60.0);
+    auto httpResp = co_await client->sendRequestCoro(req, 20.0);
 
     // --- Step 7: Evaluate SmartSuite reversal response ---
     if (httpResp) {
@@ -1683,7 +1672,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
           try {
             LOG_INFO << "[reverseTransaction] Step 9: Updating transaction status to REVERSED for reference=["
                      << reference << "]";
-            transaction.setStatus("REVERSED");
+            transaction.setStatus(constants::PaymentStatus::REVERSE);
             co_await txnMapper.update(transaction);
             LOG_INFO << "[reverseTransaction] Step 9: Transaction status updated to REVERSED successfully";
           } catch (const std::exception &e) {
@@ -1762,8 +1751,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     std::string transRef = timeStream.str();
 
     Json::Value payload;
-    payload["v_PHONENO"] =
-        utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
+    payload["v_PHONENO"] = utils::PhoneNumberFormatter::formatPhoneNumber(dto.getPhoneNo());
 
     // Use std::ostringstream to avoid scientific notation and ensure it's a
     // string
@@ -1794,7 +1782,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
     req->setBody(body);
 
-    auto httpResp = co_await client->sendRequestCoro(req, 60.0);
+    auto httpResp = co_await client->sendRequestCoro(req, 20.0);
 
     if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
                      httpResp->statusCode() == drogon::k201Created)) {
@@ -2119,6 +2107,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
       LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
       response.code = 1;
+      response.success = false;
       response.message = "Failed to transfer funds.";
       co_return response;
     }
@@ -2126,6 +2115,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     const auto &smartSuiteConfig = configJson["SmartSuiteApi"];
     if (smartSuiteConfig.isNull()) {
       response.code = 1;
+      response.success = false;
       response.message = "Failed to transfer funds.";
       co_return response;
     }
@@ -2243,4 +2233,97 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
   }
 }
 
+
+
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::sendLowPrepaidBalanceNotification(const std::string &businessId) {
+
+  dto::smart_suite::SmartSuiteOperationResponse response;
+
+  try {
+
+    auto dbClient = drogon::app().getDbClient();
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
+
+    auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
+      response.code = 1;
+      response.success = false;
+      response.message = "Failed to to parse ConfigurationData.";
+      co_return response;
+    }
+
+    const auto &notificationsConfig = configJson["Notifications"];
+
+    if (notificationsConfig.isNull() || !notificationsConfig.isMember("PaymentProviderLowBalanceAlert")) {
+      response.code = 1;
+      response.success = false;
+      response.message = "Failed to parse ConfigurationData.";
+      co_return response;
+    }
+
+    const auto &alertConfig = notificationsConfig["PaymentProviderLowBalanceAlert"];
+
+    // 1. Extract Email Body
+    std::string emailBody = alertConfig.get("EmailBody", "").asString();
+
+    // 2. Extract Recipients List into JSON Array
+    Json::Value recipientsList = Json::arrayValue;
+    if (alertConfig.isMember("Recipients") && alertConfig["Recipients"].isMember("Email")) {
+      recipientsList = alertConfig["Recipients"]["Email"];
+    }
+
+    // Send email with credentials
+    auto plugin = drogon::app().getPlugin<plugins::DataSupportServicePlugin>();
+    auto &emailApi = plugin->getEmailApi();
+
+    // loop through recipientsList and send email ...
+
+    if (recipientsList.isArray()) {
+      for (const auto &recipient : recipientsList) {
+        if (!recipient.isString() || recipient.asString().empty()) {
+          continue;
+        }
+
+        dto::SendEmailDto emailDto;
+        emailDto.setTo(recipient.asString());
+        emailDto.setSubject("Low Balance Alert");
+        emailDto.setBody(emailBody);
+
+        // Send email for the current recipient in loop
+        auto result = co_await emailApi.sendEmailAsync(businessId, emailDto);
+
+        if (!result.success) {
+          LOG_WARN << "Failed to send alert email to " << recipient.asString()
+                   << ": " << result.message;
+
+        }
+
+      }
+    }
+
+    //send SMS as well...
+
+    response.code = 0;
+    response.success = true;
+    response.message = "Low balance emails dispatched.";
+    co_return response;
+
+
+  } catch (const std::exception &ex) {
+    response.message = "Failed to retrieve balance.";
+    response.code = 1;
+    response.success = false;
+    co_return response;
+  }
+
+
+}
 } // namespace data_support::services

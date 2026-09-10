@@ -38,7 +38,6 @@ namespace drogon_model
 {
 namespace DataSupportDb
 {
-class BusinessAccounts;
 
 class WaecMerchants
 {
@@ -51,10 +50,14 @@ class WaecMerchants
         static const std::string _phone_number;
         static const std::string _email;
         static const std::string _pin_hash;
-        static const std::string _is_affiliate;
         static const std::string _status;
         static const std::string _commission_account_id;
         static const std::string _main_account_id;
+        static const std::string _account_type;
+        static const std::string _account_provider;
+        static const std::string _bank_account_number;
+        static const std::string _total_commission_earned;
+        static const std::string _commission_balance;
         static const std::string _created_at;
         static const std::string _updated_at;
     };
@@ -165,23 +168,13 @@ class WaecMerchants
     void setPinHash(const std::string &pPinHash) noexcept;
     void setPinHash(std::string &&pPinHash) noexcept;
 
-    /**  For column is_affiliate  */
-    ///Get the value of the column is_affiliate, returns the default value if the column is null
-    const bool &getValueOfIsAffiliate() const noexcept;
-    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<bool> &getIsAffiliate() const noexcept;
-    ///Set the value of the column is_affiliate
-    void setIsAffiliate(const bool &pIsAffiliate) noexcept;
-    void setIsAffiliateToNull() noexcept;
-
     /**  For column status  */
     ///Get the value of the column status, returns the default value if the column is null
-    const std::string &getValueOfStatus() const noexcept;
+    const int32_t &getValueOfStatus() const noexcept;
     ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<std::string> &getStatus() const noexcept;
+    const std::shared_ptr<int32_t> &getStatus() const noexcept;
     ///Set the value of the column status
-    void setStatus(const std::string &pStatus) noexcept;
-    void setStatus(std::string &&pStatus) noexcept;
+    void setStatus(const int32_t &pStatus) noexcept;
     void setStatusToNull() noexcept;
 
     /**  For column commission_account_id  */
@@ -204,6 +197,56 @@ class WaecMerchants
     void setMainAccountId(std::string &&pMainAccountId) noexcept;
     void setMainAccountIdToNull() noexcept;
 
+    /**  For column account_type  */
+    ///Get the value of the column account_type, returns the default value if the column is null
+    const std::string &getValueOfAccountType() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getAccountType() const noexcept;
+    ///Set the value of the column account_type
+    void setAccountType(const std::string &pAccountType) noexcept;
+    void setAccountType(std::string &&pAccountType) noexcept;
+    void setAccountTypeToNull() noexcept;
+
+    /**  For column account_provider  */
+    ///Get the value of the column account_provider, returns the default value if the column is null
+    const std::string &getValueOfAccountProvider() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getAccountProvider() const noexcept;
+    ///Set the value of the column account_provider
+    void setAccountProvider(const std::string &pAccountProvider) noexcept;
+    void setAccountProvider(std::string &&pAccountProvider) noexcept;
+    void setAccountProviderToNull() noexcept;
+
+    /**  For column bank_account_number  */
+    ///Get the value of the column bank_account_number, returns the default value if the column is null
+    const std::string &getValueOfBankAccountNumber() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getBankAccountNumber() const noexcept;
+    ///Set the value of the column bank_account_number
+    void setBankAccountNumber(const std::string &pBankAccountNumber) noexcept;
+    void setBankAccountNumber(std::string &&pBankAccountNumber) noexcept;
+    void setBankAccountNumberToNull() noexcept;
+
+    /**  For column total_commission_earned  */
+    ///Get the value of the column total_commission_earned, returns the default value if the column is null
+    const std::string &getValueOfTotalCommissionEarned() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getTotalCommissionEarned() const noexcept;
+    ///Set the value of the column total_commission_earned
+    void setTotalCommissionEarned(const std::string &pTotalCommissionEarned) noexcept;
+    void setTotalCommissionEarned(std::string &&pTotalCommissionEarned) noexcept;
+    void setTotalCommissionEarnedToNull() noexcept;
+
+    /**  For column commission_balance  */
+    ///Get the value of the column commission_balance, returns the default value if the column is null
+    const std::string &getValueOfCommissionBalance() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getCommissionBalance() const noexcept;
+    ///Set the value of the column commission_balance
+    void setCommissionBalance(const std::string &pCommissionBalance) noexcept;
+    void setCommissionBalance(std::string &&pCommissionBalance) noexcept;
+    void setCommissionBalanceToNull() noexcept;
+
     /**  For column created_at  */
     ///Get the value of the column created_at, returns the default value if the column is null
     const ::trantor::Date &getValueOfCreatedAt() const noexcept;
@@ -223,17 +266,13 @@ class WaecMerchants
     void setUpdatedAtToNull() noexcept;
 
 
-    static size_t getColumnNumber() noexcept {  return 12;  }
+    static size_t getColumnNumber() noexcept {  return 16;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
-    BusinessAccounts getBusinessAccounts(const drogon::orm::DbClientPtr &clientPtr) const;
-    void getBusinessAccounts(const drogon::orm::DbClientPtr &clientPtr,
-                             const std::function<void(BusinessAccounts)> &rcb,
-                             const drogon::orm::ExceptionCallback &ecb) const;
   private:
     friend drogon::orm::Mapper<WaecMerchants>;
     friend drogon::orm::BaseBuilder<WaecMerchants, true, true>;
@@ -255,10 +294,14 @@ class WaecMerchants
     std::shared_ptr<std::string> phoneNumber_;
     std::shared_ptr<std::string> email_;
     std::shared_ptr<std::string> pinHash_;
-    std::shared_ptr<bool> isAffiliate_;
-    std::shared_ptr<std::string> status_;
+    std::shared_ptr<int32_t> status_;
     std::shared_ptr<std::string> commissionAccountId_;
     std::shared_ptr<std::string> mainAccountId_;
+    std::shared_ptr<std::string> accountType_;
+    std::shared_ptr<std::string> accountProvider_;
+    std::shared_ptr<std::string> bankAccountNumber_;
+    std::shared_ptr<std::string> totalCommissionEarned_;
+    std::shared_ptr<std::string> commissionBalance_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
     struct MetaData
@@ -272,7 +315,7 @@ class WaecMerchants
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[12]={ false };
+    bool dirtyFlag_[16]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -320,37 +363,58 @@ class WaecMerchants
             sql += "pin_hash,";
             ++parametersCount;
         }
-        sql += "is_affiliate,";
+        sql += "status,";
         ++parametersCount;
         if(!dirtyFlag_[6])
         {
             needSelection=true;
         }
-        sql += "status,";
-        ++parametersCount;
-        if(!dirtyFlag_[7])
-        {
-            needSelection=true;
-        }
-        if(dirtyFlag_[8])
+        if(dirtyFlag_[7])
         {
             sql += "commission_account_id,";
             ++parametersCount;
         }
-        if(dirtyFlag_[9])
+        if(dirtyFlag_[8])
         {
             sql += "main_account_id,";
             ++parametersCount;
         }
+        if(dirtyFlag_[9])
+        {
+            sql += "account_type,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[10])
+        {
+            sql += "account_provider,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[11])
+        {
+            sql += "bank_account_number,";
+            ++parametersCount;
+        }
+        sql += "total_commission_earned,";
+        ++parametersCount;
+        if(!dirtyFlag_[12])
+        {
+            needSelection=true;
+        }
+        sql += "commission_balance,";
+        ++parametersCount;
+        if(!dirtyFlag_[13])
+        {
+            needSelection=true;
+        }
         sql += "created_at,";
         ++parametersCount;
-        if(!dirtyFlag_[10])
+        if(!dirtyFlag_[14])
         {
             needSelection=true;
         }
         sql += "updated_at,";
         ++parametersCount;
-        if(!dirtyFlag_[11])
+        if(!dirtyFlag_[15])
         {
             needSelection=true;
         }
@@ -409,10 +473,6 @@ class WaecMerchants
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
-        else
-        {
-            sql +="default,";
-        }
         if(dirtyFlag_[8])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
@@ -428,11 +488,39 @@ class WaecMerchants
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
+        if(dirtyFlag_[11])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        if(dirtyFlag_[12])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
         else
         {
             sql +="default,";
         }
-        if(dirtyFlag_[11])
+        if(dirtyFlag_[13])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
+        }
+        if(dirtyFlag_[14])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
+        }
+        if(dirtyFlag_[15])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);

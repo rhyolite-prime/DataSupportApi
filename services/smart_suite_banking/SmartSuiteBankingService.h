@@ -5,7 +5,6 @@
 #ifndef DATASUPPORTAPI_SMARTSUITEBANKINGSERVICE_H
 #define DATASUPPORTAPI_SMARTSUITEBANKINGSERVICE_H
 #include <drogon/drogon.h>
-#include "dto/BaseApiResponse.h"
 #include "dto/smart_suite/AccountBalanceDto.h"
 #include "dto/smart_suite/ChangePinDto.h"
 #include "dto/smart_suite/FlexyWithdrawalToBankDto.h"
@@ -57,6 +56,8 @@ namespace data_support::services {
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> flexyToKiddyTransfer(const std::string &businessId, const dto::smart_suite::KiddyWithdrawalRequestDto &dto);
 
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> interAccountTransfer(const std::string &businessId, const dto::smart_suite::InterAccountTransferDto &dto);
+
+        drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> sendLowPrepaidBalanceNotification(const std::string &businessId);
 
         // audit ...
 

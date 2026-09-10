@@ -1,5 +1,7 @@
 #include "PhoneNumberFormatter.h"
 
+#include <regex>
+
 namespace data_support::utils {
 
     std::string PhoneNumberFormatter::formatPhoneNumber(const std::string& phoneNumber) {
@@ -38,6 +40,18 @@ namespace data_support::utils {
         }
     
         return phoneNumber;
+    }
+
+    bool PhoneNumberFormatter::isValidPhoneNumber(const std::string& phone) {
+        // Basic phone validation (can be customized based on country)
+        const std::regex pattern(R"(^\+?[0-9]{10,15}$)");
+        return std::regex_match(phone, pattern);
+    }
+
+    bool PhoneNumberFormatter::isValidPin(const std::string& pin) {
+        // PIN should be exactly 4 digits
+        const std::regex pattern(R"(^[0-9]{4}$)");
+        return std::regex_match(pin, pattern);
     }
 
 }

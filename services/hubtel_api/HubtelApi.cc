@@ -88,7 +88,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
     std::string authHeader = "Basic " + drogon::utils::base64Encode((const unsigned char*)auth.data(), auth.length());
 
     // Make the delayed HTTP call (6 seconds delay) to allow USSD session to properly end
-    drogon::app().getLoop()->runAfter(6.0, [posSalesAccountId, body, authHeader]() {
+    drogon::app().getLoop()->runAfter(5.0, [posSalesAccountId, body, authHeader]() {
         auto client = drogon::HttpClient::newHttpClient("https://rmp.hubtel.com");
         auto req = drogon::HttpRequest::newHttpRequest();
         req->setMethod(drogon::Post);
@@ -122,7 +122,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
 }
 
 
-drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const std::string &businessId, const dto::WebCheckoutDto &dto) {
+drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const std::string &businessId, const dto::HubtelWebCheckoutDto &dto) {
 
     dto::TransactionResponse response;
     
@@ -163,12 +163,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const st
         payload["returnUrl"] = dto.getReturnUrl();
         payload["merchantAccountNumber"] = merchantAccountNumber;
 
-        std::string callbackUrl = dto.getCallbackUrl() + "/" + businessId;
-        if (callbackUrl.empty()) {
-            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/"+businessId;
-        }
-
-        payload["callbackUrl"] = callbackUrl;
+        payload["callbackUrl"] = dto.getCallbackUrl();
         payload["cancellationUrl"] = dto.getCancellationUrl();
         payload["description"] = dto.getDescription();
         payload["clientReference"] = dto.getClientReference();
@@ -532,9 +527,87 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
 }
 
 
-drogon::Task<bool> HubtelApi::sendSms(const std::string &phoneNumber,
-                                      const std::string &clientSecret,
-                                      const std::string &clientId,
+drogon::Task<dto::TransactionResponse> HubtelApi::getAccountBalance(const std::string &businessId, const std::string &accountType) {
+
+    dto::TransactionResponse response;
+
+    try {
+
+        auto dbClient = drogon::app().getDbClient();
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
+
+        auto businessAccount = co_await mapper.findByPrimaryKey(businessId);
+        auto configStr = businessAccount.getValueOfConfigurationData();
+
+        Json::Value configJson;
+        Json::CharReaderBuilder readerBuilder;
+        std::string errs;
+        std::istringstream iss(configStr);
+
+        if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+            LOG_ERROR << "Failed to parse ConfigurationData: " << errs;
+            response.code = 1;
+            response.message = "Failed to initiate transaction. Configuration error.";
+            co_return response;
+        }
+
+        const auto &hubtelConfig = configJson["HubtelPaymentApi"];
+        if (hubtelConfig.isNull()) {
+            response.code = 1;
+            response.message = "Failed to initiate transaction. Hubtel configuration missing.";
+            co_return response;
+        }
+
+        std::string username = hubtelConfig["ApiIdOrUsername"].asString();
+        std::string password = hubtelConfig["ApiKeyOrPassword"].asString();
+        std::string prepaidAccountId = hubtelConfig["PrepaidAccountId"].asString();
+        std::string posSalesAccountId = hubtelConfig["PosSalesAccountId"].asString();
+
+        std::string auth = username + ":" + password;
+        std::string authHeader = "Basic " + drogon::utils::base64Encode((const unsigned char*)auth.data(), auth.length());
+
+        auto client = drogon::HttpClient::newHttpClient("https://trnf.hubtel.com");
+        auto req = drogon::HttpRequest::newHttpRequest();
+        req->setMethod(drogon::Get);
+
+        req->setPath(accountType == "prepaid"  ? "/api/inter-transfers/prepaid/" + prepaidAccountId  : "/api/inter-transfers/" + posSalesAccountId);
+
+        req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+
+        req->addHeader("Authorization", authHeader);
+
+        auto httpResp = co_await client->sendRequestCoro(req);
+
+        if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
+            const std::string responseStr = std::string(httpResp->getBody());
+
+            Json::Value jsonResponse;
+            std::istringstream respIss(responseStr);
+            if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
+                auto result = dto::AccountBalanceResponse::fromJson(jsonResponse);
+
+                response.code = (result.responseCode == constants::TransactionStatusCode::HUBTEL_TRANSACTION_SUCCESS_CODE) ? 0 : 1;
+                response.message = (result.responseCode == constants::TransactionStatusCode::HUBTEL_TRANSACTION_SUCCESS_CODE) ? "Balance Retrieved Successfully" : "Failed to retrieved balance.";
+                co_return response;
+            }
+
+        }
+
+        response.code = 1;
+        response.message = "Failed to retrieved balance. Please try again.";
+        co_return response;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "Error retrieving Hubtel " + accountType + "account balance" << e.what();
+        response.code = 1;
+        response.message = "Error retrieving Hubtel." + accountType + "account balance";
+        co_return response;
+    }
+
+
+}
+
+drogon::Task<bool> HubtelApi::sendSms(const std::string &phoneNumber, const std::string &clientSecret, const std::string &clientId,
                                       const std::string &senderId,
                                       const std::string &messageContent) {
 

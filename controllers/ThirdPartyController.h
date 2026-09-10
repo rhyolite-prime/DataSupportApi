@@ -24,8 +24,32 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   ADD_METHOD_TO(ThirdPartyController::flexyToKiddyTransfer,std::string(PREFIX) + "smart-suite/flexy-to-kiddy-transfer", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::submitKiddyWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-kiddy-withdrawal-request", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::submitSavingsWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-savings-withdrawal-request", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::notifyLowPrepaidBalance,std::string(PREFIX) + "smart-suite/notify-low-prepaid-balance", Get, Options);
+
+  //ERP-POS
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, "erp-pos/create-merchant", Post, Options);
+
+  //ERP-SCHOOL MANAGER
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, "erp-sm/create-merchant", Post, Options);
+
+  //ERP-HR
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, "erp-hr/create-merchant", Post, Options);
+
+
+  //ERP-PAYROLL
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, "erp-pr/create-merchant", Post, Options);
+
+
 
   //WAEC eVoucher
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, "waec/create-merchant", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::individualVoucherSale, "waec/voucher-sale", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::handleBulkVoucherSale, "waec/bulk-voucher-sale", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::handleAffiliateVoucherSale, "waec/affiliate-voucher-sale", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::getMerchantDashboardStats, "waec/get-merchant-stats", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::getMerchantTransactions, "waec/get-merchant-transactions", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::requestMerchantStatement, "waec/request-merchant-statement", Post, Options);
+
   METHOD_LIST_END
 
   Task<HttpResponsePtr> verifyCustomerAccount(HttpRequestPtr req);
@@ -40,6 +64,20 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   Task<HttpResponsePtr> flexyToKiddyTransfer(HttpRequestPtr req);
   Task<HttpResponsePtr> submitKiddyWithdrawalRequest(HttpRequestPtr req);
   Task<HttpResponsePtr> submitSavingsWithdrawalRequest(HttpRequestPtr req);
+
+  //utils
+  Task<HttpResponsePtr> notifyLowPrepaidBalance(HttpRequestPtr req);
+
+
+    //waec vouchers
+  Task<HttpResponsePtr> createMerchantAccount(HttpRequestPtr req);
+  Task<HttpResponsePtr> individualVoucherSale(HttpRequestPtr req);
+  Task<HttpResponsePtr> handleBulkVoucherSale(HttpRequestPtr req);
+  Task<HttpResponsePtr> handleAffiliateVoucherSale(HttpRequestPtr req);
+  Task<HttpResponsePtr> getMerchantDashboardStats(HttpRequestPtr req);
+  Task<HttpResponsePtr> getMerchantTransactions(HttpRequestPtr req);
+  Task<HttpResponsePtr> requestMerchantStatement(HttpRequestPtr req);
+
 
   private:
   struct AuthResult {

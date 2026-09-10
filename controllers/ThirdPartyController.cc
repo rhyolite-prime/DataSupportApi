@@ -1,5 +1,6 @@
 #include "ThirdPartyController.h"
 
+#include "dto/erp_api/SyncApiCredentialDto.h"
 #include "dto/smart_suite/AccountBalanceDto.h"
 #include "dto/smart_suite/ChangePinDto.h"
 #include "dto/smart_suite/WebCheckoutDepositDto.h"
@@ -353,3 +354,216 @@ Task<HttpResponsePtr> ThirdPartyController::submitSavingsWithdrawalRequest(HttpR
 
 }
 
+//utils
+
+Task<HttpResponsePtr> ThirdPartyController::notifyLowPrepaidBalance(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+    auto result = co_await smartSuiteBankingService.sendLowPrepaidBalanceNotification(authResult.businessId);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+//WAEC eVoucher
+
+Task<HttpResponsePtr> ThirdPartyController::createMerchantAccount(HttpRequestPtr req) {
+
+    //creates a merchant and a turbo ledger personal account
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::waec_voucher::WaecMerchantDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &waecVoucherService = plugin->getWaecVoucherService();
+
+    auto result = co_await waecVoucherService.createMerchantAccount(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::individualVoucherSale(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::waec_voucher::SingleWaecVoucherSaleDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &waecVoucherService = plugin->getWaecVoucherService();
+
+    auto result = co_await waecVoucherService.initializeSingleVoucherSale(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::handleBulkVoucherSale(HttpRequestPtr req) {
+
+    //creates a transaction in turbo ledger in the name of the merchant account
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::waec_voucher::BulkWaecVoucherSaleDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &waecVoucherService = plugin->getWaecVoucherService();
+
+    auto result = co_await waecVoucherService.initializeBulkVoucherSale(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::handleAffiliateVoucherSale(HttpRequestPtr req) {
+
+    // creates a transaction in turbo ledger and credits the merchant wallet
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::waec_voucher::AffiliateWaecVoucherSaleDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &waecVoucherService = plugin->getWaecVoucherService();
+
+    auto result = co_await waecVoucherService.initializeAffiliateVoucherSale(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::getMerchantDashboardStats(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::waec_voucher::WaecMerchantAuthDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &waecVoucherService = plugin->getWaecVoucherService();
+
+    auto result = co_await waecVoucherService.getMerchantSummaryStats(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::getMerchantTransactions(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::waec_voucher::MerchantTransactionsRequestDto dto;
+    dto.fromJson(*jsonPtr);
+
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &waecVoucherService = plugin->getWaecVoucherService();
+
+    auto result = co_await waecVoucherService.getMerchantTransactions(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::requestMerchantStatement(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::waec_voucher::MerchantStatementRequestDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &waecVoucherService = plugin->getWaecVoucherService();
+
+    auto result = co_await waecVoucherService.getMerchantStatement(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}

@@ -34,7 +34,6 @@ add_executable(${PROJECT_NAME} main.cc
         utils/codecvt_helper.h
         dto/BusinessApiKeyDto.h
         dto/waec_voucher/WaecMerchantAuthDto.h
-        dto/waec_voucher/WaecVoucherDto.h
         dto/smart_suite/FlexyWithdrawalToBankDto.h
         services/quartz/QuartzApi.h
         dto/QuartzJobDto.h
@@ -62,6 +61,18 @@ add_executable(${PROJECT_NAME} main.cc
         services/hubtel_api/HubtelApi.cc
         dto/smart_suite/SmartSuiteApiResponse.h
         dto/smart_suite/SmartSuiteOperationResponse.h
+        services/turbo_ledger/TurboLedgerService.h
+        services/turbo_ledger/TurboLedgerService.cc
+        dto/turbo_ledger/CreateIndividualAccountDto.h
+        services/erp_api/ErpApi.h
+        services/erp_api/ErpApi.cc
+        services/email/EmailApi.h
+        dto/SendEmailDto.h
+        services/email/EmailApi.cc
+        dto/erp_api/SyncApiCredentialDto.h
+        dto/erp_api/SyncPosBranchDto.h
+        services/pay_stack_api/PayStackApi.h
+        services/pay_stack_api/PaystackApi.cc
 )
 
 # ##############################################################################

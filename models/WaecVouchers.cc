@@ -14,12 +14,14 @@ using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
 const std::string WaecVouchers::Cols::_id = "\"id\"";
+const std::string WaecVouchers::Cols::_business_id = "\"business_id\"";
 const std::string WaecVouchers::Cols::_batch_id = "\"batch_id\"";
 const std::string WaecVouchers::Cols::_serial_number = "\"serial_number\"";
 const std::string WaecVouchers::Cols::_pin = "\"pin\"";
-const std::string WaecVouchers::Cols::_status = "\"status\"";
-const std::string WaecVouchers::Cols::_price = "\"price\"";
+const std::string WaecVouchers::Cols::_retail_price = "\"retail_price\"";
 const std::string WaecVouchers::Cols::_wholesale_price = "\"wholesale_price\"";
+const std::string WaecVouchers::Cols::_voucher_type = "\"voucher_type\"";
+const std::string WaecVouchers::Cols::_is_sold = "\"is_sold\"";
 const std::string WaecVouchers::Cols::_created_at = "\"created_at\"";
 const std::string WaecVouchers::Cols::_updated_at = "\"updated_at\"";
 const std::string WaecVouchers::primaryKeyName = "id";
@@ -28,12 +30,14 @@ const std::string WaecVouchers::tableName = "\"waec_vouchers\"";
 
 const std::vector<typename WaecVouchers::MetaData> WaecVouchers::metaData_={
 {"id","std::string","uuid",0,0,1,1},
+{"business_id","std::string","uuid",0,0,0,0},
 {"batch_id","std::string","character varying",100,0,0,0},
 {"serial_number","std::string","character varying",100,0,0,1},
 {"pin","std::string","character varying",255,0,0,1},
-{"status","std::string","character varying",50,0,0,0},
-{"price","std::string","numeric",0,0,0,1},
+{"retail_price","std::string","numeric",0,0,0,1},
 {"wholesale_price","std::string","numeric",0,0,0,0},
+{"voucher_type","int32_t","integer",4,0,0,0},
+{"is_sold","bool","boolean",1,0,0,0},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
 };
@@ -50,6 +54,10 @@ WaecVouchers::WaecVouchers(const Row &r, const ssize_t indexOffset) noexcept
         {
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
         }
+        if(!r["business_id"].isNull())
+        {
+            businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+        }
         if(!r["batch_id"].isNull())
         {
             batchId_=std::make_shared<std::string>(r["batch_id"].as<std::string>());
@@ -62,17 +70,21 @@ WaecVouchers::WaecVouchers(const Row &r, const ssize_t indexOffset) noexcept
         {
             pin_=std::make_shared<std::string>(r["pin"].as<std::string>());
         }
-        if(!r["status"].isNull())
+        if(!r["retail_price"].isNull())
         {
-            status_=std::make_shared<std::string>(r["status"].as<std::string>());
-        }
-        if(!r["price"].isNull())
-        {
-            price_=std::make_shared<std::string>(r["price"].as<std::string>());
+            retailPrice_=std::make_shared<std::string>(r["retail_price"].as<std::string>());
         }
         if(!r["wholesale_price"].isNull())
         {
             wholesalePrice_=std::make_shared<std::string>(r["wholesale_price"].as<std::string>());
+        }
+        if(!r["voucher_type"].isNull())
+        {
+            voucherType_=std::make_shared<int32_t>(r["voucher_type"].as<int32_t>());
+        }
+        if(!r["is_sold"].isNull())
+        {
+            isSold_=std::make_shared<bool>(r["is_sold"].as<bool>());
         }
         if(!r["created_at"].isNull())
         {
@@ -122,7 +134,7 @@ WaecVouchers::WaecVouchers(const Row &r, const ssize_t indexOffset) noexcept
     else
     {
         size_t offset = (size_t)indexOffset;
-        if(offset + 9 > r.size())
+        if(offset + 11 > r.size())
         {
             LOG_FATAL << "Invalid SQL result for this model";
             return;
@@ -136,27 +148,27 @@ WaecVouchers::WaecVouchers(const Row &r, const ssize_t indexOffset) noexcept
         index = offset + 1;
         if(!r[index].isNull())
         {
-            batchId_=std::make_shared<std::string>(r[index].as<std::string>());
+            businessId_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 2;
         if(!r[index].isNull())
         {
-            serialNumber_=std::make_shared<std::string>(r[index].as<std::string>());
+            batchId_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 3;
         if(!r[index].isNull())
         {
-            pin_=std::make_shared<std::string>(r[index].as<std::string>());
+            serialNumber_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 4;
         if(!r[index].isNull())
         {
-            status_=std::make_shared<std::string>(r[index].as<std::string>());
+            pin_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 5;
         if(!r[index].isNull())
         {
-            price_=std::make_shared<std::string>(r[index].as<std::string>());
+            retailPrice_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 6;
         if(!r[index].isNull())
@@ -164,6 +176,16 @@ WaecVouchers::WaecVouchers(const Row &r, const ssize_t indexOffset) noexcept
             wholesalePrice_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 7;
+        if(!r[index].isNull())
+        {
+            voucherType_=std::make_shared<int32_t>(r[index].as<int32_t>());
+        }
+        index = offset + 8;
+        if(!r[index].isNull())
+        {
+            isSold_=std::make_shared<bool>(r[index].as<bool>());
+        }
+        index = offset + 9;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
@@ -186,7 +208,7 @@ WaecVouchers::WaecVouchers(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
-        index = offset + 8;
+        index = offset + 10;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
@@ -215,7 +237,7 @@ WaecVouchers::WaecVouchers(const Row &r, const ssize_t indexOffset) noexcept
 
 WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 9)
+    if(pMasqueradingVector.size() != 11)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -233,7 +255,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::stri
         dirtyFlag_[1] = true;
         if(!pJson[pMasqueradingVector[1]].isNull())
         {
-            batchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
+            businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
@@ -241,7 +263,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::stri
         dirtyFlag_[2] = true;
         if(!pJson[pMasqueradingVector[2]].isNull())
         {
-            serialNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
+            batchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
@@ -249,7 +271,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::stri
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            pin_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            serialNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
@@ -257,7 +279,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::stri
         dirtyFlag_[4] = true;
         if(!pJson[pMasqueradingVector[4]].isNull())
         {
-            status_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
+            pin_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
@@ -265,7 +287,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::stri
         dirtyFlag_[5] = true;
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
-            price_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            retailPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
@@ -281,7 +303,23 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::stri
         dirtyFlag_[7] = true;
         if(!pJson[pMasqueradingVector[7]].isNull())
         {
-            auto timeStr = pJson[pMasqueradingVector[7]].asString();
+            voucherType_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
+        }
+    }
+    if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
+    {
+        dirtyFlag_[8] = true;
+        if(!pJson[pMasqueradingVector[8]].isNull())
+        {
+            isSold_=std::make_shared<bool>(pJson[pMasqueradingVector[8]].asBool());
+        }
+    }
+    if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
+    {
+        dirtyFlag_[9] = true;
+        if(!pJson[pMasqueradingVector[9]].isNull())
+        {
+            auto timeStr = pJson[pMasqueradingVector[9]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
@@ -302,12 +340,12 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson, const std::vector<std::stri
             }
         }
     }
-    if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
+    if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
-        dirtyFlag_[8] = true;
-        if(!pJson[pMasqueradingVector[8]].isNull())
+        dirtyFlag_[10] = true;
+        if(!pJson[pMasqueradingVector[10]].isNull())
         {
-            auto timeStr = pJson[pMasqueradingVector[8]].asString();
+            auto timeStr = pJson[pMasqueradingVector[10]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
@@ -340,9 +378,17 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
-    if(pJson.isMember("batch_id"))
+    if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
+        if(!pJson["business_id"].isNull())
+        {
+            businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
+        }
+    }
+    if(pJson.isMember("batch_id"))
+    {
+        dirtyFlag_[2]=true;
         if(!pJson["batch_id"].isNull())
         {
             batchId_=std::make_shared<std::string>(pJson["batch_id"].asString());
@@ -350,7 +396,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("serial_number"))
     {
-        dirtyFlag_[2]=true;
+        dirtyFlag_[3]=true;
         if(!pJson["serial_number"].isNull())
         {
             serialNumber_=std::make_shared<std::string>(pJson["serial_number"].asString());
@@ -358,26 +404,18 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("pin"))
     {
-        dirtyFlag_[3]=true;
+        dirtyFlag_[4]=true;
         if(!pJson["pin"].isNull())
         {
             pin_=std::make_shared<std::string>(pJson["pin"].asString());
         }
     }
-    if(pJson.isMember("status"))
-    {
-        dirtyFlag_[4]=true;
-        if(!pJson["status"].isNull())
-        {
-            status_=std::make_shared<std::string>(pJson["status"].asString());
-        }
-    }
-    if(pJson.isMember("price"))
+    if(pJson.isMember("retail_price"))
     {
         dirtyFlag_[5]=true;
-        if(!pJson["price"].isNull())
+        if(!pJson["retail_price"].isNull())
         {
-            price_=std::make_shared<std::string>(pJson["price"].asString());
+            retailPrice_=std::make_shared<std::string>(pJson["retail_price"].asString());
         }
     }
     if(pJson.isMember("wholesale_price"))
@@ -388,9 +426,25 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson) noexcept(false)
             wholesalePrice_=std::make_shared<std::string>(pJson["wholesale_price"].asString());
         }
     }
-    if(pJson.isMember("created_at"))
+    if(pJson.isMember("voucher_type"))
     {
         dirtyFlag_[7]=true;
+        if(!pJson["voucher_type"].isNull())
+        {
+            voucherType_=std::make_shared<int32_t>((int32_t)pJson["voucher_type"].asInt64());
+        }
+    }
+    if(pJson.isMember("is_sold"))
+    {
+        dirtyFlag_[8]=true;
+        if(!pJson["is_sold"].isNull())
+        {
+            isSold_=std::make_shared<bool>(pJson["is_sold"].asBool());
+        }
+    }
+    if(pJson.isMember("created_at"))
+    {
+        dirtyFlag_[9]=true;
         if(!pJson["created_at"].isNull())
         {
             auto timeStr = pJson["created_at"].asString();
@@ -416,7 +470,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("updated_at"))
     {
-        dirtyFlag_[8]=true;
+        dirtyFlag_[10]=true;
         if(!pJson["updated_at"].isNull())
         {
             auto timeStr = pJson["updated_at"].asString();
@@ -445,7 +499,7 @@ WaecVouchers::WaecVouchers(const Json::Value &pJson) noexcept(false)
 void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
                                             const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 9)
+    if(pMasqueradingVector.size() != 11)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -462,7 +516,7 @@ void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[1] = true;
         if(!pJson[pMasqueradingVector[1]].isNull())
         {
-            batchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
+            businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
@@ -470,7 +524,7 @@ void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[2] = true;
         if(!pJson[pMasqueradingVector[2]].isNull())
         {
-            serialNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
+            batchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
@@ -478,7 +532,7 @@ void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            pin_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            serialNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
@@ -486,7 +540,7 @@ void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[4] = true;
         if(!pJson[pMasqueradingVector[4]].isNull())
         {
-            status_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
+            pin_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
@@ -494,7 +548,7 @@ void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[5] = true;
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
-            price_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            retailPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
@@ -510,7 +564,23 @@ void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[7] = true;
         if(!pJson[pMasqueradingVector[7]].isNull())
         {
-            auto timeStr = pJson[pMasqueradingVector[7]].asString();
+            voucherType_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
+        }
+    }
+    if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
+    {
+        dirtyFlag_[8] = true;
+        if(!pJson[pMasqueradingVector[8]].isNull())
+        {
+            isSold_=std::make_shared<bool>(pJson[pMasqueradingVector[8]].asBool());
+        }
+    }
+    if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
+    {
+        dirtyFlag_[9] = true;
+        if(!pJson[pMasqueradingVector[9]].isNull())
+        {
+            auto timeStr = pJson[pMasqueradingVector[9]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
@@ -531,12 +601,12 @@ void WaecVouchers::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
-    if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
+    if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
-        dirtyFlag_[8] = true;
-        if(!pJson[pMasqueradingVector[8]].isNull())
+        dirtyFlag_[10] = true;
+        if(!pJson[pMasqueradingVector[10]].isNull())
         {
-            auto timeStr = pJson[pMasqueradingVector[8]].asString();
+            auto timeStr = pJson[pMasqueradingVector[10]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
@@ -568,9 +638,17 @@ void WaecVouchers::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
-    if(pJson.isMember("batch_id"))
+    if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
+        if(!pJson["business_id"].isNull())
+        {
+            businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
+        }
+    }
+    if(pJson.isMember("batch_id"))
+    {
+        dirtyFlag_[2] = true;
         if(!pJson["batch_id"].isNull())
         {
             batchId_=std::make_shared<std::string>(pJson["batch_id"].asString());
@@ -578,7 +656,7 @@ void WaecVouchers::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("serial_number"))
     {
-        dirtyFlag_[2] = true;
+        dirtyFlag_[3] = true;
         if(!pJson["serial_number"].isNull())
         {
             serialNumber_=std::make_shared<std::string>(pJson["serial_number"].asString());
@@ -586,26 +664,18 @@ void WaecVouchers::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("pin"))
     {
-        dirtyFlag_[3] = true;
+        dirtyFlag_[4] = true;
         if(!pJson["pin"].isNull())
         {
             pin_=std::make_shared<std::string>(pJson["pin"].asString());
         }
     }
-    if(pJson.isMember("status"))
-    {
-        dirtyFlag_[4] = true;
-        if(!pJson["status"].isNull())
-        {
-            status_=std::make_shared<std::string>(pJson["status"].asString());
-        }
-    }
-    if(pJson.isMember("price"))
+    if(pJson.isMember("retail_price"))
     {
         dirtyFlag_[5] = true;
-        if(!pJson["price"].isNull())
+        if(!pJson["retail_price"].isNull())
         {
-            price_=std::make_shared<std::string>(pJson["price"].asString());
+            retailPrice_=std::make_shared<std::string>(pJson["retail_price"].asString());
         }
     }
     if(pJson.isMember("wholesale_price"))
@@ -616,9 +686,25 @@ void WaecVouchers::updateByJson(const Json::Value &pJson) noexcept(false)
             wholesalePrice_=std::make_shared<std::string>(pJson["wholesale_price"].asString());
         }
     }
-    if(pJson.isMember("created_at"))
+    if(pJson.isMember("voucher_type"))
     {
         dirtyFlag_[7] = true;
+        if(!pJson["voucher_type"].isNull())
+        {
+            voucherType_=std::make_shared<int32_t>((int32_t)pJson["voucher_type"].asInt64());
+        }
+    }
+    if(pJson.isMember("is_sold"))
+    {
+        dirtyFlag_[8] = true;
+        if(!pJson["is_sold"].isNull())
+        {
+            isSold_=std::make_shared<bool>(pJson["is_sold"].asBool());
+        }
+    }
+    if(pJson.isMember("created_at"))
+    {
+        dirtyFlag_[9] = true;
         if(!pJson["created_at"].isNull())
         {
             auto timeStr = pJson["created_at"].asString();
@@ -644,7 +730,7 @@ void WaecVouchers::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("updated_at"))
     {
-        dirtyFlag_[8] = true;
+        dirtyFlag_[10] = true;
         if(!pJson["updated_at"].isNull())
         {
             auto timeStr = pJson["updated_at"].asString();
@@ -697,6 +783,33 @@ const typename WaecVouchers::PrimaryKeyType & WaecVouchers::getPrimaryKey() cons
     return *id_;
 }
 
+const std::string &WaecVouchers::getValueOfBusinessId() const noexcept
+{
+    static const std::string defaultValue = std::string();
+    if(businessId_)
+        return *businessId_;
+    return defaultValue;
+}
+const std::shared_ptr<std::string> &WaecVouchers::getBusinessId() const noexcept
+{
+    return businessId_;
+}
+void WaecVouchers::setBusinessId(const std::string &pBusinessId) noexcept
+{
+    businessId_ = std::make_shared<std::string>(pBusinessId);
+    dirtyFlag_[1] = true;
+}
+void WaecVouchers::setBusinessId(std::string &&pBusinessId) noexcept
+{
+    businessId_ = std::make_shared<std::string>(std::move(pBusinessId));
+    dirtyFlag_[1] = true;
+}
+void WaecVouchers::setBusinessIdToNull() noexcept
+{
+    businessId_.reset();
+    dirtyFlag_[1] = true;
+}
+
 const std::string &WaecVouchers::getValueOfBatchId() const noexcept
 {
     static const std::string defaultValue = std::string();
@@ -711,17 +824,17 @@ const std::shared_ptr<std::string> &WaecVouchers::getBatchId() const noexcept
 void WaecVouchers::setBatchId(const std::string &pBatchId) noexcept
 {
     batchId_ = std::make_shared<std::string>(pBatchId);
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 void WaecVouchers::setBatchId(std::string &&pBatchId) noexcept
 {
     batchId_ = std::make_shared<std::string>(std::move(pBatchId));
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 void WaecVouchers::setBatchIdToNull() noexcept
 {
     batchId_.reset();
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 
 const std::string &WaecVouchers::getValueOfSerialNumber() const noexcept
@@ -738,12 +851,12 @@ const std::shared_ptr<std::string> &WaecVouchers::getSerialNumber() const noexce
 void WaecVouchers::setSerialNumber(const std::string &pSerialNumber) noexcept
 {
     serialNumber_ = std::make_shared<std::string>(pSerialNumber);
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 void WaecVouchers::setSerialNumber(std::string &&pSerialNumber) noexcept
 {
     serialNumber_ = std::make_shared<std::string>(std::move(pSerialNumber));
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 
 const std::string &WaecVouchers::getValueOfPin() const noexcept
@@ -760,60 +873,33 @@ const std::shared_ptr<std::string> &WaecVouchers::getPin() const noexcept
 void WaecVouchers::setPin(const std::string &pPin) noexcept
 {
     pin_ = std::make_shared<std::string>(pPin);
-    dirtyFlag_[3] = true;
+    dirtyFlag_[4] = true;
 }
 void WaecVouchers::setPin(std::string &&pPin) noexcept
 {
     pin_ = std::make_shared<std::string>(std::move(pPin));
-    dirtyFlag_[3] = true;
-}
-
-const std::string &WaecVouchers::getValueOfStatus() const noexcept
-{
-    static const std::string defaultValue = std::string();
-    if(status_)
-        return *status_;
-    return defaultValue;
-}
-const std::shared_ptr<std::string> &WaecVouchers::getStatus() const noexcept
-{
-    return status_;
-}
-void WaecVouchers::setStatus(const std::string &pStatus) noexcept
-{
-    status_ = std::make_shared<std::string>(pStatus);
-    dirtyFlag_[4] = true;
-}
-void WaecVouchers::setStatus(std::string &&pStatus) noexcept
-{
-    status_ = std::make_shared<std::string>(std::move(pStatus));
-    dirtyFlag_[4] = true;
-}
-void WaecVouchers::setStatusToNull() noexcept
-{
-    status_.reset();
     dirtyFlag_[4] = true;
 }
 
-const std::string &WaecVouchers::getValueOfPrice() const noexcept
+const std::string &WaecVouchers::getValueOfRetailPrice() const noexcept
 {
     static const std::string defaultValue = std::string();
-    if(price_)
-        return *price_;
+    if(retailPrice_)
+        return *retailPrice_;
     return defaultValue;
 }
-const std::shared_ptr<std::string> &WaecVouchers::getPrice() const noexcept
+const std::shared_ptr<std::string> &WaecVouchers::getRetailPrice() const noexcept
 {
-    return price_;
+    return retailPrice_;
 }
-void WaecVouchers::setPrice(const std::string &pPrice) noexcept
+void WaecVouchers::setRetailPrice(const std::string &pRetailPrice) noexcept
 {
-    price_ = std::make_shared<std::string>(pPrice);
+    retailPrice_ = std::make_shared<std::string>(pRetailPrice);
     dirtyFlag_[5] = true;
 }
-void WaecVouchers::setPrice(std::string &&pPrice) noexcept
+void WaecVouchers::setRetailPrice(std::string &&pRetailPrice) noexcept
 {
-    price_ = std::make_shared<std::string>(std::move(pPrice));
+    retailPrice_ = std::make_shared<std::string>(std::move(pRetailPrice));
     dirtyFlag_[5] = true;
 }
 
@@ -844,6 +930,50 @@ void WaecVouchers::setWholesalePriceToNull() noexcept
     dirtyFlag_[6] = true;
 }
 
+const int32_t &WaecVouchers::getValueOfVoucherType() const noexcept
+{
+    static const int32_t defaultValue = int32_t();
+    if(voucherType_)
+        return *voucherType_;
+    return defaultValue;
+}
+const std::shared_ptr<int32_t> &WaecVouchers::getVoucherType() const noexcept
+{
+    return voucherType_;
+}
+void WaecVouchers::setVoucherType(const int32_t &pVoucherType) noexcept
+{
+    voucherType_ = std::make_shared<int32_t>(pVoucherType);
+    dirtyFlag_[7] = true;
+}
+void WaecVouchers::setVoucherTypeToNull() noexcept
+{
+    voucherType_.reset();
+    dirtyFlag_[7] = true;
+}
+
+const bool &WaecVouchers::getValueOfIsSold() const noexcept
+{
+    static const bool defaultValue = bool();
+    if(isSold_)
+        return *isSold_;
+    return defaultValue;
+}
+const std::shared_ptr<bool> &WaecVouchers::getIsSold() const noexcept
+{
+    return isSold_;
+}
+void WaecVouchers::setIsSold(const bool &pIsSold) noexcept
+{
+    isSold_ = std::make_shared<bool>(pIsSold);
+    dirtyFlag_[8] = true;
+}
+void WaecVouchers::setIsSoldToNull() noexcept
+{
+    isSold_.reset();
+    dirtyFlag_[8] = true;
+}
+
 const ::trantor::Date &WaecVouchers::getValueOfCreatedAt() const noexcept
 {
     static const ::trantor::Date defaultValue = ::trantor::Date();
@@ -858,12 +988,12 @@ const std::shared_ptr<::trantor::Date> &WaecVouchers::getCreatedAt() const noexc
 void WaecVouchers::setCreatedAt(const ::trantor::Date &pCreatedAt) noexcept
 {
     createdAt_ = std::make_shared<::trantor::Date>(pCreatedAt);
-    dirtyFlag_[7] = true;
+    dirtyFlag_[9] = true;
 }
 void WaecVouchers::setCreatedAtToNull() noexcept
 {
     createdAt_.reset();
-    dirtyFlag_[7] = true;
+    dirtyFlag_[9] = true;
 }
 
 const ::trantor::Date &WaecVouchers::getValueOfUpdatedAt() const noexcept
@@ -880,12 +1010,12 @@ const std::shared_ptr<::trantor::Date> &WaecVouchers::getUpdatedAt() const noexc
 void WaecVouchers::setUpdatedAt(const ::trantor::Date &pUpdatedAt) noexcept
 {
     updatedAt_ = std::make_shared<::trantor::Date>(pUpdatedAt);
-    dirtyFlag_[8] = true;
+    dirtyFlag_[10] = true;
 }
 void WaecVouchers::setUpdatedAtToNull() noexcept
 {
     updatedAt_.reset();
-    dirtyFlag_[8] = true;
+    dirtyFlag_[10] = true;
 }
 
 void WaecVouchers::updateId(const uint64_t id)
@@ -896,12 +1026,14 @@ const std::vector<std::string> &WaecVouchers::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
         "id",
+        "business_id",
         "batch_id",
         "serial_number",
         "pin",
-        "status",
-        "price",
+        "retail_price",
         "wholesale_price",
+        "voucher_type",
+        "is_sold",
         "created_at",
         "updated_at"
     };
@@ -923,6 +1055,17 @@ void WaecVouchers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[1])
     {
+        if(getBusinessId())
+        {
+            binder << getValueOfBusinessId();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[2])
+    {
         if(getBatchId())
         {
             binder << getValueOfBatchId();
@@ -932,7 +1075,7 @@ void WaecVouchers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if(dirtyFlag_[3])
     {
         if(getSerialNumber())
         {
@@ -943,7 +1086,7 @@ void WaecVouchers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if(dirtyFlag_[4])
     {
         if(getPin())
         {
@@ -954,22 +1097,11 @@ void WaecVouchers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[4])
-    {
-        if(getStatus())
-        {
-            binder << getValueOfStatus();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[5])
     {
-        if(getPrice())
+        if(getRetailPrice())
         {
-            binder << getValueOfPrice();
+            binder << getValueOfRetailPrice();
         }
         else
         {
@@ -989,6 +1121,28 @@ void WaecVouchers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[7])
     {
+        if(getVoucherType())
+        {
+            binder << getValueOfVoucherType();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[8])
+    {
+        if(getIsSold())
+        {
+            binder << getValueOfIsSold();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[9])
+    {
         if(getCreatedAt())
         {
             binder << getValueOfCreatedAt();
@@ -998,7 +1152,7 @@ void WaecVouchers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[8])
+    if(dirtyFlag_[10])
     {
         if(getUpdatedAt())
         {
@@ -1050,6 +1204,14 @@ const std::vector<std::string> WaecVouchers::updateColumns() const
     {
         ret.push_back(getColumnName(8));
     }
+    if(dirtyFlag_[9])
+    {
+        ret.push_back(getColumnName(9));
+    }
+    if(dirtyFlag_[10])
+    {
+        ret.push_back(getColumnName(10));
+    }
     return ret;
 }
 
@@ -1068,6 +1230,17 @@ void WaecVouchers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[1])
     {
+        if(getBusinessId())
+        {
+            binder << getValueOfBusinessId();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[2])
+    {
         if(getBatchId())
         {
             binder << getValueOfBatchId();
@@ -1077,7 +1250,7 @@ void WaecVouchers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if(dirtyFlag_[3])
     {
         if(getSerialNumber())
         {
@@ -1088,7 +1261,7 @@ void WaecVouchers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if(dirtyFlag_[4])
     {
         if(getPin())
         {
@@ -1099,22 +1272,11 @@ void WaecVouchers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[4])
-    {
-        if(getStatus())
-        {
-            binder << getValueOfStatus();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[5])
     {
-        if(getPrice())
+        if(getRetailPrice())
         {
-            binder << getValueOfPrice();
+            binder << getValueOfRetailPrice();
         }
         else
         {
@@ -1134,6 +1296,28 @@ void WaecVouchers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[7])
     {
+        if(getVoucherType())
+        {
+            binder << getValueOfVoucherType();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[8])
+    {
+        if(getIsSold())
+        {
+            binder << getValueOfIsSold();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[9])
+    {
         if(getCreatedAt())
         {
             binder << getValueOfCreatedAt();
@@ -1143,7 +1327,7 @@ void WaecVouchers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[8])
+    if(dirtyFlag_[10])
     {
         if(getUpdatedAt())
         {
@@ -1165,6 +1349,14 @@ Json::Value WaecVouchers::toJson() const
     else
     {
         ret["id"]=Json::Value();
+    }
+    if(getBusinessId())
+    {
+        ret["business_id"]=getValueOfBusinessId();
+    }
+    else
+    {
+        ret["business_id"]=Json::Value();
     }
     if(getBatchId())
     {
@@ -1190,21 +1382,13 @@ Json::Value WaecVouchers::toJson() const
     {
         ret["pin"]=Json::Value();
     }
-    if(getStatus())
+    if(getRetailPrice())
     {
-        ret["status"]=getValueOfStatus();
+        ret["retail_price"]=getValueOfRetailPrice();
     }
     else
     {
-        ret["status"]=Json::Value();
-    }
-    if(getPrice())
-    {
-        ret["price"]=getValueOfPrice();
-    }
-    else
-    {
-        ret["price"]=Json::Value();
+        ret["retail_price"]=Json::Value();
     }
     if(getWholesalePrice())
     {
@@ -1213,6 +1397,22 @@ Json::Value WaecVouchers::toJson() const
     else
     {
         ret["wholesale_price"]=Json::Value();
+    }
+    if(getVoucherType())
+    {
+        ret["voucher_type"]=getValueOfVoucherType();
+    }
+    else
+    {
+        ret["voucher_type"]=Json::Value();
+    }
+    if(getIsSold())
+    {
+        ret["is_sold"]=getValueOfIsSold();
+    }
+    else
+    {
+        ret["is_sold"]=Json::Value();
     }
     if(getCreatedAt())
     {
@@ -1242,7 +1442,7 @@ Json::Value WaecVouchers::toMasqueradedJson(
     const std::vector<std::string> &pMasqueradingVector) const
 {
     Json::Value ret;
-    if(pMasqueradingVector.size() == 9)
+    if(pMasqueradingVector.size() == 11)
     {
         if(!pMasqueradingVector[0].empty())
         {
@@ -1257,9 +1457,9 @@ Json::Value WaecVouchers::toMasqueradedJson(
         }
         if(!pMasqueradingVector[1].empty())
         {
-            if(getBatchId())
+            if(getBusinessId())
             {
-                ret[pMasqueradingVector[1]]=getValueOfBatchId();
+                ret[pMasqueradingVector[1]]=getValueOfBusinessId();
             }
             else
             {
@@ -1268,9 +1468,9 @@ Json::Value WaecVouchers::toMasqueradedJson(
         }
         if(!pMasqueradingVector[2].empty())
         {
-            if(getSerialNumber())
+            if(getBatchId())
             {
-                ret[pMasqueradingVector[2]]=getValueOfSerialNumber();
+                ret[pMasqueradingVector[2]]=getValueOfBatchId();
             }
             else
             {
@@ -1279,9 +1479,9 @@ Json::Value WaecVouchers::toMasqueradedJson(
         }
         if(!pMasqueradingVector[3].empty())
         {
-            if(getPin())
+            if(getSerialNumber())
             {
-                ret[pMasqueradingVector[3]]=getValueOfPin();
+                ret[pMasqueradingVector[3]]=getValueOfSerialNumber();
             }
             else
             {
@@ -1290,9 +1490,9 @@ Json::Value WaecVouchers::toMasqueradedJson(
         }
         if(!pMasqueradingVector[4].empty())
         {
-            if(getStatus())
+            if(getPin())
             {
-                ret[pMasqueradingVector[4]]=getValueOfStatus();
+                ret[pMasqueradingVector[4]]=getValueOfPin();
             }
             else
             {
@@ -1301,9 +1501,9 @@ Json::Value WaecVouchers::toMasqueradedJson(
         }
         if(!pMasqueradingVector[5].empty())
         {
-            if(getPrice())
+            if(getRetailPrice())
             {
-                ret[pMasqueradingVector[5]]=getValueOfPrice();
+                ret[pMasqueradingVector[5]]=getValueOfRetailPrice();
             }
             else
             {
@@ -1323,9 +1523,9 @@ Json::Value WaecVouchers::toMasqueradedJson(
         }
         if(!pMasqueradingVector[7].empty())
         {
-            if(getCreatedAt())
+            if(getVoucherType())
             {
-                ret[pMasqueradingVector[7]]=getCreatedAt()->toDbStringLocal();
+                ret[pMasqueradingVector[7]]=getValueOfVoucherType();
             }
             else
             {
@@ -1334,13 +1534,35 @@ Json::Value WaecVouchers::toMasqueradedJson(
         }
         if(!pMasqueradingVector[8].empty())
         {
-            if(getUpdatedAt())
+            if(getIsSold())
             {
-                ret[pMasqueradingVector[8]]=getUpdatedAt()->toDbStringLocal();
+                ret[pMasqueradingVector[8]]=getValueOfIsSold();
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
+            }
+        }
+        if(!pMasqueradingVector[9].empty())
+        {
+            if(getCreatedAt())
+            {
+                ret[pMasqueradingVector[9]]=getCreatedAt()->toDbStringLocal();
+            }
+            else
+            {
+                ret[pMasqueradingVector[9]]=Json::Value();
+            }
+        }
+        if(!pMasqueradingVector[10].empty())
+        {
+            if(getUpdatedAt())
+            {
+                ret[pMasqueradingVector[10]]=getUpdatedAt()->toDbStringLocal();
+            }
+            else
+            {
+                ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
         return ret;
@@ -1353,6 +1575,14 @@ Json::Value WaecVouchers::toMasqueradedJson(
     else
     {
         ret["id"]=Json::Value();
+    }
+    if(getBusinessId())
+    {
+        ret["business_id"]=getValueOfBusinessId();
+    }
+    else
+    {
+        ret["business_id"]=Json::Value();
     }
     if(getBatchId())
     {
@@ -1378,21 +1608,13 @@ Json::Value WaecVouchers::toMasqueradedJson(
     {
         ret["pin"]=Json::Value();
     }
-    if(getStatus())
+    if(getRetailPrice())
     {
-        ret["status"]=getValueOfStatus();
+        ret["retail_price"]=getValueOfRetailPrice();
     }
     else
     {
-        ret["status"]=Json::Value();
-    }
-    if(getPrice())
-    {
-        ret["price"]=getValueOfPrice();
-    }
-    else
-    {
-        ret["price"]=Json::Value();
+        ret["retail_price"]=Json::Value();
     }
     if(getWholesalePrice())
     {
@@ -1401,6 +1623,22 @@ Json::Value WaecVouchers::toMasqueradedJson(
     else
     {
         ret["wholesale_price"]=Json::Value();
+    }
+    if(getVoucherType())
+    {
+        ret["voucher_type"]=getValueOfVoucherType();
+    }
+    else
+    {
+        ret["voucher_type"]=Json::Value();
+    }
+    if(getIsSold())
+    {
+        ret["is_sold"]=getValueOfIsSold();
+    }
+    else
+    {
+        ret["is_sold"]=Json::Value();
     }
     if(getCreatedAt())
     {
@@ -1428,19 +1666,19 @@ bool WaecVouchers::validateJsonForCreation(const Json::Value &pJson, std::string
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
-    else
+    if(pJson.isMember("business_id"))
     {
-        err="The id column cannot be null";
-        return false;
+        if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
+            return false;
     }
     if(pJson.isMember("batch_id"))
     {
-        if(!validJsonOfField(1, "batch_id", pJson["batch_id"], err, true))
+        if(!validJsonOfField(2, "batch_id", pJson["batch_id"], err, true))
             return false;
     }
     if(pJson.isMember("serial_number"))
     {
-        if(!validJsonOfField(2, "serial_number", pJson["serial_number"], err, true))
+        if(!validJsonOfField(3, "serial_number", pJson["serial_number"], err, true))
             return false;
     }
     else
@@ -1450,7 +1688,7 @@ bool WaecVouchers::validateJsonForCreation(const Json::Value &pJson, std::string
     }
     if(pJson.isMember("pin"))
     {
-        if(!validJsonOfField(3, "pin", pJson["pin"], err, true))
+        if(!validJsonOfField(4, "pin", pJson["pin"], err, true))
             return false;
     }
     else
@@ -1458,19 +1696,14 @@ bool WaecVouchers::validateJsonForCreation(const Json::Value &pJson, std::string
         err="The pin column cannot be null";
         return false;
     }
-    if(pJson.isMember("status"))
+    if(pJson.isMember("retail_price"))
     {
-        if(!validJsonOfField(4, "status", pJson["status"], err, true))
-            return false;
-    }
-    if(pJson.isMember("price"))
-    {
-        if(!validJsonOfField(5, "price", pJson["price"], err, true))
+        if(!validJsonOfField(5, "retail_price", pJson["retail_price"], err, true))
             return false;
     }
     else
     {
-        err="The price column cannot be null";
+        err="The retail_price column cannot be null";
         return false;
     }
     if(pJson.isMember("wholesale_price"))
@@ -1478,14 +1711,24 @@ bool WaecVouchers::validateJsonForCreation(const Json::Value &pJson, std::string
         if(!validJsonOfField(6, "wholesale_price", pJson["wholesale_price"], err, true))
             return false;
     }
+    if(pJson.isMember("voucher_type"))
+    {
+        if(!validJsonOfField(7, "voucher_type", pJson["voucher_type"], err, true))
+            return false;
+    }
+    if(pJson.isMember("is_sold"))
+    {
+        if(!validJsonOfField(8, "is_sold", pJson["is_sold"], err, true))
+            return false;
+    }
     if(pJson.isMember("created_at"))
     {
-        if(!validJsonOfField(7, "created_at", pJson["created_at"], err, true))
+        if(!validJsonOfField(9, "created_at", pJson["created_at"], err, true))
             return false;
     }
     if(pJson.isMember("updated_at"))
     {
-        if(!validJsonOfField(8, "updated_at", pJson["updated_at"], err, true))
+        if(!validJsonOfField(10, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
     return true;
@@ -1494,7 +1737,7 @@ bool WaecVouchers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
                                                       const std::vector<std::string> &pMasqueradingVector,
                                                       std::string &err)
 {
-    if(pMasqueradingVector.size() != 9)
+    if(pMasqueradingVector.size() != 11)
     {
         err = "Bad masquerading vector";
         return false;
@@ -1507,11 +1750,6 @@ bool WaecVouchers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
-        else
-        {
-            err="The " + pMasqueradingVector[0] + " column cannot be null";
-            return false;
-        }
       }
       if(!pMasqueradingVector[1].empty())
       {
@@ -1528,11 +1766,6 @@ bool WaecVouchers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
-        else
-        {
-            err="The " + pMasqueradingVector[2] + " column cannot be null";
-            return false;
-        }
       }
       if(!pMasqueradingVector[3].empty())
       {
@@ -1554,6 +1787,11 @@ bool WaecVouchers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+        else
+        {
+            err="The " + pMasqueradingVector[4] + " column cannot be null";
+            return false;
+        }
       }
       if(!pMasqueradingVector[5].empty())
       {
@@ -1592,6 +1830,22 @@ bool WaecVouchers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
                   return false;
           }
       }
+      if(!pMasqueradingVector[9].empty())
+      {
+          if(pJson.isMember(pMasqueradingVector[9]))
+          {
+              if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
+                  return false;
+          }
+      }
+      if(!pMasqueradingVector[10].empty())
+      {
+          if(pJson.isMember(pMasqueradingVector[10]))
+          {
+              if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
+                  return false;
+          }
+      }
     }
     catch(const Json::LogicError &e)
     {
@@ -1612,29 +1866,29 @@ bool WaecVouchers::validateJsonForUpdate(const Json::Value &pJson, std::string &
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+    if(pJson.isMember("business_id"))
+    {
+        if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
+            return false;
+    }
     if(pJson.isMember("batch_id"))
     {
-        if(!validJsonOfField(1, "batch_id", pJson["batch_id"], err, false))
+        if(!validJsonOfField(2, "batch_id", pJson["batch_id"], err, false))
             return false;
     }
     if(pJson.isMember("serial_number"))
     {
-        if(!validJsonOfField(2, "serial_number", pJson["serial_number"], err, false))
+        if(!validJsonOfField(3, "serial_number", pJson["serial_number"], err, false))
             return false;
     }
     if(pJson.isMember("pin"))
     {
-        if(!validJsonOfField(3, "pin", pJson["pin"], err, false))
+        if(!validJsonOfField(4, "pin", pJson["pin"], err, false))
             return false;
     }
-    if(pJson.isMember("status"))
+    if(pJson.isMember("retail_price"))
     {
-        if(!validJsonOfField(4, "status", pJson["status"], err, false))
-            return false;
-    }
-    if(pJson.isMember("price"))
-    {
-        if(!validJsonOfField(5, "price", pJson["price"], err, false))
+        if(!validJsonOfField(5, "retail_price", pJson["retail_price"], err, false))
             return false;
     }
     if(pJson.isMember("wholesale_price"))
@@ -1642,14 +1896,24 @@ bool WaecVouchers::validateJsonForUpdate(const Json::Value &pJson, std::string &
         if(!validJsonOfField(6, "wholesale_price", pJson["wholesale_price"], err, false))
             return false;
     }
+    if(pJson.isMember("voucher_type"))
+    {
+        if(!validJsonOfField(7, "voucher_type", pJson["voucher_type"], err, false))
+            return false;
+    }
+    if(pJson.isMember("is_sold"))
+    {
+        if(!validJsonOfField(8, "is_sold", pJson["is_sold"], err, false))
+            return false;
+    }
     if(pJson.isMember("created_at"))
     {
-        if(!validJsonOfField(7, "created_at", pJson["created_at"], err, false))
+        if(!validJsonOfField(9, "created_at", pJson["created_at"], err, false))
             return false;
     }
     if(pJson.isMember("updated_at"))
     {
-        if(!validJsonOfField(8, "updated_at", pJson["updated_at"], err, false))
+        if(!validJsonOfField(10, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
     return true;
@@ -1658,7 +1922,7 @@ bool WaecVouchers::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
                                                     const std::vector<std::string> &pMasqueradingVector,
                                                     std::string &err)
 {
-    if(pMasqueradingVector.size() != 9)
+    if(pMasqueradingVector.size() != 11)
     {
         err = "Bad masquerading vector";
         return false;
@@ -1714,6 +1978,16 @@ bool WaecVouchers::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+      if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
+      {
+          if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
+              return false;
+      }
+      if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
+      {
+          if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
+              return false;
+      }
     }
     catch(const Json::LogicError &e)
     {
@@ -1752,20 +2026,11 @@ bool WaecVouchers::validJsonOfField(size_t index,
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
-            {
-                err="String length exceeds limit for the " +
-                    fieldName +
-                    " field (the maximum value is 100)";
-                return false;
-            }
             break;
         case 2:
             if(pJson.isNull())
             {
-                err="The " + fieldName + " column cannot be null";
-                return false;
+                return true;
             }
             if(!pJson.isString())
             {
@@ -1793,18 +2058,19 @@ bool WaecVouchers::validJsonOfField(size_t index,
                 return false;
             }
             if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 255)
+                .from_bytes(pJson.asCString()).size() > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
-                    " field (the maximum value is 255)";
+                    " field (the maximum value is 100)";
                 return false;
             }
             break;
         case 4:
             if(pJson.isNull())
             {
-                return true;
+                err="The " + fieldName + " column cannot be null";
+                return false;
             }
             if(!pJson.isString())
             {
@@ -1812,11 +2078,11 @@ bool WaecVouchers::validJsonOfField(size_t index,
                 return false;
             }
             if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+                .from_bytes(pJson.asCString()).size() > 255)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
-                    " field (the maximum value is 50)";
+                    " field (the maximum value is 255)";
                 return false;
             }
             break;
@@ -1848,13 +2114,35 @@ bool WaecVouchers::validJsonOfField(size_t index,
             {
                 return true;
             }
-            if(!pJson.isString())
+            if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
             break;
         case 8:
+            if(pJson.isNull())
+            {
+                return true;
+            }
+            if(!pJson.isBool())
+            {
+                err="Type error in the "+fieldName+" field";
+                return false;
+            }
+            break;
+        case 9:
+            if(pJson.isNull())
+            {
+                return true;
+            }
+            if(!pJson.isString())
+            {
+                err="Type error in the "+fieldName+" field";
+                return false;
+            }
+            break;
+        case 10:
             if(pJson.isNull())
             {
                 return true;

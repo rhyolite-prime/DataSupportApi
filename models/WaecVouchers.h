@@ -45,12 +45,14 @@ class WaecVouchers
     struct Cols
     {
         static const std::string _id;
+        static const std::string _business_id;
         static const std::string _batch_id;
         static const std::string _serial_number;
         static const std::string _pin;
-        static const std::string _status;
-        static const std::string _price;
+        static const std::string _retail_price;
         static const std::string _wholesale_price;
+        static const std::string _voucher_type;
+        static const std::string _is_sold;
         static const std::string _created_at;
         static const std::string _updated_at;
     };
@@ -113,6 +115,16 @@ class WaecVouchers
     void setId(const std::string &pId) noexcept;
     void setId(std::string &&pId) noexcept;
 
+    /**  For column business_id  */
+    ///Get the value of the column business_id, returns the default value if the column is null
+    const std::string &getValueOfBusinessId() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getBusinessId() const noexcept;
+    ///Set the value of the column business_id
+    void setBusinessId(const std::string &pBusinessId) noexcept;
+    void setBusinessId(std::string &&pBusinessId) noexcept;
+    void setBusinessIdToNull() noexcept;
+
     /**  For column batch_id  */
     ///Get the value of the column batch_id, returns the default value if the column is null
     const std::string &getValueOfBatchId() const noexcept;
@@ -141,24 +153,14 @@ class WaecVouchers
     void setPin(const std::string &pPin) noexcept;
     void setPin(std::string &&pPin) noexcept;
 
-    /**  For column status  */
-    ///Get the value of the column status, returns the default value if the column is null
-    const std::string &getValueOfStatus() const noexcept;
+    /**  For column retail_price  */
+    ///Get the value of the column retail_price, returns the default value if the column is null
+    const std::string &getValueOfRetailPrice() const noexcept;
     ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<std::string> &getStatus() const noexcept;
-    ///Set the value of the column status
-    void setStatus(const std::string &pStatus) noexcept;
-    void setStatus(std::string &&pStatus) noexcept;
-    void setStatusToNull() noexcept;
-
-    /**  For column price  */
-    ///Get the value of the column price, returns the default value if the column is null
-    const std::string &getValueOfPrice() const noexcept;
-    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<std::string> &getPrice() const noexcept;
-    ///Set the value of the column price
-    void setPrice(const std::string &pPrice) noexcept;
-    void setPrice(std::string &&pPrice) noexcept;
+    const std::shared_ptr<std::string> &getRetailPrice() const noexcept;
+    ///Set the value of the column retail_price
+    void setRetailPrice(const std::string &pRetailPrice) noexcept;
+    void setRetailPrice(std::string &&pRetailPrice) noexcept;
 
     /**  For column wholesale_price  */
     ///Get the value of the column wholesale_price, returns the default value if the column is null
@@ -169,6 +171,24 @@ class WaecVouchers
     void setWholesalePrice(const std::string &pWholesalePrice) noexcept;
     void setWholesalePrice(std::string &&pWholesalePrice) noexcept;
     void setWholesalePriceToNull() noexcept;
+
+    /**  For column voucher_type  */
+    ///Get the value of the column voucher_type, returns the default value if the column is null
+    const int32_t &getValueOfVoucherType() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<int32_t> &getVoucherType() const noexcept;
+    ///Set the value of the column voucher_type
+    void setVoucherType(const int32_t &pVoucherType) noexcept;
+    void setVoucherTypeToNull() noexcept;
+
+    /**  For column is_sold  */
+    ///Get the value of the column is_sold, returns the default value if the column is null
+    const bool &getValueOfIsSold() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<bool> &getIsSold() const noexcept;
+    ///Set the value of the column is_sold
+    void setIsSold(const bool &pIsSold) noexcept;
+    void setIsSoldToNull() noexcept;
 
     /**  For column created_at  */
     ///Get the value of the column created_at, returns the default value if the column is null
@@ -189,7 +209,7 @@ class WaecVouchers
     void setUpdatedAtToNull() noexcept;
 
 
-    static size_t getColumnNumber() noexcept {  return 9;  }
+    static size_t getColumnNumber() noexcept {  return 11;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
@@ -212,12 +232,14 @@ class WaecVouchers
     ///For mysql or sqlite3
     void updateId(const uint64_t id);
     std::shared_ptr<std::string> id_;
+    std::shared_ptr<std::string> businessId_;
     std::shared_ptr<std::string> batchId_;
     std::shared_ptr<std::string> serialNumber_;
     std::shared_ptr<std::string> pin_;
-    std::shared_ptr<std::string> status_;
-    std::shared_ptr<std::string> price_;
+    std::shared_ptr<std::string> retailPrice_;
     std::shared_ptr<std::string> wholesalePrice_;
+    std::shared_ptr<int32_t> voucherType_;
+    std::shared_ptr<bool> isSold_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
     struct MetaData
@@ -231,7 +253,7 @@ class WaecVouchers
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[9]={ false };
+    bool dirtyFlag_[11]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -249,35 +271,35 @@ class WaecVouchers
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
-        if(dirtyFlag_[0])
+        sql += "id,";
+        ++parametersCount;
+        if(!dirtyFlag_[0])
         {
-            sql += "id,";
-            ++parametersCount;
+            needSelection=true;
         }
         if(dirtyFlag_[1])
         {
-            sql += "batch_id,";
+            sql += "business_id,";
             ++parametersCount;
         }
         if(dirtyFlag_[2])
         {
-            sql += "serial_number,";
+            sql += "batch_id,";
             ++parametersCount;
         }
         if(dirtyFlag_[3])
         {
+            sql += "serial_number,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[4])
+        {
             sql += "pin,";
             ++parametersCount;
         }
-        sql += "status,";
-        ++parametersCount;
-        if(!dirtyFlag_[4])
-        {
-            needSelection=true;
-        }
         if(dirtyFlag_[5])
         {
-            sql += "price,";
+            sql += "retail_price,";
             ++parametersCount;
         }
         if(dirtyFlag_[6])
@@ -285,13 +307,25 @@ class WaecVouchers
             sql += "wholesale_price,";
             ++parametersCount;
         }
-        sql += "created_at,";
+        sql += "voucher_type,";
         ++parametersCount;
         if(!dirtyFlag_[7])
         {
             needSelection=true;
         }
-        if(dirtyFlag_[8])
+        sql += "is_sold,";
+        ++parametersCount;
+        if(!dirtyFlag_[8])
+        {
+            needSelection=true;
+        }
+        sql += "created_at,";
+        ++parametersCount;
+        if(!dirtyFlag_[9])
+        {
+            needSelection=true;
+        }
+        if(dirtyFlag_[10])
         {
             sql += "updated_at,";
             ++parametersCount;
@@ -311,6 +345,10 @@ class WaecVouchers
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
         }
         if(dirtyFlag_[1])
         {
@@ -332,10 +370,6 @@ class WaecVouchers
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
-        else
-        {
-            sql +="default,";
-        }
         if(dirtyFlag_[5])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
@@ -356,6 +390,24 @@ class WaecVouchers
             sql +="default,";
         }
         if(dirtyFlag_[8])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
+        }
+        if(dirtyFlag_[9])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
+        }
+        if(dirtyFlag_[10])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);

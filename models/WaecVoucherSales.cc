@@ -6,8 +6,6 @@
  */
 
 #include "WaecVoucherSales.h"
-#include "WaecMerchants.h"
-#include "WaecVouchers.h"
 #include <drogon/utils/Utilities.h>
 #include <string>
 
@@ -16,11 +14,13 @@ using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
 const std::string WaecVoucherSales::Cols::_id = "\"id\"";
+const std::string WaecVoucherSales::Cols::_business_id = "\"business_id\"";
 const std::string WaecVoucherSales::Cols::_voucher_id = "\"voucher_id\"";
 const std::string WaecVoucherSales::Cols::_merchant_id = "\"merchant_id\"";
 const std::string WaecVoucherSales::Cols::_buyer_phone = "\"buyer_phone\"";
 const std::string WaecVoucherSales::Cols::_buyer_email = "\"buyer_email\"";
 const std::string WaecVoucherSales::Cols::_sale_type = "\"sale_type\"";
+const std::string WaecVoucherSales::Cols::_status = "\"status\"";
 const std::string WaecVoucherSales::Cols::_amount_paid = "\"amount_paid\"";
 const std::string WaecVoucherSales::Cols::_commission_earned = "\"commission_earned\"";
 const std::string WaecVoucherSales::Cols::_payment_reference = "\"payment_reference\"";
@@ -31,11 +31,13 @@ const std::string WaecVoucherSales::tableName = "\"waec_voucher_sales\"";
 
 const std::vector<typename WaecVoucherSales::MetaData> WaecVoucherSales::metaData_={
 {"id","std::string","uuid",0,0,1,1},
+{"business_id","std::string","uuid",0,0,0,0},
 {"voucher_id","std::string","uuid",0,0,0,0},
 {"merchant_id","std::string","uuid",0,0,0,0},
 {"buyer_phone","std::string","character varying",20,0,0,0},
 {"buyer_email","std::string","character varying",255,0,0,0},
-{"sale_type","std::string","character varying",50,0,0,0},
+{"sale_type","int32_t","integer",4,0,0,0},
+{"status","int32_t","integer",4,0,0,0},
 {"amount_paid","std::string","numeric",0,0,0,1},
 {"commission_earned","std::string","numeric",0,0,0,0},
 {"payment_reference","std::string","character varying",255,0,0,0},
@@ -53,6 +55,10 @@ WaecVoucherSales::WaecVoucherSales(const Row &r, const ssize_t indexOffset) noex
         if(!r["id"].isNull())
         {
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+        }
+        if(!r["business_id"].isNull())
+        {
+            businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
         }
         if(!r["voucher_id"].isNull())
         {
@@ -72,7 +78,11 @@ WaecVoucherSales::WaecVoucherSales(const Row &r, const ssize_t indexOffset) noex
         }
         if(!r["sale_type"].isNull())
         {
-            saleType_=std::make_shared<std::string>(r["sale_type"].as<std::string>());
+            saleType_=std::make_shared<int32_t>(r["sale_type"].as<int32_t>());
+        }
+        if(!r["status"].isNull())
+        {
+            status_=std::make_shared<int32_t>(r["status"].as<int32_t>());
         }
         if(!r["amount_paid"].isNull())
         {
@@ -112,7 +122,7 @@ WaecVoucherSales::WaecVoucherSales(const Row &r, const ssize_t indexOffset) noex
     else
     {
         size_t offset = (size_t)indexOffset;
-        if(offset + 10 > r.size())
+        if(offset + 12 > r.size())
         {
             LOG_FATAL << "Invalid SQL result for this model";
             return;
@@ -126,44 +136,54 @@ WaecVoucherSales::WaecVoucherSales(const Row &r, const ssize_t indexOffset) noex
         index = offset + 1;
         if(!r[index].isNull())
         {
-            voucherId_=std::make_shared<std::string>(r[index].as<std::string>());
+            businessId_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 2;
         if(!r[index].isNull())
         {
-            merchantId_=std::make_shared<std::string>(r[index].as<std::string>());
+            voucherId_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 3;
         if(!r[index].isNull())
         {
-            buyerPhone_=std::make_shared<std::string>(r[index].as<std::string>());
+            merchantId_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 4;
         if(!r[index].isNull())
         {
-            buyerEmail_=std::make_shared<std::string>(r[index].as<std::string>());
+            buyerPhone_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 5;
         if(!r[index].isNull())
         {
-            saleType_=std::make_shared<std::string>(r[index].as<std::string>());
+            buyerEmail_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 6;
         if(!r[index].isNull())
         {
-            amountPaid_=std::make_shared<std::string>(r[index].as<std::string>());
+            saleType_=std::make_shared<int32_t>(r[index].as<int32_t>());
         }
         index = offset + 7;
         if(!r[index].isNull())
         {
-            commissionEarned_=std::make_shared<std::string>(r[index].as<std::string>());
+            status_=std::make_shared<int32_t>(r[index].as<int32_t>());
         }
         index = offset + 8;
         if(!r[index].isNull())
         {
-            paymentReference_=std::make_shared<std::string>(r[index].as<std::string>());
+            amountPaid_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 9;
+        if(!r[index].isNull())
+        {
+            commissionEarned_=std::make_shared<std::string>(r[index].as<std::string>());
+        }
+        index = offset + 10;
+        if(!r[index].isNull())
+        {
+            paymentReference_=std::make_shared<std::string>(r[index].as<std::string>());
+        }
+        index = offset + 11;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
@@ -192,7 +212,7 @@ WaecVoucherSales::WaecVoucherSales(const Row &r, const ssize_t indexOffset) noex
 
 WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 10)
+    if(pMasqueradingVector.size() != 12)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -210,7 +230,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[1] = true;
         if(!pJson[pMasqueradingVector[1]].isNull())
         {
-            voucherId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
+            businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
@@ -218,7 +238,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[2] = true;
         if(!pJson[pMasqueradingVector[2]].isNull())
         {
-            merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
+            voucherId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
@@ -226,7 +246,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            buyerPhone_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
@@ -234,7 +254,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[4] = true;
         if(!pJson[pMasqueradingVector[4]].isNull())
         {
-            buyerEmail_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
+            buyerPhone_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
@@ -242,7 +262,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[5] = true;
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
-            saleType_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            buyerEmail_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
@@ -250,7 +270,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[6] = true;
         if(!pJson[pMasqueradingVector[6]].isNull())
         {
-            amountPaid_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
+            saleType_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[6]].asInt64());
         }
     }
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
@@ -258,7 +278,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[7] = true;
         if(!pJson[pMasqueradingVector[7]].isNull())
         {
-            commissionEarned_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
+            status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
         }
     }
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
@@ -266,7 +286,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[8] = true;
         if(!pJson[pMasqueradingVector[8]].isNull())
         {
-            paymentReference_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
+            amountPaid_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
@@ -274,7 +294,23 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson, const std::vector<s
         dirtyFlag_[9] = true;
         if(!pJson[pMasqueradingVector[9]].isNull())
         {
-            auto timeStr = pJson[pMasqueradingVector[9]].asString();
+            commissionEarned_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
+        }
+    }
+    if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
+    {
+        dirtyFlag_[10] = true;
+        if(!pJson[pMasqueradingVector[10]].isNull())
+        {
+            paymentReference_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
+        }
+    }
+    if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
+    {
+        dirtyFlag_[11] = true;
+        if(!pJson[pMasqueradingVector[11]].isNull())
+        {
+            auto timeStr = pJson[pMasqueradingVector[11]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
@@ -307,9 +343,17 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
-    if(pJson.isMember("voucher_id"))
+    if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
+        if(!pJson["business_id"].isNull())
+        {
+            businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
+        }
+    }
+    if(pJson.isMember("voucher_id"))
+    {
+        dirtyFlag_[2]=true;
         if(!pJson["voucher_id"].isNull())
         {
             voucherId_=std::make_shared<std::string>(pJson["voucher_id"].asString());
@@ -317,7 +361,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("merchant_id"))
     {
-        dirtyFlag_[2]=true;
+        dirtyFlag_[3]=true;
         if(!pJson["merchant_id"].isNull())
         {
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
@@ -325,7 +369,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("buyer_phone"))
     {
-        dirtyFlag_[3]=true;
+        dirtyFlag_[4]=true;
         if(!pJson["buyer_phone"].isNull())
         {
             buyerPhone_=std::make_shared<std::string>(pJson["buyer_phone"].asString());
@@ -333,7 +377,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("buyer_email"))
     {
-        dirtyFlag_[4]=true;
+        dirtyFlag_[5]=true;
         if(!pJson["buyer_email"].isNull())
         {
             buyerEmail_=std::make_shared<std::string>(pJson["buyer_email"].asString());
@@ -341,15 +385,23 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("sale_type"))
     {
-        dirtyFlag_[5]=true;
+        dirtyFlag_[6]=true;
         if(!pJson["sale_type"].isNull())
         {
-            saleType_=std::make_shared<std::string>(pJson["sale_type"].asString());
+            saleType_=std::make_shared<int32_t>((int32_t)pJson["sale_type"].asInt64());
+        }
+    }
+    if(pJson.isMember("status"))
+    {
+        dirtyFlag_[7]=true;
+        if(!pJson["status"].isNull())
+        {
+            status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
     if(pJson.isMember("amount_paid"))
     {
-        dirtyFlag_[6]=true;
+        dirtyFlag_[8]=true;
         if(!pJson["amount_paid"].isNull())
         {
             amountPaid_=std::make_shared<std::string>(pJson["amount_paid"].asString());
@@ -357,7 +409,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("commission_earned"))
     {
-        dirtyFlag_[7]=true;
+        dirtyFlag_[9]=true;
         if(!pJson["commission_earned"].isNull())
         {
             commissionEarned_=std::make_shared<std::string>(pJson["commission_earned"].asString());
@@ -365,7 +417,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("payment_reference"))
     {
-        dirtyFlag_[8]=true;
+        dirtyFlag_[10]=true;
         if(!pJson["payment_reference"].isNull())
         {
             paymentReference_=std::make_shared<std::string>(pJson["payment_reference"].asString());
@@ -373,7 +425,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("created_at"))
     {
-        dirtyFlag_[9]=true;
+        dirtyFlag_[11]=true;
         if(!pJson["created_at"].isNull())
         {
             auto timeStr = pJson["created_at"].asString();
@@ -402,7 +454,7 @@ WaecVoucherSales::WaecVoucherSales(const Json::Value &pJson) noexcept(false)
 void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
                                             const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 10)
+    if(pMasqueradingVector.size() != 12)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -419,7 +471,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[1] = true;
         if(!pJson[pMasqueradingVector[1]].isNull())
         {
-            voucherId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
+            businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
@@ -427,7 +479,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[2] = true;
         if(!pJson[pMasqueradingVector[2]].isNull())
         {
-            merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
+            voucherId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
@@ -435,7 +487,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            buyerPhone_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
@@ -443,7 +495,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[4] = true;
         if(!pJson[pMasqueradingVector[4]].isNull())
         {
-            buyerEmail_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
+            buyerPhone_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
@@ -451,7 +503,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[5] = true;
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
-            saleType_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            buyerEmail_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
@@ -459,7 +511,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[6] = true;
         if(!pJson[pMasqueradingVector[6]].isNull())
         {
-            amountPaid_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
+            saleType_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[6]].asInt64());
         }
     }
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
@@ -467,7 +519,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[7] = true;
         if(!pJson[pMasqueradingVector[7]].isNull())
         {
-            commissionEarned_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
+            status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
         }
     }
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
@@ -475,7 +527,7 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[8] = true;
         if(!pJson[pMasqueradingVector[8]].isNull())
         {
-            paymentReference_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
+            amountPaid_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
@@ -483,7 +535,23 @@ void WaecVoucherSales::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[9] = true;
         if(!pJson[pMasqueradingVector[9]].isNull())
         {
-            auto timeStr = pJson[pMasqueradingVector[9]].asString();
+            commissionEarned_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
+        }
+    }
+    if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
+    {
+        dirtyFlag_[10] = true;
+        if(!pJson[pMasqueradingVector[10]].isNull())
+        {
+            paymentReference_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
+        }
+    }
+    if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
+    {
+        dirtyFlag_[11] = true;
+        if(!pJson[pMasqueradingVector[11]].isNull())
+        {
+            auto timeStr = pJson[pMasqueradingVector[11]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
@@ -515,9 +583,17 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
-    if(pJson.isMember("voucher_id"))
+    if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
+        if(!pJson["business_id"].isNull())
+        {
+            businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
+        }
+    }
+    if(pJson.isMember("voucher_id"))
+    {
+        dirtyFlag_[2] = true;
         if(!pJson["voucher_id"].isNull())
         {
             voucherId_=std::make_shared<std::string>(pJson["voucher_id"].asString());
@@ -525,7 +601,7 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("merchant_id"))
     {
-        dirtyFlag_[2] = true;
+        dirtyFlag_[3] = true;
         if(!pJson["merchant_id"].isNull())
         {
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
@@ -533,7 +609,7 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("buyer_phone"))
     {
-        dirtyFlag_[3] = true;
+        dirtyFlag_[4] = true;
         if(!pJson["buyer_phone"].isNull())
         {
             buyerPhone_=std::make_shared<std::string>(pJson["buyer_phone"].asString());
@@ -541,7 +617,7 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("buyer_email"))
     {
-        dirtyFlag_[4] = true;
+        dirtyFlag_[5] = true;
         if(!pJson["buyer_email"].isNull())
         {
             buyerEmail_=std::make_shared<std::string>(pJson["buyer_email"].asString());
@@ -549,15 +625,23 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("sale_type"))
     {
-        dirtyFlag_[5] = true;
+        dirtyFlag_[6] = true;
         if(!pJson["sale_type"].isNull())
         {
-            saleType_=std::make_shared<std::string>(pJson["sale_type"].asString());
+            saleType_=std::make_shared<int32_t>((int32_t)pJson["sale_type"].asInt64());
+        }
+    }
+    if(pJson.isMember("status"))
+    {
+        dirtyFlag_[7] = true;
+        if(!pJson["status"].isNull())
+        {
+            status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
     if(pJson.isMember("amount_paid"))
     {
-        dirtyFlag_[6] = true;
+        dirtyFlag_[8] = true;
         if(!pJson["amount_paid"].isNull())
         {
             amountPaid_=std::make_shared<std::string>(pJson["amount_paid"].asString());
@@ -565,7 +649,7 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("commission_earned"))
     {
-        dirtyFlag_[7] = true;
+        dirtyFlag_[9] = true;
         if(!pJson["commission_earned"].isNull())
         {
             commissionEarned_=std::make_shared<std::string>(pJson["commission_earned"].asString());
@@ -573,7 +657,7 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("payment_reference"))
     {
-        dirtyFlag_[8] = true;
+        dirtyFlag_[10] = true;
         if(!pJson["payment_reference"].isNull())
         {
             paymentReference_=std::make_shared<std::string>(pJson["payment_reference"].asString());
@@ -581,7 +665,7 @@ void WaecVoucherSales::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("created_at"))
     {
-        dirtyFlag_[9] = true;
+        dirtyFlag_[11] = true;
         if(!pJson["created_at"].isNull())
         {
             auto timeStr = pJson["created_at"].asString();
@@ -634,6 +718,33 @@ const typename WaecVoucherSales::PrimaryKeyType & WaecVoucherSales::getPrimaryKe
     return *id_;
 }
 
+const std::string &WaecVoucherSales::getValueOfBusinessId() const noexcept
+{
+    static const std::string defaultValue = std::string();
+    if(businessId_)
+        return *businessId_;
+    return defaultValue;
+}
+const std::shared_ptr<std::string> &WaecVoucherSales::getBusinessId() const noexcept
+{
+    return businessId_;
+}
+void WaecVoucherSales::setBusinessId(const std::string &pBusinessId) noexcept
+{
+    businessId_ = std::make_shared<std::string>(pBusinessId);
+    dirtyFlag_[1] = true;
+}
+void WaecVoucherSales::setBusinessId(std::string &&pBusinessId) noexcept
+{
+    businessId_ = std::make_shared<std::string>(std::move(pBusinessId));
+    dirtyFlag_[1] = true;
+}
+void WaecVoucherSales::setBusinessIdToNull() noexcept
+{
+    businessId_.reset();
+    dirtyFlag_[1] = true;
+}
+
 const std::string &WaecVoucherSales::getValueOfVoucherId() const noexcept
 {
     static const std::string defaultValue = std::string();
@@ -648,17 +759,17 @@ const std::shared_ptr<std::string> &WaecVoucherSales::getVoucherId() const noexc
 void WaecVoucherSales::setVoucherId(const std::string &pVoucherId) noexcept
 {
     voucherId_ = std::make_shared<std::string>(pVoucherId);
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 void WaecVoucherSales::setVoucherId(std::string &&pVoucherId) noexcept
 {
     voucherId_ = std::make_shared<std::string>(std::move(pVoucherId));
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 void WaecVoucherSales::setVoucherIdToNull() noexcept
 {
     voucherId_.reset();
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 
 const std::string &WaecVoucherSales::getValueOfMerchantId() const noexcept
@@ -675,17 +786,17 @@ const std::shared_ptr<std::string> &WaecVoucherSales::getMerchantId() const noex
 void WaecVoucherSales::setMerchantId(const std::string &pMerchantId) noexcept
 {
     merchantId_ = std::make_shared<std::string>(pMerchantId);
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 void WaecVoucherSales::setMerchantId(std::string &&pMerchantId) noexcept
 {
     merchantId_ = std::make_shared<std::string>(std::move(pMerchantId));
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 void WaecVoucherSales::setMerchantIdToNull() noexcept
 {
     merchantId_.reset();
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 
 const std::string &WaecVoucherSales::getValueOfBuyerPhone() const noexcept
@@ -702,17 +813,17 @@ const std::shared_ptr<std::string> &WaecVoucherSales::getBuyerPhone() const noex
 void WaecVoucherSales::setBuyerPhone(const std::string &pBuyerPhone) noexcept
 {
     buyerPhone_ = std::make_shared<std::string>(pBuyerPhone);
-    dirtyFlag_[3] = true;
+    dirtyFlag_[4] = true;
 }
 void WaecVoucherSales::setBuyerPhone(std::string &&pBuyerPhone) noexcept
 {
     buyerPhone_ = std::make_shared<std::string>(std::move(pBuyerPhone));
-    dirtyFlag_[3] = true;
+    dirtyFlag_[4] = true;
 }
 void WaecVoucherSales::setBuyerPhoneToNull() noexcept
 {
     buyerPhone_.reset();
-    dirtyFlag_[3] = true;
+    dirtyFlag_[4] = true;
 }
 
 const std::string &WaecVoucherSales::getValueOfBuyerEmail() const noexcept
@@ -729,44 +840,61 @@ const std::shared_ptr<std::string> &WaecVoucherSales::getBuyerEmail() const noex
 void WaecVoucherSales::setBuyerEmail(const std::string &pBuyerEmail) noexcept
 {
     buyerEmail_ = std::make_shared<std::string>(pBuyerEmail);
-    dirtyFlag_[4] = true;
+    dirtyFlag_[5] = true;
 }
 void WaecVoucherSales::setBuyerEmail(std::string &&pBuyerEmail) noexcept
 {
     buyerEmail_ = std::make_shared<std::string>(std::move(pBuyerEmail));
-    dirtyFlag_[4] = true;
+    dirtyFlag_[5] = true;
 }
 void WaecVoucherSales::setBuyerEmailToNull() noexcept
 {
     buyerEmail_.reset();
-    dirtyFlag_[4] = true;
+    dirtyFlag_[5] = true;
 }
 
-const std::string &WaecVoucherSales::getValueOfSaleType() const noexcept
+const int32_t &WaecVoucherSales::getValueOfSaleType() const noexcept
 {
-    static const std::string defaultValue = std::string();
+    static const int32_t defaultValue = int32_t();
     if(saleType_)
         return *saleType_;
     return defaultValue;
 }
-const std::shared_ptr<std::string> &WaecVoucherSales::getSaleType() const noexcept
+const std::shared_ptr<int32_t> &WaecVoucherSales::getSaleType() const noexcept
 {
     return saleType_;
 }
-void WaecVoucherSales::setSaleType(const std::string &pSaleType) noexcept
+void WaecVoucherSales::setSaleType(const int32_t &pSaleType) noexcept
 {
-    saleType_ = std::make_shared<std::string>(pSaleType);
-    dirtyFlag_[5] = true;
-}
-void WaecVoucherSales::setSaleType(std::string &&pSaleType) noexcept
-{
-    saleType_ = std::make_shared<std::string>(std::move(pSaleType));
-    dirtyFlag_[5] = true;
+    saleType_ = std::make_shared<int32_t>(pSaleType);
+    dirtyFlag_[6] = true;
 }
 void WaecVoucherSales::setSaleTypeToNull() noexcept
 {
     saleType_.reset();
-    dirtyFlag_[5] = true;
+    dirtyFlag_[6] = true;
+}
+
+const int32_t &WaecVoucherSales::getValueOfStatus() const noexcept
+{
+    static const int32_t defaultValue = int32_t();
+    if(status_)
+        return *status_;
+    return defaultValue;
+}
+const std::shared_ptr<int32_t> &WaecVoucherSales::getStatus() const noexcept
+{
+    return status_;
+}
+void WaecVoucherSales::setStatus(const int32_t &pStatus) noexcept
+{
+    status_ = std::make_shared<int32_t>(pStatus);
+    dirtyFlag_[7] = true;
+}
+void WaecVoucherSales::setStatusToNull() noexcept
+{
+    status_.reset();
+    dirtyFlag_[7] = true;
 }
 
 const std::string &WaecVoucherSales::getValueOfAmountPaid() const noexcept
@@ -783,12 +911,12 @@ const std::shared_ptr<std::string> &WaecVoucherSales::getAmountPaid() const noex
 void WaecVoucherSales::setAmountPaid(const std::string &pAmountPaid) noexcept
 {
     amountPaid_ = std::make_shared<std::string>(pAmountPaid);
-    dirtyFlag_[6] = true;
+    dirtyFlag_[8] = true;
 }
 void WaecVoucherSales::setAmountPaid(std::string &&pAmountPaid) noexcept
 {
     amountPaid_ = std::make_shared<std::string>(std::move(pAmountPaid));
-    dirtyFlag_[6] = true;
+    dirtyFlag_[8] = true;
 }
 
 const std::string &WaecVoucherSales::getValueOfCommissionEarned() const noexcept
@@ -805,17 +933,17 @@ const std::shared_ptr<std::string> &WaecVoucherSales::getCommissionEarned() cons
 void WaecVoucherSales::setCommissionEarned(const std::string &pCommissionEarned) noexcept
 {
     commissionEarned_ = std::make_shared<std::string>(pCommissionEarned);
-    dirtyFlag_[7] = true;
+    dirtyFlag_[9] = true;
 }
 void WaecVoucherSales::setCommissionEarned(std::string &&pCommissionEarned) noexcept
 {
     commissionEarned_ = std::make_shared<std::string>(std::move(pCommissionEarned));
-    dirtyFlag_[7] = true;
+    dirtyFlag_[9] = true;
 }
 void WaecVoucherSales::setCommissionEarnedToNull() noexcept
 {
     commissionEarned_.reset();
-    dirtyFlag_[7] = true;
+    dirtyFlag_[9] = true;
 }
 
 const std::string &WaecVoucherSales::getValueOfPaymentReference() const noexcept
@@ -832,17 +960,17 @@ const std::shared_ptr<std::string> &WaecVoucherSales::getPaymentReference() cons
 void WaecVoucherSales::setPaymentReference(const std::string &pPaymentReference) noexcept
 {
     paymentReference_ = std::make_shared<std::string>(pPaymentReference);
-    dirtyFlag_[8] = true;
+    dirtyFlag_[10] = true;
 }
 void WaecVoucherSales::setPaymentReference(std::string &&pPaymentReference) noexcept
 {
     paymentReference_ = std::make_shared<std::string>(std::move(pPaymentReference));
-    dirtyFlag_[8] = true;
+    dirtyFlag_[10] = true;
 }
 void WaecVoucherSales::setPaymentReferenceToNull() noexcept
 {
     paymentReference_.reset();
-    dirtyFlag_[8] = true;
+    dirtyFlag_[10] = true;
 }
 
 const ::trantor::Date &WaecVoucherSales::getValueOfCreatedAt() const noexcept
@@ -859,12 +987,12 @@ const std::shared_ptr<::trantor::Date> &WaecVoucherSales::getCreatedAt() const n
 void WaecVoucherSales::setCreatedAt(const ::trantor::Date &pCreatedAt) noexcept
 {
     createdAt_ = std::make_shared<::trantor::Date>(pCreatedAt);
-    dirtyFlag_[9] = true;
+    dirtyFlag_[11] = true;
 }
 void WaecVoucherSales::setCreatedAtToNull() noexcept
 {
     createdAt_.reset();
-    dirtyFlag_[9] = true;
+    dirtyFlag_[11] = true;
 }
 
 void WaecVoucherSales::updateId(const uint64_t id)
@@ -875,11 +1003,13 @@ const std::vector<std::string> &WaecVoucherSales::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
         "id",
+        "business_id",
         "voucher_id",
         "merchant_id",
         "buyer_phone",
         "buyer_email",
         "sale_type",
+        "status",
         "amount_paid",
         "commission_earned",
         "payment_reference",
@@ -903,6 +1033,17 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
     }
     if(dirtyFlag_[1])
     {
+        if(getBusinessId())
+        {
+            binder << getValueOfBusinessId();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[2])
+    {
         if(getVoucherId())
         {
             binder << getValueOfVoucherId();
@@ -912,7 +1053,7 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if(dirtyFlag_[3])
     {
         if(getMerchantId())
         {
@@ -923,7 +1064,7 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if(dirtyFlag_[4])
     {
         if(getBuyerPhone())
         {
@@ -934,7 +1075,7 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[4])
+    if(dirtyFlag_[5])
     {
         if(getBuyerEmail())
         {
@@ -945,7 +1086,7 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[5])
+    if(dirtyFlag_[6])
     {
         if(getSaleType())
         {
@@ -956,7 +1097,18 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[6])
+    if(dirtyFlag_[7])
+    {
+        if(getStatus())
+        {
+            binder << getValueOfStatus();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[8])
     {
         if(getAmountPaid())
         {
@@ -967,7 +1119,7 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[7])
+    if(dirtyFlag_[9])
     {
         if(getCommissionEarned())
         {
@@ -978,7 +1130,7 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[8])
+    if(dirtyFlag_[10])
     {
         if(getPaymentReference())
         {
@@ -989,7 +1141,7 @@ void WaecVoucherSales::outputArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[9])
+    if(dirtyFlag_[11])
     {
         if(getCreatedAt())
         {
@@ -1045,6 +1197,14 @@ const std::vector<std::string> WaecVoucherSales::updateColumns() const
     {
         ret.push_back(getColumnName(9));
     }
+    if(dirtyFlag_[10])
+    {
+        ret.push_back(getColumnName(10));
+    }
+    if(dirtyFlag_[11])
+    {
+        ret.push_back(getColumnName(11));
+    }
     return ret;
 }
 
@@ -1063,6 +1223,17 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
     }
     if(dirtyFlag_[1])
     {
+        if(getBusinessId())
+        {
+            binder << getValueOfBusinessId();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[2])
+    {
         if(getVoucherId())
         {
             binder << getValueOfVoucherId();
@@ -1072,7 +1243,7 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if(dirtyFlag_[3])
     {
         if(getMerchantId())
         {
@@ -1083,7 +1254,7 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if(dirtyFlag_[4])
     {
         if(getBuyerPhone())
         {
@@ -1094,7 +1265,7 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[4])
+    if(dirtyFlag_[5])
     {
         if(getBuyerEmail())
         {
@@ -1105,7 +1276,7 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[5])
+    if(dirtyFlag_[6])
     {
         if(getSaleType())
         {
@@ -1116,7 +1287,18 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[6])
+    if(dirtyFlag_[7])
+    {
+        if(getStatus())
+        {
+            binder << getValueOfStatus();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[8])
     {
         if(getAmountPaid())
         {
@@ -1127,7 +1309,7 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[7])
+    if(dirtyFlag_[9])
     {
         if(getCommissionEarned())
         {
@@ -1138,7 +1320,7 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[8])
+    if(dirtyFlag_[10])
     {
         if(getPaymentReference())
         {
@@ -1149,7 +1331,7 @@ void WaecVoucherSales::updateArgs(drogon::orm::internal::SqlBinder &binder) cons
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[9])
+    if(dirtyFlag_[11])
     {
         if(getCreatedAt())
         {
@@ -1171,6 +1353,14 @@ Json::Value WaecVoucherSales::toJson() const
     else
     {
         ret["id"]=Json::Value();
+    }
+    if(getBusinessId())
+    {
+        ret["business_id"]=getValueOfBusinessId();
+    }
+    else
+    {
+        ret["business_id"]=Json::Value();
     }
     if(getVoucherId())
     {
@@ -1211,6 +1401,14 @@ Json::Value WaecVoucherSales::toJson() const
     else
     {
         ret["sale_type"]=Json::Value();
+    }
+    if(getStatus())
+    {
+        ret["status"]=getValueOfStatus();
+    }
+    else
+    {
+        ret["status"]=Json::Value();
     }
     if(getAmountPaid())
     {
@@ -1256,7 +1454,7 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
     const std::vector<std::string> &pMasqueradingVector) const
 {
     Json::Value ret;
-    if(pMasqueradingVector.size() == 10)
+    if(pMasqueradingVector.size() == 12)
     {
         if(!pMasqueradingVector[0].empty())
         {
@@ -1271,9 +1469,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[1].empty())
         {
-            if(getVoucherId())
+            if(getBusinessId())
             {
-                ret[pMasqueradingVector[1]]=getValueOfVoucherId();
+                ret[pMasqueradingVector[1]]=getValueOfBusinessId();
             }
             else
             {
@@ -1282,9 +1480,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[2].empty())
         {
-            if(getMerchantId())
+            if(getVoucherId())
             {
-                ret[pMasqueradingVector[2]]=getValueOfMerchantId();
+                ret[pMasqueradingVector[2]]=getValueOfVoucherId();
             }
             else
             {
@@ -1293,9 +1491,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[3].empty())
         {
-            if(getBuyerPhone())
+            if(getMerchantId())
             {
-                ret[pMasqueradingVector[3]]=getValueOfBuyerPhone();
+                ret[pMasqueradingVector[3]]=getValueOfMerchantId();
             }
             else
             {
@@ -1304,9 +1502,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[4].empty())
         {
-            if(getBuyerEmail())
+            if(getBuyerPhone())
             {
-                ret[pMasqueradingVector[4]]=getValueOfBuyerEmail();
+                ret[pMasqueradingVector[4]]=getValueOfBuyerPhone();
             }
             else
             {
@@ -1315,9 +1513,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[5].empty())
         {
-            if(getSaleType())
+            if(getBuyerEmail())
             {
-                ret[pMasqueradingVector[5]]=getValueOfSaleType();
+                ret[pMasqueradingVector[5]]=getValueOfBuyerEmail();
             }
             else
             {
@@ -1326,9 +1524,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[6].empty())
         {
-            if(getAmountPaid())
+            if(getSaleType())
             {
-                ret[pMasqueradingVector[6]]=getValueOfAmountPaid();
+                ret[pMasqueradingVector[6]]=getValueOfSaleType();
             }
             else
             {
@@ -1337,9 +1535,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[7].empty())
         {
-            if(getCommissionEarned())
+            if(getStatus())
             {
-                ret[pMasqueradingVector[7]]=getValueOfCommissionEarned();
+                ret[pMasqueradingVector[7]]=getValueOfStatus();
             }
             else
             {
@@ -1348,9 +1546,9 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[8].empty())
         {
-            if(getPaymentReference())
+            if(getAmountPaid())
             {
-                ret[pMasqueradingVector[8]]=getValueOfPaymentReference();
+                ret[pMasqueradingVector[8]]=getValueOfAmountPaid();
             }
             else
             {
@@ -1359,13 +1557,35 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
         }
         if(!pMasqueradingVector[9].empty())
         {
-            if(getCreatedAt())
+            if(getCommissionEarned())
             {
-                ret[pMasqueradingVector[9]]=getCreatedAt()->toDbStringLocal();
+                ret[pMasqueradingVector[9]]=getValueOfCommissionEarned();
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
+            }
+        }
+        if(!pMasqueradingVector[10].empty())
+        {
+            if(getPaymentReference())
+            {
+                ret[pMasqueradingVector[10]]=getValueOfPaymentReference();
+            }
+            else
+            {
+                ret[pMasqueradingVector[10]]=Json::Value();
+            }
+        }
+        if(!pMasqueradingVector[11].empty())
+        {
+            if(getCreatedAt())
+            {
+                ret[pMasqueradingVector[11]]=getCreatedAt()->toDbStringLocal();
+            }
+            else
+            {
+                ret[pMasqueradingVector[11]]=Json::Value();
             }
         }
         return ret;
@@ -1378,6 +1598,14 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
     else
     {
         ret["id"]=Json::Value();
+    }
+    if(getBusinessId())
+    {
+        ret["business_id"]=getValueOfBusinessId();
+    }
+    else
+    {
+        ret["business_id"]=Json::Value();
     }
     if(getVoucherId())
     {
@@ -1418,6 +1646,14 @@ Json::Value WaecVoucherSales::toMasqueradedJson(
     else
     {
         ret["sale_type"]=Json::Value();
+    }
+    if(getStatus())
+    {
+        ret["status"]=getValueOfStatus();
+    }
+    else
+    {
+        ret["status"]=Json::Value();
     }
     if(getAmountPaid())
     {
@@ -1461,39 +1697,44 @@ bool WaecVoucherSales::validateJsonForCreation(const Json::Value &pJson, std::st
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
-    else
+    if(pJson.isMember("business_id"))
     {
-        err="The id column cannot be null";
-        return false;
+        if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
+            return false;
     }
     if(pJson.isMember("voucher_id"))
     {
-        if(!validJsonOfField(1, "voucher_id", pJson["voucher_id"], err, true))
+        if(!validJsonOfField(2, "voucher_id", pJson["voucher_id"], err, true))
             return false;
     }
     if(pJson.isMember("merchant_id"))
     {
-        if(!validJsonOfField(2, "merchant_id", pJson["merchant_id"], err, true))
+        if(!validJsonOfField(3, "merchant_id", pJson["merchant_id"], err, true))
             return false;
     }
     if(pJson.isMember("buyer_phone"))
     {
-        if(!validJsonOfField(3, "buyer_phone", pJson["buyer_phone"], err, true))
+        if(!validJsonOfField(4, "buyer_phone", pJson["buyer_phone"], err, true))
             return false;
     }
     if(pJson.isMember("buyer_email"))
     {
-        if(!validJsonOfField(4, "buyer_email", pJson["buyer_email"], err, true))
+        if(!validJsonOfField(5, "buyer_email", pJson["buyer_email"], err, true))
             return false;
     }
     if(pJson.isMember("sale_type"))
     {
-        if(!validJsonOfField(5, "sale_type", pJson["sale_type"], err, true))
+        if(!validJsonOfField(6, "sale_type", pJson["sale_type"], err, true))
+            return false;
+    }
+    if(pJson.isMember("status"))
+    {
+        if(!validJsonOfField(7, "status", pJson["status"], err, true))
             return false;
     }
     if(pJson.isMember("amount_paid"))
     {
-        if(!validJsonOfField(6, "amount_paid", pJson["amount_paid"], err, true))
+        if(!validJsonOfField(8, "amount_paid", pJson["amount_paid"], err, true))
             return false;
     }
     else
@@ -1503,17 +1744,17 @@ bool WaecVoucherSales::validateJsonForCreation(const Json::Value &pJson, std::st
     }
     if(pJson.isMember("commission_earned"))
     {
-        if(!validJsonOfField(7, "commission_earned", pJson["commission_earned"], err, true))
+        if(!validJsonOfField(9, "commission_earned", pJson["commission_earned"], err, true))
             return false;
     }
     if(pJson.isMember("payment_reference"))
     {
-        if(!validJsonOfField(8, "payment_reference", pJson["payment_reference"], err, true))
+        if(!validJsonOfField(10, "payment_reference", pJson["payment_reference"], err, true))
             return false;
     }
     if(pJson.isMember("created_at"))
     {
-        if(!validJsonOfField(9, "created_at", pJson["created_at"], err, true))
+        if(!validJsonOfField(11, "created_at", pJson["created_at"], err, true))
             return false;
     }
     return true;
@@ -1522,7 +1763,7 @@ bool WaecVoucherSales::validateMasqueradedJsonForCreation(const Json::Value &pJs
                                                           const std::vector<std::string> &pMasqueradingVector,
                                                           std::string &err)
 {
-    if(pMasqueradingVector.size() != 10)
+    if(pMasqueradingVector.size() != 12)
     {
         err = "Bad masquerading vector";
         return false;
@@ -1535,11 +1776,6 @@ bool WaecVoucherSales::validateMasqueradedJsonForCreation(const Json::Value &pJs
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
-        else
-        {
-            err="The " + pMasqueradingVector[0] + " column cannot be null";
-            return false;
-        }
       }
       if(!pMasqueradingVector[1].empty())
       {
@@ -1588,11 +1824,6 @@ bool WaecVoucherSales::validateMasqueradedJsonForCreation(const Json::Value &pJs
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
-        else
-        {
-            err="The " + pMasqueradingVector[6] + " column cannot be null";
-            return false;
-        }
       }
       if(!pMasqueradingVector[7].empty())
       {
@@ -1609,12 +1840,33 @@ bool WaecVoucherSales::validateMasqueradedJsonForCreation(const Json::Value &pJs
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+        else
+        {
+            err="The " + pMasqueradingVector[8] + " column cannot be null";
+            return false;
+        }
       }
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
           {
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
+                  return false;
+          }
+      }
+      if(!pMasqueradingVector[10].empty())
+      {
+          if(pJson.isMember(pMasqueradingVector[10]))
+          {
+              if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
+                  return false;
+          }
+      }
+      if(!pMasqueradingVector[11].empty())
+      {
+          if(pJson.isMember(pMasqueradingVector[11]))
+          {
+              if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, true))
                   return false;
           }
       }
@@ -1638,49 +1890,59 @@ bool WaecVoucherSales::validateJsonForUpdate(const Json::Value &pJson, std::stri
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+    if(pJson.isMember("business_id"))
+    {
+        if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
+            return false;
+    }
     if(pJson.isMember("voucher_id"))
     {
-        if(!validJsonOfField(1, "voucher_id", pJson["voucher_id"], err, false))
+        if(!validJsonOfField(2, "voucher_id", pJson["voucher_id"], err, false))
             return false;
     }
     if(pJson.isMember("merchant_id"))
     {
-        if(!validJsonOfField(2, "merchant_id", pJson["merchant_id"], err, false))
+        if(!validJsonOfField(3, "merchant_id", pJson["merchant_id"], err, false))
             return false;
     }
     if(pJson.isMember("buyer_phone"))
     {
-        if(!validJsonOfField(3, "buyer_phone", pJson["buyer_phone"], err, false))
+        if(!validJsonOfField(4, "buyer_phone", pJson["buyer_phone"], err, false))
             return false;
     }
     if(pJson.isMember("buyer_email"))
     {
-        if(!validJsonOfField(4, "buyer_email", pJson["buyer_email"], err, false))
+        if(!validJsonOfField(5, "buyer_email", pJson["buyer_email"], err, false))
             return false;
     }
     if(pJson.isMember("sale_type"))
     {
-        if(!validJsonOfField(5, "sale_type", pJson["sale_type"], err, false))
+        if(!validJsonOfField(6, "sale_type", pJson["sale_type"], err, false))
+            return false;
+    }
+    if(pJson.isMember("status"))
+    {
+        if(!validJsonOfField(7, "status", pJson["status"], err, false))
             return false;
     }
     if(pJson.isMember("amount_paid"))
     {
-        if(!validJsonOfField(6, "amount_paid", pJson["amount_paid"], err, false))
+        if(!validJsonOfField(8, "amount_paid", pJson["amount_paid"], err, false))
             return false;
     }
     if(pJson.isMember("commission_earned"))
     {
-        if(!validJsonOfField(7, "commission_earned", pJson["commission_earned"], err, false))
+        if(!validJsonOfField(9, "commission_earned", pJson["commission_earned"], err, false))
             return false;
     }
     if(pJson.isMember("payment_reference"))
     {
-        if(!validJsonOfField(8, "payment_reference", pJson["payment_reference"], err, false))
+        if(!validJsonOfField(10, "payment_reference", pJson["payment_reference"], err, false))
             return false;
     }
     if(pJson.isMember("created_at"))
     {
-        if(!validJsonOfField(9, "created_at", pJson["created_at"], err, false))
+        if(!validJsonOfField(11, "created_at", pJson["created_at"], err, false))
             return false;
     }
     return true;
@@ -1689,7 +1951,7 @@ bool WaecVoucherSales::validateMasqueradedJsonForUpdate(const Json::Value &pJson
                                                         const std::vector<std::string> &pMasqueradingVector,
                                                         std::string &err)
 {
-    if(pMasqueradingVector.size() != 10)
+    if(pMasqueradingVector.size() != 12)
     {
         err = "Bad masquerading vector";
         return false;
@@ -1748,6 +2010,16 @@ bool WaecVoucherSales::validateMasqueradedJsonForUpdate(const Json::Value &pJson
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
+              return false;
+      }
+      if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
+      {
+          if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
+              return false;
+      }
+      if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
+      {
+          if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, false))
               return false;
       }
     }
@@ -1810,14 +2082,6 @@ bool WaecVoucherSales::validJsonOfField(size_t index,
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
-            {
-                err="String length exceeds limit for the " +
-                    fieldName +
-                    " field (the maximum value is 20)";
-                return false;
-            }
             break;
         case 4:
             if(pJson.isNull())
@@ -1830,11 +2094,11 @@ bool WaecVoucherSales::validJsonOfField(size_t index,
                 return false;
             }
             if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 255)
+                .from_bytes(pJson.asCString()).size() > 20)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
-                    " field (the maximum value is 255)";
+                    " field (the maximum value is 20)";
                 return false;
             }
             break;
@@ -1849,15 +2113,37 @@ bool WaecVoucherSales::validJsonOfField(size_t index,
                 return false;
             }
             if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+                .from_bytes(pJson.asCString()).size() > 255)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
-                    " field (the maximum value is 50)";
+                    " field (the maximum value is 255)";
                 return false;
             }
             break;
         case 6:
+            if(pJson.isNull())
+            {
+                return true;
+            }
+            if(!pJson.isInt())
+            {
+                err="Type error in the "+fieldName+" field";
+                return false;
+            }
+            break;
+        case 7:
+            if(pJson.isNull())
+            {
+                return true;
+            }
+            if(!pJson.isInt())
+            {
+                err="Type error in the "+fieldName+" field";
+                return false;
+            }
+            break;
+        case 8:
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
@@ -1869,7 +2155,7 @@ bool WaecVoucherSales::validJsonOfField(size_t index,
                 return false;
             }
             break;
-        case 7:
+        case 9:
             if(pJson.isNull())
             {
                 return true;
@@ -1880,7 +2166,7 @@ bool WaecVoucherSales::validJsonOfField(size_t index,
                 return false;
             }
             break;
-        case 8:
+        case 10:
             if(pJson.isNull())
             {
                 return true;
@@ -1899,7 +2185,7 @@ bool WaecVoucherSales::validJsonOfField(size_t index,
                 return false;
             }
             break;
-        case 9:
+        case 11:
             if(pJson.isNull())
             {
                 return true;
@@ -1915,90 +2201,4 @@ bool WaecVoucherSales::validJsonOfField(size_t index,
             return false;
     }
     return true;
-}
-WaecMerchants WaecVoucherSales::getWaecMerchants(const DbClientPtr &clientPtr) const {
-    static const std::string sql = "select * from waec_merchants where id = $1";
-    Result r(nullptr);
-    {
-        auto binder = *clientPtr << sql;
-        binder << *merchantId_ << Mode::Blocking >>
-            [&r](const Result &result) { r = result; };
-        binder.exec();
-    }
-    if (r.size() == 0)
-    {
-        throw UnexpectedRows("0 rows found");
-    }
-    else if (r.size() > 1)
-    {
-        throw UnexpectedRows("Found more than one row");
-    }
-    return WaecMerchants(r[0]);
-}
-
-void WaecVoucherSales::getWaecMerchants(const DbClientPtr &clientPtr,
-                                        const std::function<void(WaecMerchants)> &rcb,
-                                        const ExceptionCallback &ecb) const
-{
-    static const std::string sql = "select * from waec_merchants where id = $1";
-    *clientPtr << sql
-               << *merchantId_
-               >> [rcb = std::move(rcb), ecb](const Result &r){
-                    if (r.size() == 0)
-                    {
-                        ecb(UnexpectedRows("0 rows found"));
-                    }
-                    else if (r.size() > 1)
-                    {
-                        ecb(UnexpectedRows("Found more than one row"));
-                    }
-                    else
-                    {
-                        rcb(WaecMerchants(r[0]));
-                    }
-               }
-               >> ecb;
-}
-WaecVouchers WaecVoucherSales::getWaecVouchers(const DbClientPtr &clientPtr) const {
-    static const std::string sql = "select * from waec_vouchers where id = $1";
-    Result r(nullptr);
-    {
-        auto binder = *clientPtr << sql;
-        binder << *voucherId_ << Mode::Blocking >>
-            [&r](const Result &result) { r = result; };
-        binder.exec();
-    }
-    if (r.size() == 0)
-    {
-        throw UnexpectedRows("0 rows found");
-    }
-    else if (r.size() > 1)
-    {
-        throw UnexpectedRows("Found more than one row");
-    }
-    return WaecVouchers(r[0]);
-}
-
-void WaecVoucherSales::getWaecVouchers(const DbClientPtr &clientPtr,
-                                       const std::function<void(WaecVouchers)> &rcb,
-                                       const ExceptionCallback &ecb) const
-{
-    static const std::string sql = "select * from waec_vouchers where id = $1";
-    *clientPtr << sql
-               << *voucherId_
-               >> [rcb = std::move(rcb), ecb](const Result &r){
-                    if (r.size() == 0)
-                    {
-                        ecb(UnexpectedRows("0 rows found"));
-                    }
-                    else if (r.size() > 1)
-                    {
-                        ecb(UnexpectedRows("Found more than one row"));
-                    }
-                    else
-                    {
-                        rcb(WaecVouchers(r[0]));
-                    }
-               }
-               >> ecb;
 }
