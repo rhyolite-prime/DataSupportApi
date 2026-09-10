@@ -81,7 +81,6 @@ namespace data_support::dto::erp_api {
 
     };
 
-
     inline void SyncPosBranchDto::fromJson(const Json::Value& json) {
 
         // Parse wrapper fields (top-level)
@@ -137,6 +136,103 @@ namespace data_support::dto::erp_api {
             if (data.isMember("IsDefault") && !data["IsDefault"].isNull()) {
                 is_default_ = data["IsDefault"].asBool();
             }
+            if (data.isMember("TenantId") && !data["TenantId"].isNull()) {
+                tenant_id_ = data["TenantId"].asInt();
+            }
+
+    }
+
+
+    class SyncInventoryCategoryDto {
+        public:
+
+        SyncInventoryCategoryDto() = default;
+
+        void fromJson(const Json::Value& json);
+
+        // Getters for wrapper fields
+        [[nodiscard]] const std::string& getOperation() const { return operation_; }
+        [[nodiscard]] const std::string& getBusinessAccountId() const { return business_account_id_; }
+
+        [[nodiscard]] const std::string& getId() const { return id_; }
+        [[nodiscard]] const std::string& getName() const { return name_; }
+        [[nodiscard]] const std::string& getSlug() const { return slug_; }
+        [[nodiscard]] const std::string& getDescription() const { return description_; }
+        [[nodiscard]] const std::string& getParentCategoryId() const { return parent_category_id_; }
+        [[nodiscard]] bool getIsService() const { return is_service_; }
+        [[nodiscard]] int getProductCount() const { return product_count_; }
+        [[nodiscard]] int getTenantId() const { return tenant_id_; }
+
+        // Setters
+        void setOperation(const std::string& value) { operation_ = value; }
+        void setBusinessAccountId(const std::string& value) { business_account_id_ = value; }
+
+        void setId(const std::string& value) { id_ = value; }
+        void setName(const std::string& value) { name_ = value; }
+        void setSlug(const std::string& value) { slug_ = value; }
+        void setDescription(const std::string& value) { description_ = value; }
+        void setParentCategoryId(const std::string& value) { parent_category_id_ = value; }
+        void setIsService(bool value) { is_service_ = value; }
+        void setProductCount(int value) { product_count_ = value; }
+        void setTenantId(int value) { tenant_id_ = value; }
+
+
+    private:
+
+        std::string operation_;
+        std::string business_account_id_;
+
+        std::string id_;
+        std::string name_;
+        std::string slug_;
+        std::string description_;
+        bool is_service_ {false};
+        std::string parent_category_id_;
+        int product_count_ {0};
+        int tenant_id_ {0};
+    };
+
+
+    inline void SyncInventoryCategoryDto::fromJson(const Json::Value& json) {
+
+        // Parse wrapper fields (top-level)
+        if (json.isMember("Operation") && !json["Operation"].isNull()) {
+            setOperation(json["Operation"].asString());
+        }
+        if (json.isMember("BusinessAccountId") && !json["BusinessAccountId"].isNull()) {
+            setBusinessAccountId(json["BusinessAccountId"].asString());
+        }
+
+        const Json::Value& data = json.isMember("data") ? json["data"] : json;
+
+            if (data.isMember("Id") && !data["Id"].isNull()) {
+                id_ = data["Id"].asString();
+            }
+
+            if (data.isMember("Name") && !data["Name"].isNull()) {
+                name_ = data["Name"].asString();
+            }
+
+            if (data.isMember("Slug") && !data["Slug"].isNull()) {
+                slug_ = data["Slug"].asString();
+            }
+
+            if (data.isMember("Description") && !data["Description"].isNull()) {
+                description_ = data["Description"].asString();
+            }
+
+            if (data.isMember("ParentCategoryId") && !data["ParentCategoryId"].isNull()) {
+                parent_category_id_ = data["ParentCategoryId"].asString();
+            }
+
+            if (data.isMember("IsService") && !data["IsService"].isNull()) {
+                is_service_ = data["IsService"].asBool();
+            }
+
+            if (data.isMember("ProductCount") && !data["ProductCount"].isNull()) {
+                product_count_ = data["ProductCount"].asInt();
+            }
+
             if (data.isMember("TenantId") && !data["TenantId"].isNull()) {
                 tenant_id_ = data["TenantId"].asInt();
             }

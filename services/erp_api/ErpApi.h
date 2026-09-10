@@ -8,7 +8,7 @@
 #include <drogon/drogon.h>
 #include "dto/BaseApiResponse.h"
 #include "dto/erp_api/SyncApiCredentialDto.h"
-#include "dto/erp_api/SyncPosBranchDto.h"
+#include "dto/erp_api/UnifiedSyncDto.h"
 
 namespace data_support::services {
 
@@ -72,6 +72,8 @@ namespace data_support::services {
         drogon::Task<dto::BaseApiResponse> syncApiCredentials(const dto::erp_api::SyncApiCredentialDto &dto);
 
         drogon::Task<dto::BaseApiResponse> syncPosBranches(const dto::erp_api::SyncPosBranchDto &dto);
+
+        drogon::Task<dto::BaseApiResponse> syncPosInventoryCategories(const dto::erp_api::SyncInventoryCategoryDto &dto);
 
 
     };

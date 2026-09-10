@@ -70,7 +70,7 @@ add_executable(${PROJECT_NAME} main.cc
         dto/SendEmailDto.h
         services/email/EmailApi.cc
         dto/erp_api/SyncApiCredentialDto.h
-        dto/erp_api/SyncPosBranchDto.h
+        dto/erp_api/UnifiedSyncDto.h
         services/pay_stack_api/PaystackApi.h
         services/pay_stack_api/PaystackApi.cc
 )

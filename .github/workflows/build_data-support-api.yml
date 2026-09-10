@@ -61,7 +61,7 @@ jobs:
       - name: Upload Binary
         uses: actions/upload-artifact@v4
         with:
-          name: ds-api
+          name: ultra-magnus
           path: build/DataSupportApi
 
 
