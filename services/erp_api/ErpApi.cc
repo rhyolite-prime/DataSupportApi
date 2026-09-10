@@ -7,8 +7,13 @@
 #include <drogon/drogon.h>
 #include <drogon/orm/CoroMapper.h>
 
+#include "ErpCurrencies.h"
 #include "PosBranches.h"
+#include "PosCoupons.h"
+#include "PosDeliveryChannels.h"
 #include "PosInventoryCategories.h"
+#include "PosInventoryItems.h"
+#include "PosPickupPoints.h"
 
 namespace data_support::services {
 
@@ -216,9 +221,9 @@ namespace data_support::services {
     }
 
 
-    //------- SYNC API CREDENTIALS ----------
+    //------- SYNC API RESOURCES ----------
 
-    drogon::Task<dto::BaseApiResponse> ErpApi::syncApiCredentials(const dto::erp_api::SyncApiCredentialDto &dto) {
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncApiCredentials(const dto::erp_api::SyncApiCredentialDto &dto) {
 
         dto::BaseApiResponse response;
 
@@ -227,7 +232,7 @@ namespace data_support::services {
             drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> mapper(dbClient);
 
             auto account = co_await mapper.findByPrimaryKey(dto.getBusinessAccountId());
-            
+
             std::string configStr = account.getValueOfConfigurationData();
             Json::Value configData;
             Json::CharReaderBuilder readerBuilder;
@@ -270,7 +275,6 @@ namespace data_support::services {
 
         co_return response;
     }
-
 
   drogon::Task<dto::BaseApiResponse> ErpApi::syncPosBranches(const dto::erp_api::SyncPosBranchDto &dto) {
     dto::BaseApiResponse response;
@@ -382,7 +386,7 @@ namespace data_support::services {
         co_return response;
     }
 
-    drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryCategories(const dto::erp_api::SyncInventoryCategoryDto &dto) {
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryCategories(const dto::erp_api::SyncInventoryCategoryDto &dto) {
 
     dto::BaseApiResponse response;
 
@@ -529,6 +533,947 @@ namespace data_support::services {
 
     co_return response;
 }
+
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncPosCoupons(const dto::erp_api::SyncPosCouponDto &dto) {
+
+    dto::BaseApiResponse response;
+
+    LOG_INFO << "[syncPosCoupons] Entering method. Operation: '" << dto.getOperation()
+             << "', BusinessAccountId: '" << dto.getBusinessAccountId()
+             << "', CouponIdentifier: '" << dto.getCouponIdentifier() << "'";
+
+    try {
+        auto dbClient = drogon::app().getDbClient();
+        if (!dbClient) {
+            LOG_ERROR << "[syncPosCoupons] Failed to get database client!";
+            response.message = "Database client unavailable.";
+            response.success = false;
+            co_return response;
+        }
+        LOG_DEBUG << "[syncPosCoupons] Database client obtained.";
+
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::PosCoupons> mapper(dbClient);
+        LOG_DEBUG << "[syncPosCoupons] CoroMapper created.";
+
+        // ---------------------------------------------------------------
+        // Envelope validation
+        // ---------------------------------------------------------------
+        const std::string& businessAccountId = dto.getBusinessAccountId();
+        const std::string& operation         = dto.getOperation();
+
+        if (businessAccountId.empty()) {
+            LOG_WARN << "[syncPosCoupons] BusinessAccountId is empty. Aborting.";
+            response.message = "BusinessAccountId is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        if (dto.getCouponIdentifier().empty()) {
+            LOG_WARN << "[syncPosCoupons] CouponIdentifier is empty. Aborting.";
+            response.message = "CouponIdentifier is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // DELETE — resolve by CouponIdentifier + BusinessId
+        // ---------------------------------------------------------------
+        if (operation == "delete") {
+            LOG_INFO << "[syncPosCoupons] Attempting to DELETE coupon: "
+                     << dto.getCouponIdentifier();
+
+            auto deletedCount = co_await mapper.deleteBy(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosCoupons::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosCoupons::Cols::_coupon_identifier,
+                    drogon::orm::CompareOperator::EQ, dto.getCouponIdentifier()));
+
+            LOG_INFO << "[syncPosCoupons] DELETE completed for coupon: "
+                     << dto.getCouponIdentifier()
+                     << ", rows affected: " << deletedCount;
+
+            response.message = "Coupon deleted successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // BUILD MODEL for create / update
+        // ---------------------------------------------------------------
+        LOG_DEBUG << "[syncPosCoupons] Populating coupon model with DTO data...";
+
+        drogon_model::DataSupportDb::PosCoupons coupon;
+
+        coupon.setBusinessId(businessAccountId);
+        coupon.setCouponValue(std::to_string(dto.getCouponValue()));
+        coupon.setMinimumOrderLimit(std::to_string(dto.getMinimumOrderLimit()));
+        coupon.setMaximumOrderLimit(std::to_string(dto.getMaximumOrderLimit()));
+        coupon.setCouponIdentifier(dto.getCouponIdentifier());
+        coupon.setValidTill(trantor::Date::fromDbStringLocal(dto.getValidTill()));
+        coupon.setUsageQuota(dto.getUsageQuota());
+        coupon.setUsageCount(dto.getUsageCount());
+        coupon.setStatus(dto.getStatus());
+        coupon.setUsePercentage(dto.getUsePercentage());
+        coupon.setBranchId(dto.getBranchId());
+        coupon.setBranchName(dto.getBranchName());
+
+        // Serialize the Assignments array to a JSON string for storage
+        if (!dto.getAssignments().isNull() && dto.getAssignments().isArray()) {
+            Json::StreamWriterBuilder writer;
+            writer["indentation"] = "";
+            coupon.setAssignments(
+                Json::writeString(writer, dto.getAssignments()));
+        } else {
+            coupon.setAssignments("[]");
+        }
+
+        LOG_DEBUG << "[syncPosCoupons] Coupon model populated. Identifier: "
+                  << coupon.getValueOfCouponIdentifier()
+                  << ", Value: " << coupon.getValueOfCouponValue();
+
+        // ---------------------------------------------------------------
+        // CREATE
+        // ---------------------------------------------------------------
+        if (operation == "create") {
+            LOG_INFO << "[syncPosCoupons] Attempting to INSERT coupon: "
+                     << dto.getCouponIdentifier();
+
+            coupon.setCreatedAt(trantor::Date::now());
+            co_await mapper.insert(coupon);
+
+            LOG_INFO << "[syncPosCoupons] INSERT successful for coupon: "
+                     << dto.getCouponIdentifier();
+
+            response.message = "Coupon created successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UPDATE
+        // ---------------------------------------------------------------
+        if (operation == "update") {
+            LOG_INFO << "[syncPosCoupons] Attempting to UPDATE coupon: "
+                     << dto.getCouponIdentifier();
+
+            // Since the DTO does not carry the primary key, look up the
+            // existing record by (business_id, coupon_identifier) first
+            // and copy its primary key onto the model before updating.
+            auto existing = co_await mapper.findOne(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosCoupons::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosCoupons::Cols::_coupon_identifier,
+                    drogon::orm::CompareOperator::EQ, dto.getCouponIdentifier()));
+
+            coupon.setId(existing.getValueOfId());
+            coupon.setUpdatedAt(trantor::Date::now());
+
+            auto updatedCount = co_await mapper.update(coupon);
+
+            LOG_INFO << "[syncPosCoupons] UPDATE successful for coupon: "
+                     << dto.getCouponIdentifier()
+                     << ", rows affected: " << updatedCount;
+
+            response.message = "Coupon updated successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UNKNOWN OPERATION
+        // ---------------------------------------------------------------
+        LOG_WARN << "[syncPosCoupons] Unsupported operation: '" << operation
+                 << "' for coupon: " << dto.getCouponIdentifier();
+        response.message = "Unsupported operation: " + operation;
+        response.success = false;
+
+    } catch (const drogon::orm::UnexpectedRows &e) {
+        LOG_ERROR << "[syncPosCoupons] UnexpectedRows exception: " << e.what()
+                  << ". The coupon may not exist for update.";
+        response.message = "Record not found or database inconsistency: "
+                           + std::string(e.what());
+        response.success = false;
+
+    } catch (const drogon::orm::DrogonDbException &e) {
+        LOG_ERROR << "[syncPosCoupons] Database error: " << e.base().what();
+        response.message = "Database error occurred while syncing coupon: "
+                           + std::string(e.base().what());
+        response.success = false;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "[syncPosCoupons] General exception: " << e.what();
+        response.message = "Failed to sync coupon. Please try again. Error: "
+                           + std::string(e.what());
+        response.success = false;
+    }
+
+    LOG_INFO << "[syncPosCoupons] Exiting method. Success: " << response.success
+             << ", Message: '" << response.message << "'";
+
+    co_return response;
+}
+
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncErpCurrencies(const dto::erp_api::SyncErpCurrencyDto &dto) {
+
+    dto::BaseApiResponse response;
+
+    LOG_INFO << "[syncErpCurrencies] Entering method. Operation: '" << dto.getOperation()
+             << "', BusinessAccountId: '" << dto.getBusinessAccountId()
+             << "', CurrencyCode: '" << dto.getCode() << "'";
+
+    try {
+        auto dbClient = drogon::app().getDbClient();
+        if (!dbClient) {
+            LOG_ERROR << "[syncErpCurrencies] Failed to get database client!";
+            response.message = "Database client unavailable.";
+            response.success = false;
+            co_return response;
+        }
+        LOG_DEBUG << "[syncErpCurrencies] Database client obtained.";
+
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::ErpCurrencies> mapper(dbClient);
+        LOG_DEBUG << "[syncErpCurrencies] CoroMapper created.";
+
+        // ---------------------------------------------------------------
+        // Envelope validation
+        // ---------------------------------------------------------------
+        const std::string& businessAccountId = dto.getBusinessAccountId();
+        const std::string& operation         = dto.getOperation();
+
+        if (businessAccountId.empty()) {
+            LOG_WARN << "[syncErpCurrencies] BusinessAccountId is empty. Aborting.";
+            response.message = "BusinessAccountId is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        if (dto.getCode().empty()) {
+            LOG_WARN << "[syncErpCurrencies] Currency Code is empty. Aborting.";
+            response.message = "Currency Code is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // DELETE — resolve by (business_id, code)
+        // ---------------------------------------------------------------
+        if (operation == "delete") {
+            LOG_INFO << "[syncErpCurrencies] Attempting to DELETE currency: "
+                     << dto.getCode();
+
+            auto deletedCount = co_await mapper.deleteBy(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::ErpCurrencies::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::ErpCurrencies::Cols::_code,
+                    drogon::orm::CompareOperator::EQ, dto.getCode()));
+
+            LOG_INFO << "[syncErpCurrencies] DELETE completed for currency: "
+                     << dto.getCode()
+                     << ", rows affected: " << deletedCount;
+
+            response.message = "Currency deleted successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // BUILD MODEL for create / update
+        // ---------------------------------------------------------------
+        LOG_DEBUG << "[syncErpCurrencies] Populating currency model with DTO data...";
+
+        drogon_model::DataSupportDb::ErpCurrencies currency;
+
+        currency.setBusinessId(businessAccountId);
+        currency.setName(dto.getName());
+        currency.setCode(dto.getCode());
+        currency.setMinorName(dto.getMinorName());
+        currency.setBuyRate(std::to_string(dto.getBuyRate()));
+        currency.setSellRate(std::to_string(dto.getSellRate()));
+        currency.setIsDefault(dto.getIsDefault());
+
+        LOG_DEBUG << "[syncErpCurrencies] Currency model populated. Code: "
+                  << currency.getValueOfCode()
+                  << ", Name: " << currency.getValueOfName();
+
+        // ---------------------------------------------------------------
+        // CREATE
+        // ---------------------------------------------------------------
+        if (operation == "create") {
+            LOG_INFO << "[syncErpCurrencies] Attempting to INSERT currency: "
+                     << dto.getCode();
+
+            currency.setCreatedAt(trantor::Date::now());
+            co_await mapper.insert(currency);
+
+            LOG_INFO << "[syncErpCurrencies] INSERT successful for currency: "
+                     << dto.getCode();
+
+            response.message = "Currency created successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UPDATE
+        // ---------------------------------------------------------------
+        if (operation == "update") {
+            LOG_INFO << "[syncErpCurrencies] Attempting to UPDATE currency: "
+                     << dto.getCode();
+
+            // Look up the existing row by (business_id, code) to obtain
+            // its primary key, then copy it onto the model before updating.
+            auto existing = co_await mapper.findOne(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::ErpCurrencies::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::ErpCurrencies::Cols::_code,
+                    drogon::orm::CompareOperator::EQ, dto.getCode()));
+
+            currency.setId(existing.getValueOfId());
+            currency.setUpdatedAt(trantor::Date::now());
+
+            auto updatedCount = co_await mapper.update(currency);
+
+            LOG_INFO << "[syncErpCurrencies] UPDATE successful for currency: "
+                     << dto.getCode()
+                     << ", rows affected: " << updatedCount;
+
+            response.message = "Currency updated successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UNKNOWN OPERATION
+        // ---------------------------------------------------------------
+        LOG_WARN << "[syncErpCurrencies] Unsupported operation: '" << operation
+                 << "' for currency: " << dto.getCode();
+        response.message = "Unsupported operation: " + operation;
+        response.success = false;
+
+    } catch (const drogon::orm::UnexpectedRows &e) {
+        LOG_ERROR << "[syncErpCurrencies] UnexpectedRows exception: " << e.what()
+                  << ". The currency may not exist for update.";
+        response.message = "Record not found or database inconsistency: "
+                           + std::string(e.what());
+        response.success = false;
+
+    } catch (const drogon::orm::DrogonDbException &e) {
+        LOG_ERROR << "[syncErpCurrencies] Database error: " << e.base().what();
+        response.message = "Database error occurred while syncing currency: "
+                           + std::string(e.base().what());
+        response.success = false;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "[syncErpCurrencies] General exception: " << e.what();
+        response.message = "Failed to sync currency. Please try again. Error: "
+                           + std::string(e.what());
+        response.success = false;
+    }
+
+    LOG_INFO << "[syncErpCurrencies] Exiting method. Success: " << response.success
+             << ", Message: '" << response.message << "'";
+
+    co_return response;
+}
+
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncPosDeliveryChannels(const dto::erp_api::SyncPosDeliveryChannelDto &dto) {
+
+    dto::BaseApiResponse response;
+
+    LOG_INFO << "[syncPosDeliveryChannels] Entering method. Operation: '" << dto.getOperation()
+             << "', BusinessAccountId: '" << dto.getBusinessAccountId()
+             << "', ChannelName: '" << dto.getName() << "'";
+
+    try {
+        auto dbClient = drogon::app().getDbClient();
+        if (!dbClient) {
+            LOG_ERROR << "[syncPosDeliveryChannels] Failed to get database client!";
+            response.message = "Database client unavailable.";
+            response.success = false;
+            co_return response;
+        }
+        LOG_DEBUG << "[syncPosDeliveryChannels] Database client obtained.";
+
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::PosDeliveryChannels> mapper(dbClient);
+        LOG_DEBUG << "[syncPosDeliveryChannels] CoroMapper created.";
+
+        // ---------------------------------------------------------------
+        // Envelope validation
+        // ---------------------------------------------------------------
+        const std::string& businessAccountId = dto.getBusinessAccountId();
+        const std::string& operation         = dto.getOperation();
+
+        if (businessAccountId.empty()) {
+            LOG_WARN << "[syncPosDeliveryChannels] BusinessAccountId is empty. Aborting.";
+            response.message = "BusinessAccountId is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        if (dto.getName().empty()) {
+            LOG_WARN << "[syncPosDeliveryChannels] Delivery channel Name is empty. Aborting.";
+            response.message = "Delivery channel Name is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // DELETE — resolve by (business_id, name)
+        // ---------------------------------------------------------------
+        if (operation == "delete") {
+            LOG_INFO << "[syncPosDeliveryChannels] Attempting to DELETE delivery channel: "
+                     << dto.getName();
+
+            auto deletedCount = co_await mapper.deleteBy(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosDeliveryChannels::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosDeliveryChannels::Cols::_name,
+                    drogon::orm::CompareOperator::EQ, dto.getName()));
+
+            LOG_INFO << "[syncPosDeliveryChannels] DELETE completed for channel: "
+                     << dto.getName()
+                     << ", rows affected: " << deletedCount;
+
+            response.message = "Delivery channel deleted successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // BUILD MODEL for create / update
+        // ---------------------------------------------------------------
+        LOG_DEBUG << "[syncPosDeliveryChannels] Populating delivery channel model with DTO data...";
+
+        drogon_model::DataSupportDb::PosDeliveryChannels channel;
+
+        channel.setBusinessId(businessAccountId);
+        channel.setName(dto.getName());
+        channel.setDescription(dto.getDescription());
+        channel.setIsLocal(dto.getIsLocal());
+
+        // Serialize the ZoneRates array to a JSON string for storage
+        if (!dto.getZoneRates().isNull() && dto.getZoneRates().isArray()) {
+            Json::StreamWriterBuilder writer;
+            writer["indentation"] = "";
+            channel.setZoneRates(
+                Json::writeString(writer, dto.getZoneRates()));
+        } else {
+            channel.setZoneRates("[]");
+        }
+
+        LOG_DEBUG << "[syncPosDeliveryChannels] Channel model populated. Name: "
+                  << channel.getValueOfName()
+                  << ", IsLocal: " << channel.getValueOfIsLocal()
+                  << ", ZoneRates count: " << dto.getZoneRates().size();
+
+        // ---------------------------------------------------------------
+        // CREATE
+        // ---------------------------------------------------------------
+        if (operation == "create") {
+            LOG_INFO << "[syncPosDeliveryChannels] Attempting to INSERT channel: "
+                     << dto.getName();
+
+            channel.setCreatedAt(trantor::Date::now());
+            co_await mapper.insert(channel);
+
+            LOG_INFO << "[syncPosDeliveryChannels] INSERT successful for channel: "
+                     << dto.getName();
+
+            response.message = "Delivery channel created successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UPDATE
+        // ---------------------------------------------------------------
+        if (operation == "update") {
+            LOG_INFO << "[syncPosDeliveryChannels] Attempting to UPDATE channel: "
+                     << dto.getName();
+
+            // Look up the existing row by (business_id, name) to obtain
+            // its primary key, then copy it onto the model before updating.
+            auto existing = co_await mapper.findOne(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosDeliveryChannels::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosDeliveryChannels::Cols::_name,
+                    drogon::orm::CompareOperator::EQ, dto.getName()));
+
+            channel.setId(existing.getValueOfId());
+            channel.setUpdatedAt(trantor::Date::now());
+
+            auto updatedCount = co_await mapper.update(channel);
+
+            LOG_INFO << "[syncPosDeliveryChannels] UPDATE successful for channel: "
+                     << dto.getName()
+                     << ", rows affected: " << updatedCount;
+
+            response.message = "Delivery channel updated successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UNKNOWN OPERATION
+        // ---------------------------------------------------------------
+        LOG_WARN << "[syncPosDeliveryChannels] Unsupported operation: '" << operation
+                 << "' for channel: " << dto.getName();
+        response.message = "Unsupported operation: " + operation;
+        response.success = false;
+
+    } catch (const drogon::orm::UnexpectedRows &e) {
+        LOG_ERROR << "[syncPosDeliveryChannels] UnexpectedRows exception: " << e.what()
+                  << ". The delivery channel may not exist for update.";
+        response.message = "Record not found or database inconsistency: "
+                           + std::string(e.what());
+        response.success = false;
+
+    } catch (const drogon::orm::DrogonDbException &e) {
+        LOG_ERROR << "[syncPosDeliveryChannels] Database error: " << e.base().what();
+        response.message = "Database error occurred while syncing delivery channel: "
+                           + std::string(e.base().what());
+        response.success = false;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "[syncPosDeliveryChannels] General exception: " << e.what();
+        response.message = "Failed to sync delivery channel. Please try again. Error: "
+                           + std::string(e.what());
+        response.success = false;
+    }
+
+    LOG_INFO << "[syncPosDeliveryChannels] Exiting method. Success: " << response.success
+             << ", Message: '" << response.message << "'";
+
+    co_return response;
+}
+
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncPosPickupPoints(const dto::erp_api::SyncPosPickupPointDto &dto) {
+
+    dto::BaseApiResponse response;
+
+    LOG_INFO << "[syncPosPickupPoints] Entering method. Operation: '" << dto.getOperation()
+             << "', BusinessAccountId: '" << dto.getBusinessAccountId()
+             << "', SystemName: '" << dto.getSystemName() << "'";
+
+    try {
+        auto dbClient = drogon::app().getDbClient();
+        if (!dbClient) {
+            LOG_ERROR << "[syncPosPickupPoints] Failed to get database client!";
+            response.message = "Database client unavailable.";
+            response.success = false;
+            co_return response;
+        }
+        LOG_DEBUG << "[syncPosPickupPoints] Database client obtained.";
+
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::PosPickupPoints> mapper(dbClient);
+        LOG_DEBUG << "[syncPosPickupPoints] CoroMapper created.";
+
+        // ---------------------------------------------------------------
+        // Envelope validation
+        // ---------------------------------------------------------------
+        const std::string& businessAccountId = dto.getBusinessAccountId();
+        const std::string& operation         = dto.getOperation();
+
+        if (businessAccountId.empty()) {
+            LOG_WARN << "[syncPosPickupPoints] BusinessAccountId is empty. Aborting.";
+            response.message = "BusinessAccountId is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        if (dto.getSystemName().empty()) {
+            LOG_WARN << "[syncPosPickupPoints] SystemName is empty. Aborting.";
+            response.message = "Pickup point SystemName is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // DELETE — resolve by (business_id, system_name)
+        // ---------------------------------------------------------------
+        if (operation == "delete") {
+            LOG_INFO << "[syncPosPickupPoints] Attempting to DELETE pickup point: "
+                     << dto.getSystemName();
+
+            auto deletedCount = co_await mapper.deleteBy(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosPickupPoints::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosPickupPoints::Cols::_system_name,
+                    drogon::orm::CompareOperator::EQ, dto.getSystemName()));
+
+            LOG_INFO << "[syncPosPickupPoints] DELETE completed for pickup point: "
+                     << dto.getSystemName()
+                     << ", rows affected: " << deletedCount;
+
+            response.message = "Pickup point deleted successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // BUILD MODEL for create / update
+        // ---------------------------------------------------------------
+        LOG_DEBUG << "[syncPosPickupPoints] Populating pickup point model with DTO data...";
+
+        drogon_model::DataSupportDb::PosPickupPoints pickupPoint;
+
+        pickupPoint.setBusinessId(businessAccountId);
+        pickupPoint.setFriendlyName(dto.getFriendlyName());
+        pickupPoint.setSystemName(dto.getSystemName());
+        pickupPoint.setImageUrl(dto.getImageUrl());
+        pickupPoint.setGhanaPostGps(dto.getGhanaPostGps());
+        pickupPoint.setGpsCoordinates(dto.getGpsCoordinates());
+        pickupPoint.setIsActive(dto.getIsActive());
+
+        LOG_DEBUG << "[syncPosPickupPoints] Pickup point model populated. SystemName: "
+                  << pickupPoint.getValueOfSystemName()
+                  << ", FriendlyName: " << pickupPoint.getValueOfFriendlyName()
+                  << ", IsActive: " << pickupPoint.getValueOfIsActive();
+
+        // ---------------------------------------------------------------
+        // CREATE
+        // ---------------------------------------------------------------
+        if (operation == "create") {
+            LOG_INFO << "[syncPosPickupPoints] Attempting to INSERT pickup point: "
+                     << dto.getSystemName();
+
+            pickupPoint.setCreatedAt(trantor::Date::now());
+            co_await mapper.insert(pickupPoint);
+
+            LOG_INFO << "[syncPosPickupPoints] INSERT successful for pickup point: "
+                     << dto.getSystemName();
+
+            response.message = "Pickup point created successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UPDATE
+        // ---------------------------------------------------------------
+        if (operation == "update") {
+            LOG_INFO << "[syncPosPickupPoints] Attempting to UPDATE pickup point: "
+                     << dto.getSystemName();
+
+            // Look up the existing row by (business_id, system_name) to obtain
+            // its primary key, then copy it onto the model before updating.
+            auto existing = co_await mapper.findOne(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosPickupPoints::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosPickupPoints::Cols::_system_name,
+                    drogon::orm::CompareOperator::EQ, dto.getSystemName()));
+
+            pickupPoint.setId(existing.getValueOfId());
+            pickupPoint.setUpdatedAt(trantor::Date::now());
+
+            auto updatedCount = co_await mapper.update(pickupPoint);
+
+            LOG_INFO << "[syncPosPickupPoints] UPDATE successful for pickup point: "
+                     << dto.getSystemName()
+                     << ", rows affected: " << updatedCount;
+
+            response.message = "Pickup point updated successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UNKNOWN OPERATION
+        // ---------------------------------------------------------------
+        LOG_WARN << "[syncPosPickupPoints] Unsupported operation: '" << operation
+                 << "' for pickup point: " << dto.getSystemName();
+        response.message = "Unsupported operation: " + operation;
+        response.success = false;
+
+    } catch (const drogon::orm::UnexpectedRows &e) {
+        LOG_ERROR << "[syncPosPickupPoints] UnexpectedRows exception: " << e.what()
+                  << ". The pickup point may not exist for update.";
+        response.message = "Record not found or database inconsistency: "
+                           + std::string(e.what());
+        response.success = false;
+
+    } catch (const drogon::orm::DrogonDbException &e) {
+        LOG_ERROR << "[syncPosPickupPoints] Database error: " << e.base().what();
+        response.message = "Database error occurred while syncing pickup point: "
+                           + std::string(e.base().what());
+        response.success = false;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "[syncPosPickupPoints] General exception: " << e.what();
+        response.message = "Failed to sync pickup point. Please try again. Error: "
+                           + std::string(e.what());
+        response.success = false;
+    }
+
+    LOG_INFO << "[syncPosPickupPoints] Exiting method. Success: " << response.success
+             << ", Message: '" << response.message << "'";
+
+    co_return response;
+}
+
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryItems(const dto::erp_api::SyncPosInventoryItemDto &dto) {
+
+    dto::BaseApiResponse response;
+
+    LOG_INFO << "[syncPosInventoryItems] Entering method. Operation: '" << dto.getOperation()
+             << "', BusinessAccountId: '" << dto.getBusinessAccountId()
+             << "', Sku: '" << dto.getSku() << "'";
+
+    try {
+        auto dbClient = drogon::app().getDbClient();
+        if (!dbClient) {
+            LOG_ERROR << "[syncPosInventoryItems] Failed to get database client!";
+            response.message = "Database client unavailable.";
+            response.success = false;
+            co_return response;
+        }
+        LOG_DEBUG << "[syncPosInventoryItems] Database client obtained.";
+
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::PosInventoryItems> mapper(dbClient);
+        LOG_DEBUG << "[syncPosInventoryItems] CoroMapper created.";
+
+        // ---------------------------------------------------------------
+        // Envelope validation
+        // ---------------------------------------------------------------
+        const std::string& businessAccountId = dto.getBusinessAccountId();
+        const std::string& operation         = dto.getOperation();
+
+        if (businessAccountId.empty()) {
+            LOG_WARN << "[syncPosInventoryItems] BusinessAccountId is empty. Aborting.";
+            response.message = "BusinessAccountId is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        if (dto.getSku().empty()) {
+            LOG_WARN << "[syncPosInventoryItems] Sku is empty. Aborting.";
+            response.message = "Inventory item Sku is required.";
+            response.success = false;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // DELETE — resolve by (business_id, sku)
+        // ---------------------------------------------------------------
+        if (operation == "delete") {
+            LOG_INFO << "[syncPosInventoryItems] Attempting to DELETE inventory item: "
+                     << dto.getSku();
+
+            auto deletedCount = co_await mapper.deleteBy(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosInventoryItems::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosInventoryItems::Cols::_sku,
+                    drogon::orm::CompareOperator::EQ, dto.getSku()));
+
+            LOG_INFO << "[syncPosInventoryItems] DELETE completed for item: "
+                     << dto.getSku()
+                     << ", rows affected: " << deletedCount;
+
+            response.message = "Inventory item deleted successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // BUILD MODEL for create / update
+        // ---------------------------------------------------------------
+        LOG_DEBUG << "[syncPosInventoryItems] Populating inventory item model with DTO data...";
+
+        drogon_model::DataSupportDb::PosInventoryItems item;
+
+        // Basic fields
+        item.setBusinessId(businessAccountId);
+        item.setName(dto.getName());
+        item.setShortDescription(dto.getShortDescription());
+        item.setFullDescription(dto.getFullDescription());
+        item.setAdminComment(dto.getAdminComment());
+        item.setMerchantId(dto.getMerchantId());
+        item.setMerchantName(dto.getMerchantName());
+        item.setSku(dto.getSku());
+        item.setStockQuantity(dto.getStockQuantity());
+        item.setOldSellingPrice(std::to_string(dto.getOldSellingPrice()));
+        item.setSellingPrice(std::to_string(dto.getSellingPrice()));
+        item.setCostPrice(std::to_string(dto.getCostPrice()));
+
+        // Shipping
+        item.setWeight(std::to_string(dto.getWeight()));
+        item.setIsFreeShipping(dto.getIsFreeShipping());
+        item.setShipSeparately(dto.getShipSeparately());
+        item.setUomCodeId(dto.getUomCodeId());
+        item.setUomName(dto.getUomName());
+
+        // Category / tags
+        item.setCategoryId(dto.getCategoryId());
+        item.setCategoryName(dto.getCategoryName());
+        item.setMinimumCartQuantity(dto.getMinimumCartQuantity());
+        item.setMaximumCartQuantity(dto.getMaximumCartQuantity());
+        item.setBranchId(dto.getBranchId());
+        item.setBranchName(dto.getBranchName());
+        item.setShelfLocation(dto.getShelfLocation());
+
+        // Flags
+        item.setIsPublished(dto.getIsPublished());
+        item.setAllowCustomerReviews(dto.getAllowCustomerReviews());
+
+        // Dates (parsed from ISO strings)
+        if (!dto.getAvailableStartDate().empty()) {
+            item.setAvailableStartDate(
+                trantor::Date::fromDbStringLocal(dto.getAvailableStartDate()));
+        }
+        if (!dto.getAvailableEndDate().empty()) {
+            item.setAvailableEndDate(
+                trantor::Date::fromDbStringLocal(dto.getAvailableEndDate()));
+        }
+
+        item.setMarkAsNew(dto.getMarkAsNew());
+        item.setDisableBuyButton(dto.getDisableBuyButton());
+        item.setDisableWishlistButton(dto.getDisableWishlistButton());
+        item.setAvailableForPreOrder(dto.getAvailableForPreOrder());
+        item.setIsTaxExempt(dto.getIsTaxExempt());
+        item.setIsNotReturnable(dto.getIsNotReturnable());
+        item.setIsRental(dto.getIsRental());
+        item.setIsService(dto.getIsService());
+
+        // SEO
+        item.setSpecifications(dto.getProductSpecifications());
+        item.setMetaTitle(dto.getMetaTitle());
+        item.setMetaKeywords(dto.getMetaKeywords());
+        item.setMetaDescription(dto.getMetaDescription());
+
+        // ---------------------------------------------------------------
+        // Serialize the three JSON array fields to strings for storage
+        // ---------------------------------------------------------------
+        Json::StreamWriterBuilder writer;
+        writer["indentation"] = "";
+
+        if (!dto.getImages().isNull() && dto.getImages().isArray()) {
+            item.setImages(Json::writeString(writer, dto.getImages()));
+        } else {
+            item.setImages("[]");
+        }
+
+        if (!dto.getTagList().isNull() && dto.getTagList().isArray()) {
+            item.setTags(Json::writeString(writer, dto.getTagList()));
+        } else {
+            item.setTags("[]");
+        }
+
+        if (!dto.getProductAttributes().isNull() && dto.getProductAttributes().isArray()) {
+            item.setProductAttributes(
+                Json::writeString(writer, dto.getProductAttributes()));
+        } else {
+            item.setProductAttributes("[]");
+        }
+
+        LOG_DEBUG << "[syncPosInventoryItems] Item model populated. Sku: "
+                  << item.getValueOfSku()
+                  << ", Name: " << item.getValueOfName()
+                  << ", SellingPrice: " << item.getValueOfSellingPrice()
+                  << ", Images count: " << dto.getImages().size()
+                  << ", Tags count: " << dto.getTagList().size()
+                  << ", Attributes count: " << dto.getProductAttributes().size();
+
+        // ---------------------------------------------------------------
+        // CREATE
+        // ---------------------------------------------------------------
+        if (operation == "create") {
+            LOG_INFO << "[syncPosInventoryItems] Attempting to INSERT item: "
+                     << dto.getSku();
+
+            item.setCreatedAt(trantor::Date::now());
+            co_await mapper.insert(item);
+
+            LOG_INFO << "[syncPosInventoryItems] INSERT successful for item: "
+                     << dto.getSku();
+
+            response.message = "Inventory item created successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UPDATE
+        // ---------------------------------------------------------------
+        if (operation == "update") {
+            LOG_INFO << "[syncPosInventoryItems] Attempting to UPDATE item: "
+                     << dto.getSku();
+
+            // Look up existing row by (business_id, sku) to obtain the primary key,
+            // then copy it onto the model before updating.
+            auto existing = co_await mapper.findOne(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosInventoryItems::Cols::_business_id,
+                    drogon::orm::CompareOperator::EQ, businessAccountId) &&
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosInventoryItems::Cols::_sku,
+                    drogon::orm::CompareOperator::EQ, dto.getSku()));
+
+            item.setId(existing.getValueOfId());
+            item.setUpdatedAt(trantor::Date::now());
+
+            auto updatedCount = co_await mapper.update(item);
+
+            LOG_INFO << "[syncPosInventoryItems] UPDATE successful for item: "
+                     << dto.getSku()
+                     << ", rows affected: " << updatedCount;
+
+            response.message = "Inventory item updated successfully";
+            response.success = true;
+            co_return response;
+        }
+
+        // ---------------------------------------------------------------
+        // UNKNOWN OPERATION
+        // ---------------------------------------------------------------
+        LOG_WARN << "[syncPosInventoryItems] Unsupported operation: '" << operation
+                 << "' for item: " << dto.getSku();
+        response.message = "Unsupported operation: " + operation;
+        response.success = false;
+
+    } catch (const drogon::orm::UnexpectedRows &e) {
+        LOG_ERROR << "[syncPosInventoryItems] UnexpectedRows exception: " << e.what()
+                  << ". The inventory item may not exist for update.";
+        response.message = "Record not found or database inconsistency: "
+                           + std::string(e.what());
+        response.success = false;
+
+    } catch (const drogon::orm::DrogonDbException &e) {
+        LOG_ERROR << "[syncPosInventoryItems] Database error: " << e.base().what();
+        response.message = "Database error occurred while syncing inventory item: "
+                           + std::string(e.base().what());
+        response.success = false;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "[syncPosInventoryItems] General exception: " << e.what();
+        response.message = "Failed to sync inventory item. Please try again. Error: "
+                           + std::string(e.what());
+        response.success = false;
+    }
+
+    LOG_INFO << "[syncPosInventoryItems] Exiting method. Success: " << response.success
+             << ", Message: '" << response.message << "'";
+
+    co_return response;
+}
+
 
 
 

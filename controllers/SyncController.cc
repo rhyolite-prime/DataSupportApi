@@ -88,13 +88,13 @@ Task<HttpResponsePtr> SyncController::syncPosCoupons(HttpRequestPtr req) {
         co_return resp;
     }
 
-    data_support::dto::erp_api::SyncPosBranchDto dto;
+    data_support::dto::erp_api::SyncPosCouponDto dto;
     dto.fromJson(*jsonPtr);
 
     auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
     auto &erpApi = plugin->getErpApi();
 
-    auto result = co_await erpApi.syncPosBranches(dto);
+    auto result = co_await erpApi.syncPosCoupons(dto);
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 
@@ -113,13 +113,13 @@ Task<HttpResponsePtr> SyncController::syncErpCurrencies(HttpRequestPtr req) {
         co_return resp;
     }
 
-    data_support::dto::erp_api::SyncPosBranchDto dto;
+    data_support::dto::erp_api::SyncErpCurrencyDto dto;
     dto.fromJson(*jsonPtr);
 
     auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
     auto &erpApi = plugin->getErpApi();
 
-    auto result = co_await erpApi.syncPosBranches(dto);
+    auto result = co_await erpApi.syncErpCurrencies(dto);
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 
@@ -138,13 +138,13 @@ Task<HttpResponsePtr> SyncController::syncPosDeliveryChannels(HttpRequestPtr req
         co_return resp;
     }
 
-    data_support::dto::erp_api::SyncPosBranchDto dto;
+    data_support::dto::erp_api::SyncPosDeliveryChannelDto dto;
     dto.fromJson(*jsonPtr);
 
     auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
     auto &erpApi = plugin->getErpApi();
 
-    auto result = co_await erpApi.syncPosBranches(dto);
+    auto result = co_await erpApi.syncPosDeliveryChannels(dto);
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 
@@ -163,13 +163,13 @@ Task<HttpResponsePtr> SyncController::syncPosPickupPoints(HttpRequestPtr req) {
         co_return resp;
     }
 
-    data_support::dto::erp_api::SyncPosBranchDto dto;
+    data_support::dto::erp_api::SyncPosPickupPointDto dto;
     dto.fromJson(*jsonPtr);
 
     auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
     auto &erpApi = plugin->getErpApi();
 
-    auto result = co_await erpApi.syncPosBranches(dto);
+    auto result = co_await erpApi.syncPosPickupPoints(dto);
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 
@@ -188,17 +188,18 @@ Task<HttpResponsePtr> SyncController::syncPosInventoryItems(HttpRequestPtr req) 
         co_return resp;
     }
 
-    data_support::dto::erp_api::SyncPosBranchDto dto;
+    data_support::dto::erp_api::SyncPosInventoryItemDto dto;
     dto.fromJson(*jsonPtr);
 
     auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
     auto &erpApi = plugin->getErpApi();
 
-    auto result = co_await erpApi.syncPosBranches(dto);
+    auto result = co_await erpApi.syncPosInventoryItems(dto);
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 
 }
+
 
 
 Task<HttpResponsePtr> SyncController::syncErpApiKeys(HttpRequestPtr req) {

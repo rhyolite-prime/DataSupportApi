@@ -75,6 +75,16 @@ namespace data_support::services {
 
         drogon::Task<dto::BaseApiResponse> syncPosInventoryCategories(const dto::erp_api::SyncInventoryCategoryDto &dto);
 
+        drogon::Task<dto::BaseApiResponse> syncPosCoupons(const dto::erp_api::SyncPosCouponDto &dto);
+
+        drogon::Task<dto::BaseApiResponse> syncErpCurrencies(const dto::erp_api::SyncErpCurrencyDto &dto);
+
+        drogon::Task<dto::BaseApiResponse> syncPosDeliveryChannels(const dto::erp_api::SyncPosDeliveryChannelDto &dto);
+
+        drogon::Task<dto::BaseApiResponse> syncPosPickupPoints(const dto::erp_api::SyncPosPickupPointDto &dto);
+
+        drogon::Task<dto::BaseApiResponse> syncPosInventoryItems(const dto::erp_api::SyncPosInventoryItemDto &dto);
+
 
     };
 
