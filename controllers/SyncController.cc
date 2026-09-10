@@ -28,6 +28,7 @@ Task<HttpResponsePtr> SyncController::syncPosBranches(HttpRequestPtr req) {
 
 }
 
+
 Task<HttpResponsePtr> SyncController::syncPosCustomers(HttpRequestPtr req) {
 
     auto jsonPtr = req->getJsonObject();
@@ -52,6 +53,7 @@ Task<HttpResponsePtr> SyncController::syncPosCustomers(HttpRequestPtr req) {
 
 }
 
+
 Task<HttpResponsePtr> SyncController::syncPosInventoryCategories(HttpRequestPtr req) {
 
     auto jsonPtr = req->getJsonObject();
@@ -75,6 +77,7 @@ Task<HttpResponsePtr> SyncController::syncPosInventoryCategories(HttpRequestPtr 
     co_return resp;
 
 }
+
 
 Task<HttpResponsePtr> SyncController::syncPosCoupons(HttpRequestPtr req) {
 
@@ -199,7 +202,6 @@ Task<HttpResponsePtr> SyncController::syncPosInventoryItems(HttpRequestPtr req) 
     co_return resp;
 
 }
-
 
 
 Task<HttpResponsePtr> SyncController::syncErpApiKeys(HttpRequestPtr req) {

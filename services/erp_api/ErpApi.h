@@ -8,6 +8,7 @@
 #include <drogon/drogon.h>
 #include "dto/BaseApiResponse.h"
 #include "dto/erp_api/SyncApiCredentialDto.h"
+#include "dto/erp_api/UnifiedFilterDto.h"
 #include "dto/erp_api/UnifiedSyncDto.h"
 
 namespace data_support::services {
@@ -18,7 +19,7 @@ namespace data_support::services {
         //setup resources
         drogon::Task<dto::BaseApiResponse> getBranches();
         drogon::Task<dto::BaseApiResponse> getCoupons();
-        drogon::Task<dto::BaseApiResponse> getCategories();
+        drogon::Task<dto::BaseApiResponse> getCategories(const std::string &businessId, int pageNo, int pageSize);
         drogon::Task<dto::BaseApiResponse> getCurrencies();
         drogon::Task<dto::BaseApiResponse> getDeliveryChannels();
         drogon::Task<dto::BaseApiResponse> getPickupPoints();
@@ -43,7 +44,7 @@ namespace data_support::services {
         drogon::Task<dto::BaseApiResponse> processPaymentCallback();
 
         //inventory
-        drogon::Task<dto::BaseApiResponse> getInventoryItems();
+        drogon::Task<dto::BaseApiResponse> getInventoryItems(const std::string &businessId, const dto::erp_api::InventoryItemFilterDto &dto);
 
         //sales
         drogon::Task<dto::BaseApiResponse> getOrderHistory();

@@ -14,6 +14,7 @@
 #include "PosInventoryCategories.h"
 #include "PosInventoryItems.h"
 #include "PosPickupPoints.h"
+#include "utils/JsonUtils.h"
 
 namespace data_support::services {
 
@@ -49,13 +50,128 @@ namespace data_support::services {
 
     }
 
-    drogon::Task<dto::BaseApiResponse> ErpApi::getCategories() {
 
-        //rely on synced data
-        dto::BaseApiResponse res;
-        co_return res;
+    drogon::Task<dto::BaseApiResponse> ErpApi::getCategories(const std::string &businessId, int pageNo, int pageSize) {
 
+    dto::BaseApiResponse response;
+
+    LOG_INFO << "[getCategories] Entering method. businessId: '" << businessId
+             << "', pageNo: " << pageNo
+             << ", pageSize: " << pageSize;
+
+    // ---------------------------------------------------------------
+    // 0. Validate businessId
+    // ---------------------------------------------------------------
+    if (businessId.empty()) {
+        LOG_WARN << "[getCategories] businessId is empty. Aborting.";
+        response.message = "BusinessAccountId is required.";
+        response.success = false;
+        co_return response;
     }
+
+    try {
+        // ---------------------------------------------------------------
+        // 1. Database client + mapper
+        // ---------------------------------------------------------------
+        auto dbClient = drogon::app().getDbClient();
+        if (!dbClient) {
+            LOG_ERROR << "[getCategories] Failed to get database client!";
+            response.message = "Database client unavailable.";
+            response.success = false;
+            co_return response;
+        }
+        LOG_DEBUG << "[getCategories] Database client obtained.";
+
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::PosInventoryCategories> mapper(dbClient);
+
+        // ---------------------------------------------------------------
+        // 2. Validate and clamp pagination parameters
+        // ---------------------------------------------------------------
+        if (pageNo < 1)   pageNo = 1;
+        if (pageSize < 1) pageSize = 20;
+        if (pageSize > 100) {
+            LOG_WARN << "[getCategories] pageSize " << pageSize
+                     << " exceeds max, clamping to 100";
+            pageSize = 100;
+        }
+        const int offset = (pageNo - 1) * pageSize;
+
+        LOG_DEBUG << "[getCategories] Effective pagination — pageNo: " << pageNo
+                  << ", pageSize: " << pageSize
+                  << ", offset: " << offset;
+
+        // ---------------------------------------------------------------
+        // 3. Business-scoped criteria (always applied)
+        // ---------------------------------------------------------------
+        drogon::orm::Criteria businessCriteria(
+            drogon_model::DataSupportDb::PosInventoryCategories::Cols::_business_id,
+            drogon::orm::CompareOperator::EQ, businessId);
+
+        // ---------------------------------------------------------------
+        // 4. Count total for this business
+        // ---------------------------------------------------------------
+        const int64_t totalCount = co_await mapper.count(businessCriteria);
+        LOG_DEBUG << "[getCategories] Total categories for business '" << businessId
+                  << "': " << totalCount;
+
+        // ---------------------------------------------------------------
+        // 5. Fetch the requested page
+        // ---------------------------------------------------------------
+        auto categories = co_await mapper
+                              .orderBy(
+                                  drogon_model::DataSupportDb::PosInventoryCategories::Cols::_name,
+                                  drogon::orm::SortOrder::ASC)
+                              .paginate(pageNo, pageSize)
+                              .findBy(businessCriteria);
+
+        LOG_DEBUG << "[getCategories] Fetched " << categories.size()
+                  << " categories for page " << pageNo;
+
+        // ---------------------------------------------------------------
+        // 6. Build the JSON response — camelCase
+        // ---------------------------------------------------------------
+        Json::Value data = Json::arrayValue;
+
+        for (const auto &category : categories) {
+            Json::Value j = utils::JsonUtils::convertKeysToCamelCase(category.toJson());
+            data.append(j);
+        }
+
+        const int totalPages = (totalCount + pageSize - 1) / pageSize;
+
+        response.success = true;
+        response.message  = "Categories retrieved successfully.";
+        response.result["data"]       = data;
+        response.result["totalCount"] = (Json::UInt64)totalCount;
+        response.result["pageNo"]     = pageNo;
+        response.result["pageSize"]   = pageSize;
+        response.result["totalPages"] = totalPages;
+        response.result["lowerBound"] = totalCount == 0 ? 0 : (Json::UInt64)(offset + 1);
+        response.result["upperBound"] =
+            (Json::UInt64)(pageNo == totalPages
+                ? totalCount
+                : (int64_t)pageNo * pageSize);
+
+        LOG_INFO << "[getCategories] Exiting method. Returned "
+                 << data.size() << " of " << totalCount << " categories (page "
+                 << pageNo << "/" << totalPages << ").";
+
+    } catch (const drogon::orm::DrogonDbException &e) {
+        LOG_ERROR << "[getCategories] Database error: " << e.base().what();
+        response.message = "Database error occurred while fetching categories: "
+                           + std::string(e.base().what());
+        response.success = false;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "[getCategories] General exception: " << e.what();
+        response.message = "Failed to fetch categories. Please try again. Error: "
+                           + std::string(e.what());
+        response.success = false;
+    }
+
+    co_return response;
+}
+
 
     drogon::Task<dto::BaseApiResponse> ErpApi::getCurrencies() {
 
@@ -172,13 +288,225 @@ namespace data_support::services {
 
     }
 
-    drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems() {
+    drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems( const std::string &businessId, const dto::erp_api::InventoryItemFilterDto &dto) {
 
-        //rely on synced data
-        dto::BaseApiResponse res;
-        co_return res;
+    dto::BaseApiResponse response;
 
+    LOG_INFO << "[getInventoryItems] Entering method. businessId: '" << businessId
+             << "', CategoryId: '" << dto.getCategoryId()
+             << "', CategorySlug: '" << dto.getCategorySlug()
+             << "', Keywords: '" << dto.getKeywords()
+             << "', pageNo: " << dto.getPageNo()
+             << ", pageSize: " << dto.getPageSize();
+
+    // ---------------------------------------------------------------
+    // 0. Validate businessId
+    // ---------------------------------------------------------------
+    if (businessId.empty()) {
+        LOG_WARN << "[getInventoryItems] businessId is empty. Aborting.";
+        response.message = "BusinessAccountId is required.";
+        response.success = false;
+        co_return response;
     }
+
+    try {
+        // ---------------------------------------------------------------
+        // 1. Database client + mapper
+        // ---------------------------------------------------------------
+        auto dbClient = drogon::app().getDbClient();
+        if (!dbClient) {
+            LOG_ERROR << "[getInventoryItems] Failed to get database client!";
+            response.message = "Database client unavailable.";
+            response.success = false;
+            co_return response;
+        }
+        LOG_DEBUG << "[getInventoryItems] Database client obtained.";
+
+        drogon::orm::CoroMapper<drogon_model::DataSupportDb::PosInventoryItems> mapper(dbClient);
+
+        // ---------------------------------------------------------------
+        // 2. Validate and clamp pagination parameters
+        // ---------------------------------------------------------------
+        int pageNo   = dto.getPageNo();
+        int pageSize = dto.getPageSize();
+
+        if (pageNo < 1)   pageNo = 1;
+        if (pageSize < 1) pageSize = 20;
+        if (pageSize > 100) {
+            LOG_WARN << "[getInventoryItems] pageSize " << pageSize
+                     << " exceeds max, clamping to 100";
+            pageSize = 100;
+        }
+        const int offset = (pageNo - 1) * pageSize;
+
+        LOG_DEBUG << "[getInventoryItems] Effective pagination — pageNo: " << pageNo
+                  << ", pageSize: " << pageSize
+                  << ", offset: " << offset;
+
+        // ---------------------------------------------------------------
+        // 3. Build criteria — business_id is always applied first
+        // ---------------------------------------------------------------
+        drogon::orm::Criteria criteria(
+            drogon_model::DataSupportDb::PosInventoryItems::Cols::_business_id,
+            drogon::orm::CompareOperator::EQ, businessId);
+        bool criteriaSet = true;   // always true — business_id is mandatory
+
+        auto addCriteria = [&](const drogon::orm::Criteria &c) {
+            criteria = criteria && c;
+        };
+
+        // 3a. Keywords — LIKE on name OR short_description
+        if (!dto.getKeywords().empty()) {
+            const std::string likeQuery = "%" + dto.getKeywords() + "%";
+            LOG_DEBUG << "[getInventoryItems] Applying keywords filter: " << likeQuery;
+
+            addCriteria(
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosInventoryItems::Cols::_name,
+                    drogon::orm::CompareOperator::Like, likeQuery) ||
+                drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosInventoryItems::Cols::_short_description,
+                    drogon::orm::CompareOperator::Like, likeQuery));
+        }
+
+        // 3b. Category filters — OR-combined
+        const bool hasCategoryId   = !dto.getCategoryId().empty();
+        const bool hasCategorySlug = !dto.getCategorySlug().empty();
+
+        if (hasCategoryId || hasCategorySlug) {
+            drogon::orm::Criteria categoryCriteria;
+            bool categorySet = false;
+
+            if (hasCategoryId) {
+                LOG_DEBUG << "[getInventoryItems] Applying categoryId filter: "
+                          << dto.getCategoryId();
+                categoryCriteria = drogon::orm::Criteria(
+                    drogon_model::DataSupportDb::PosInventoryItems::Cols::_category_id,
+                    drogon::orm::CompareOperator::EQ, dto.getCategoryId());
+                categorySet = true;
+            }
+
+            if (hasCategorySlug) {
+                LOG_DEBUG << "[getInventoryItems] Applying categorySlug filter: "
+                          << dto.getCategorySlug();
+                if (categorySet) {
+                    categoryCriteria = categoryCriteria ||
+                        drogon::orm::Criteria(
+                            drogon_model::DataSupportDb::PosInventoryItems::Cols::_category_slug,
+                            drogon::orm::CompareOperator::EQ, dto.getCategorySlug());
+                } else {
+                    categoryCriteria = drogon::orm::Criteria(
+                        drogon_model::DataSupportDb::PosInventoryItems::Cols::_category_slug,
+                        drogon::orm::CompareOperator::EQ, dto.getCategorySlug());
+                    categorySet = true;
+                }
+            }
+
+            if (categorySet) {
+                addCriteria(categoryCriteria);
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // 4. Count total matches
+        // ---------------------------------------------------------------
+        int64_t totalCount = co_await mapper.count(criteria);
+        LOG_DEBUG << "[getInventoryItems] Total matching items: " << totalCount;
+
+        // ---------------------------------------------------------------
+        // 5. Fetch the requested page
+        // ---------------------------------------------------------------
+        auto items = co_await mapper
+                        .orderBy(
+                            drogon_model::DataSupportDb::PosInventoryItems::Cols::_name,
+                            drogon::orm::SortOrder::ASC)
+                        .limit(pageSize)
+                        .offset(offset)
+                        .findBy(criteria);
+
+        LOG_DEBUG << "[getInventoryItems] Fetched " << items.size() << " items for page "
+                  << pageNo;
+
+        // ---------------------------------------------------------------
+        // 6. Helper: deserialize a JSON-array column stored as text
+        // ---------------------------------------------------------------
+        auto parseArrayField = [](const Json::Value &src,
+                                  const std::string &key) -> Json::Value {
+            if (!src.isMember(key)) {
+                return Json::Value(Json::arrayValue);
+            }
+            // Already an array/object (jsonb returned natively) — keep as-is
+            if (!src[key].isString()) {
+                return src[key];
+            }
+            const std::string &raw = src[key].asString();
+            if (raw.empty()) {
+                return Json::Value(Json::arrayValue);
+            }
+            Json::Value parsed;
+            Json::CharReaderBuilder rb;
+            std::string errs;
+            std::istringstream iss(raw);
+            if (Json::parseFromStream(rb, iss, &parsed, &errs) && parsed.isArray()) {
+                return parsed;
+            }
+            return Json::Value(Json::arrayValue);
+        };
+
+        // ---------------------------------------------------------------
+        // 7. Build the JSON response — camelCase
+        // ---------------------------------------------------------------
+        Json::Value data = Json::arrayValue;
+
+        for (const auto &item : items) {
+            Json::Value j = utils::JsonUtils::convertKeysToCamelCase(item.toJson());
+
+            j["fullDescription"]   = parseArrayField(j, "fullDescription");
+            j["images"]            = parseArrayField(j, "images");
+            j["tags"]              = parseArrayField(j, "tags");
+            j["variants"]          = parseArrayField(j, "variants");
+            j["productAttributes"] = parseArrayField(j, "productAttributes");
+            j["specifications"]    = parseArrayField(j, "specifications");
+            j["bulkPricing"]       = parseArrayField(j, "bulkPricing");
+
+            data.append(j);
+        }
+
+        const int totalPages = (totalCount + pageSize - 1) / pageSize;
+
+        response.success = true;
+        response.message  = "Inventory items retrieved successfully.";
+        response.result["data"]       = data;
+        response.result["totalCount"] = (Json::UInt64)totalCount;
+        response.result["pageNo"]     = pageNo;
+        response.result["pageSize"]   = pageSize;
+        response.result["totalPages"] = totalPages;
+        response.result["lowerBound"] = (Json::UInt64)(offset + 1);
+        response.result["upperBound"] =
+            (Json::UInt64)(pageNo == totalPages
+                ? totalCount
+                : (int64_t)pageNo * pageSize);
+
+        LOG_INFO << "[getInventoryItems] Exiting method. Returned "
+                 << data.size() << " of " << totalCount << " items (page "
+                 << pageNo << "/" << totalPages << ").";
+
+    } catch (const drogon::orm::DrogonDbException &e) {
+        LOG_ERROR << "[getInventoryItems] Database error: " << e.base().what();
+        response.message = "Database error occurred while fetching inventory items: "
+                           + std::string(e.base().what());
+        response.success = false;
+
+    } catch (const std::exception &e) {
+        LOG_ERROR << "[getInventoryItems] General exception: " << e.what();
+        response.message = "Failed to fetch inventory items. Please try again. Error: "
+                           + std::string(e.what());
+        response.success = false;
+    }
+
+    co_return response;
+}
+
 
     drogon::Task<dto::BaseApiResponse> ErpApi::getOrderHistory() {
 
@@ -453,6 +781,7 @@ namespace data_support::services {
         category.setBusinessId(businessAccountId);
         category.setName(dto.getName());
         category.setSlug(dto.getSlug());
+        category.setImageUrl(dto.getImageUrl());
         category.setDescription(dto.getDescription());
         category.setParentCategoryId(dto.getParentCategoryId());
         category.setIsService(dto.getIsService());

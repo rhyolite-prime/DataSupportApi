@@ -48,6 +48,7 @@ class PosInventoryCategories
         static const std::string _business_id;
         static const std::string _name;
         static const std::string _slug;
+        static const std::string _image_url;
         static const std::string _description;
         static const std::string _is_service;
         static const std::string _parent_category_id;
@@ -144,6 +145,16 @@ class PosInventoryCategories
     void setSlug(std::string &&pSlug) noexcept;
     void setSlugToNull() noexcept;
 
+    /**  For column image_url  */
+    ///Get the value of the column image_url, returns the default value if the column is null
+    const std::string &getValueOfImageUrl() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getImageUrl() const noexcept;
+    ///Set the value of the column image_url
+    void setImageUrl(const std::string &pImageUrl) noexcept;
+    void setImageUrl(std::string &&pImageUrl) noexcept;
+    void setImageUrlToNull() noexcept;
+
     /**  For column description  */
     ///Get the value of the column description, returns the default value if the column is null
     const std::string &getValueOfDescription() const noexcept;
@@ -209,7 +220,7 @@ class PosInventoryCategories
     void setUpdatedAtToNull() noexcept;
 
 
-    static size_t getColumnNumber() noexcept {  return 11;  }
+    static size_t getColumnNumber() noexcept {  return 12;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
@@ -235,6 +246,7 @@ class PosInventoryCategories
     std::shared_ptr<std::string> businessId_;
     std::shared_ptr<std::string> name_;
     std::shared_ptr<std::string> slug_;
+    std::shared_ptr<std::string> imageUrl_;
     std::shared_ptr<std::string> description_;
     std::shared_ptr<bool> isService_;
     std::shared_ptr<std::string> parentCategoryId_;
@@ -253,7 +265,7 @@ class PosInventoryCategories
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[11]={ false };
+    bool dirtyFlag_[12]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -293,38 +305,43 @@ class PosInventoryCategories
         }
         if(dirtyFlag_[4])
         {
+            sql += "image_url,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[5])
+        {
             sql += "description,";
             ++parametersCount;
         }
         sql += "is_service,";
         ++parametersCount;
-        if(!dirtyFlag_[5])
+        if(!dirtyFlag_[6])
         {
             needSelection=true;
         }
-        if(dirtyFlag_[6])
+        if(dirtyFlag_[7])
         {
             sql += "parent_category_id,";
             ++parametersCount;
         }
         sql += "product_count,";
         ++parametersCount;
-        if(!dirtyFlag_[7])
+        if(!dirtyFlag_[8])
         {
             needSelection=true;
         }
-        if(dirtyFlag_[8])
+        if(dirtyFlag_[9])
         {
             sql += "tenant_id,";
             ++parametersCount;
         }
         sql += "created_at,";
         ++parametersCount;
-        if(!dirtyFlag_[9])
+        if(!dirtyFlag_[10])
         {
             needSelection=true;
         }
-        if(dirtyFlag_[10])
+        if(dirtyFlag_[11])
         {
             sql += "updated_at,";
             ++parametersCount;
@@ -370,39 +387,44 @@ class PosInventoryCategories
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
-        else
-        {
-            sql +="default,";
-        }
         if(dirtyFlag_[6])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
         }
         if(dirtyFlag_[7])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
-        else
-        {
-            sql +="default,";
-        }
         if(dirtyFlag_[8])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+        }
+        else
+        {
+            sql +="default,";
         }
         if(dirtyFlag_[9])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
         }
+        if(dirtyFlag_[10])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
         else
         {
             sql +="default,";
         }
-        if(dirtyFlag_[10])
+        if(dirtyFlag_[11])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);

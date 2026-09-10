@@ -73,6 +73,7 @@ add_executable(${PROJECT_NAME} main.cc
         dto/erp_api/UnifiedSyncDto.h
         services/pay_stack_api/PaystackApi.h
         services/pay_stack_api/PaystackApi.cc
+        dto/erp_api/UnifiedFilterDto.h
 )
 
 # ##############################################################################

@@ -15,13 +15,11 @@ namespace data_support::services {
 class BusinessAccountService {
 
 public:
-  drogon::Task<dto::BaseApiResponse> getAll(int pageNo, int pageSize,
-                                            const std::string &query);
+  drogon::Task<dto::BaseApiResponse> getAll(int pageNo, int pageSize, const std::string &query);
 
   drogon::Task<dto::BaseApiResponse> create(const dto::BusinessAccountDto &dto);
 
-  drogon::Task<dto::BaseApiResponse> update(const dto::BusinessAccountDto &dto,
-                                            const std::string &id);
+  drogon::Task<dto::BaseApiResponse> update(const dto::BusinessAccountDto &dto, const std::string &id);
 
   drogon::Task<dto::BaseApiResponse> updateAccountStatus(const std::string &id, constants::StatusType status);
 

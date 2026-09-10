@@ -156,6 +156,7 @@ namespace data_support::dto::erp_api {
         [[nodiscard]] const std::string& getId() const { return id_; }
         [[nodiscard]] const std::string& getName() const { return name_; }
         [[nodiscard]] const std::string& getSlug() const { return slug_; }
+        [[nodiscard]] const std::string& getImageUrl() const { return image_url_; }
         [[nodiscard]] const std::string& getDescription() const { return description_; }
         [[nodiscard]] const std::string& getParentCategoryId() const { return parent_category_id_; }
         [[nodiscard]] bool getIsService() const { return is_service_; }
@@ -169,6 +170,7 @@ namespace data_support::dto::erp_api {
         void setId(const std::string& value) { id_ = value; }
         void setName(const std::string& value) { name_ = value; }
         void setSlug(const std::string& value) { slug_ = value; }
+        void setImageUrl(const std::string& value) { image_url_ = value; }
         void setDescription(const std::string& value) { description_ = value; }
         void setParentCategoryId(const std::string& value) { parent_category_id_ = value; }
         void setIsService(bool value) { is_service_ = value; }
@@ -183,6 +185,7 @@ namespace data_support::dto::erp_api {
 
         std::string id_;
         std::string name_;
+        std::string image_url_;
         std::string slug_;
         std::string description_;
         bool is_service_ {false};
@@ -213,6 +216,10 @@ namespace data_support::dto::erp_api {
 
             if (data.isMember("Slug") && !data["Slug"].isNull()) {
                 slug_ = data["Slug"].asString();
+            }
+
+            if (data.isMember("ImageUrl") && !data["ImageUrl"].isNull()) {
+                image_url_ = data["ImageUrl"].asString();
             }
 
             if (data.isMember("Description") && !data["Description"].isNull()) {
