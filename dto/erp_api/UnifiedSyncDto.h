@@ -580,8 +580,9 @@ namespace data_support::dto::erp_api {
 
         // Basic getters
         [[nodiscard]] const std::string& getName() const { return name_; }
+        [[nodiscard]] const std::string& getSlug() const { return slug_; }
         [[nodiscard]] const std::string& getShortDescription() const { return short_description_; }
-        [[nodiscard]] const std::string& getFullDescription() const { return full_description_; }
+        [[nodiscard]] const Json::Value& getFullDescription() const { return full_description_; }
         [[nodiscard]] const std::string& getAdminComment() const { return admin_comment_; }
         [[nodiscard]] const std::string& getMerchantId() const { return merchant_id_; }
         [[nodiscard]] const std::string& getMerchantName() const { return merchant_name_; }
@@ -598,11 +599,14 @@ namespace data_support::dto::erp_api {
         [[nodiscard]] bool getShipSeparately() const { return ship_separately_; }
         [[nodiscard]] const std::string& getUomCodeId() const { return uom_code_id_; }
         [[nodiscard]] const std::string& getUomName() const { return uom_name_; }
+        [[nodiscard]] const std::string& getLeadTime() const { return lead_time_; }
 
         // Category / tags getters
         [[nodiscard]] const std::string& getCategoryId() const { return category_id_; }
         [[nodiscard]] const std::string& getCategoryName() const { return category_name_; }
+        [[nodiscard]] const std::string& getCategorySlug() const { return category_slug_; }
         [[nodiscard]] const Json::Value& getTagList() const { return tag_list_; }
+        [[nodiscard]] const Json::Value& getVariants() const { return variants_; }
         [[nodiscard]] int getMinimumCartQuantity() const { return minimum_cart_quantity_; }
         [[nodiscard]] int getMaximumCartQuantity() const { return maximum_cart_quantity_; }
         [[nodiscard]] const std::string& getBranchId() const { return branch_id_; }
@@ -625,10 +629,13 @@ namespace data_support::dto::erp_api {
 
         // Attributes / SEO getters
         [[nodiscard]] const Json::Value& getProductAttributes() const { return product_attributes_; }
-        [[nodiscard]] const std::string& getProductSpecifications() const { return product_specifications_; }
+        [[nodiscard]] const Json::Value& getSpecifications() const { return specifications_; }
+        [[nodiscard]] const Json::Value& getBulkPricing() const { return bulk_pricing_; }
         [[nodiscard]] const std::string& getMetaTitle() const { return meta_title_; }
         [[nodiscard]] const std::string& getMetaKeywords() const { return meta_keywords_; }
         [[nodiscard]] const std::string& getMetaDescription() const { return meta_description_; }
+        [[nodiscard]] int getRating() const { return rating_; }
+        [[nodiscard]] int getReviewsCount() const { return reviews_count_; }
 
         // Wrapper setters
         void setOperation(const std::string& value) { operation_ = value; }
@@ -681,10 +688,12 @@ namespace data_support::dto::erp_api {
 
         // Attributes / SEO setters
         void setProductAttributes(const Json::Value& value) { product_attributes_ = value; }
-        void setProductSpecifications(const std::string& value) { product_specifications_ = value; }
+        void setProductSpecifications(const Json::Value& value) { specifications_ = value; }
         void setMetaTitle(const std::string& value) { meta_title_ = value; }
         void setMetaKeywords(const std::string& value) { meta_keywords_ = value; }
         void setMetaDescription(const std::string& value) { meta_description_ = value; }
+        void setLeadTime(const std::string& value) { lead_time_ = value; }
+
 
     private:
         std::string operation_;
@@ -692,6 +701,7 @@ namespace data_support::dto::erp_api {
 
         // Basic fields
         std::string name_;
+        std::string slug_;
         std::string short_description_;
         std::string full_description_;
         std::string admin_comment_;
@@ -714,7 +724,9 @@ namespace data_support::dto::erp_api {
         // Category / tags fields
         std::string category_id_;
         std::string category_name_;
+        std::string category_slug_;
         Json::Value tag_list_ {Json::arrayValue};
+        Json::Value variants_ {Json::arrayValue};
         int minimum_cart_quantity_ {0};
         int maximum_cart_quantity_ {0};
         std::string branch_id_;
@@ -737,10 +749,14 @@ namespace data_support::dto::erp_api {
 
         // Attributes / SEO
         Json::Value product_attributes_ {Json::arrayValue};
-        std::string product_specifications_;
+        Json::Value specifications_ {Json::arrayValue};
+        Json::Value bulk_pricing_ {Json::arrayValue};
         std::string meta_title_;
         std::string meta_keywords_;
         std::string meta_description_;
+        std::string lead_time_;
+        int rating_ {0};
+        int reviews_count_ {0};
     };
 
     inline void SyncPosInventoryItemDto::fromJson(const Json::Value& json) {
@@ -880,7 +896,7 @@ namespace data_support::dto::erp_api {
             product_attributes_ = data["ProductAttributes"];
         }
         if (data.isMember("ProductSpecifications") && !data["ProductSpecifications"].isNull()) {
-            product_specifications_ = data["ProductSpecifications"].asString();
+            setProductSpecifications(data["ProductSpecifications"]);
         }
         if (data.isMember("MetaTitle") && !data["MetaTitle"].isNull()) {
             meta_title_ = data["MetaTitle"].asString();
@@ -891,6 +907,12 @@ namespace data_support::dto::erp_api {
         if (data.isMember("MetaDescription") && !data["MetaDescription"].isNull()) {
             meta_description_ = data["MetaDescription"].asString();
         }
+
+        if (data.isMember("LeadTime") && !data["LeadTime"].isNull()) {
+            lead_time_ = data["LeadTime"].asString();
+        }
+
+
     }
 
 

@@ -1631,8 +1631,8 @@ namespace data_support::services {
         // Basic fields
         item.setBusinessId(businessAccountId);
         item.setName(dto.getName());
+        item.setSlug(dto.getSlug());
         item.setShortDescription(dto.getShortDescription());
-        item.setFullDescription(dto.getFullDescription());
         item.setAdminComment(dto.getAdminComment());
         item.setMerchantId(dto.getMerchantId());
         item.setMerchantName(dto.getMerchantName());
@@ -1649,9 +1649,10 @@ namespace data_support::services {
         item.setUomCodeId(dto.getUomCodeId());
         item.setUomName(dto.getUomName());
 
-        // Category / tags
+        // Category / tags (add categorySlug)
         item.setCategoryId(dto.getCategoryId());
         item.setCategoryName(dto.getCategoryName());
+        item.setCategorySlug(dto.getCategorySlug());
         item.setMinimumCartQuantity(dto.getMinimumCartQuantity());
         item.setMaximumCartQuantity(dto.getMaximumCartQuantity());
         item.setBranchId(dto.getBranchId());
@@ -1661,17 +1662,6 @@ namespace data_support::services {
         // Flags
         item.setIsPublished(dto.getIsPublished());
         item.setAllowCustomerReviews(dto.getAllowCustomerReviews());
-
-        // Dates (parsed from ISO strings)
-        if (!dto.getAvailableStartDate().empty()) {
-            item.setAvailableStartDate(
-                trantor::Date::fromDbStringLocal(dto.getAvailableStartDate()));
-        }
-        if (!dto.getAvailableEndDate().empty()) {
-            item.setAvailableEndDate(
-                trantor::Date::fromDbStringLocal(dto.getAvailableEndDate()));
-        }
-
         item.setMarkAsNew(dto.getMarkAsNew());
         item.setDisableBuyButton(dto.getDisableBuyButton());
         item.setDisableWishlistButton(dto.getDisableWishlistButton());
@@ -1680,37 +1670,39 @@ namespace data_support::services {
         item.setIsNotReturnable(dto.getIsNotReturnable());
         item.setIsRental(dto.getIsRental());
         item.setIsService(dto.getIsService());
+        item.setRating(dto.getRating());
+        item.setReviewsCount(dto.getReviewsCount());
+
+        // Dates
+        if (!dto.getAvailableStartDate().empty()) {
+            item.setAvailableStartDate(trantor::Date::fromDbStringLocal(dto.getAvailableStartDate()));
+        }
+        if (!dto.getAvailableEndDate().empty()) {
+            item.setAvailableEndDate(trantor::Date::fromDbStringLocal(dto.getAvailableEndDate()));
+        }
 
         // SEO
-        item.setSpecifications(dto.getProductSpecifications());
         item.setMetaTitle(dto.getMetaTitle());
         item.setMetaKeywords(dto.getMetaKeywords());
         item.setMetaDescription(dto.getMetaDescription());
+        item.setLeadTime(dto.getLeadTime());
 
-        // ---------------------------------------------------------------
-        // Serialize the three JSON array fields to strings for storage
-        // ---------------------------------------------------------------
+        // ── JSON arrays → serialize to JSON strings for the DB ───────────────
         Json::StreamWriterBuilder writer;
         writer["indentation"] = "";
 
-        if (!dto.getImages().isNull() && dto.getImages().isArray()) {
-            item.setImages(Json::writeString(writer, dto.getImages()));
-        } else {
-            item.setImages("[]");
-        }
+        auto writeJson = [&](const Json::Value& v) -> std::string {
+            if (v.isNull() || (!v.isArray() && !v.isObject())) return "[]";
+            return Json::writeString(writer, v);
+        };
 
-        if (!dto.getTagList().isNull() && dto.getTagList().isArray()) {
-            item.setTags(Json::writeString(writer, dto.getTagList()));
-        } else {
-            item.setTags("[]");
-        }
-
-        if (!dto.getProductAttributes().isNull() && dto.getProductAttributes().isArray()) {
-            item.setProductAttributes(
-                Json::writeString(writer, dto.getProductAttributes()));
-        } else {
-            item.setProductAttributes("[]");
-        }
+        item.setFullDescription(writeJson(dto.getFullDescription()));
+        item.setImages(writeJson(dto.getImages()));
+        item.setTags(writeJson(dto.getTagList()));
+        item.setVariants(writeJson(dto.getVariants()));
+        item.setProductAttributes(writeJson(dto.getProductAttributes()));
+        item.setSpecifications(writeJson(dto.getSpecifications()));
+        item.setBulkPricing(writeJson(dto.getBulkPricing()));
 
         LOG_DEBUG << "[syncPosInventoryItems] Item model populated. Sku: "
                   << item.getValueOfSku()
