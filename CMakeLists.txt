@@ -71,7 +71,7 @@ add_executable(${PROJECT_NAME} main.cc
         services/email/EmailApi.cc
         dto/erp_api/SyncApiCredentialDto.h
         dto/erp_api/SyncPosBranchDto.h
-        services/pay_stack_api/PayStackApi.h
+        services/pay_stack_api/PaystackApi.h
         services/pay_stack_api/PaystackApi.cc
 )
 
