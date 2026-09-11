@@ -1629,7 +1629,9 @@ namespace data_support::services {
         drogon_model::DataSupportDb::PosInventoryItems item;
 
         // Basic fields
+        item.setId(dto.getId());
         item.setBusinessId(businessAccountId);
+        item.setTenantId(dto.getTenantId());
         item.setName(dto.getName());
         item.setSlug(dto.getSlug());
         item.setShortDescription(dto.getShortDescription());

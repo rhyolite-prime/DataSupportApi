@@ -577,6 +577,8 @@ namespace data_support::dto::erp_api {
         // Wrapper getters
         [[nodiscard]] const std::string& getOperation() const { return operation_; }
         [[nodiscard]] const std::string& getBusinessAccountId() const { return business_account_id_; }
+        [[nodiscard]] const std::string& getId() const { return id_; }
+        [[nodiscard]] int getTenantId() const { return tenant_id_; }
 
         // Basic getters
         [[nodiscard]] const std::string& getName() const { return name_; }
@@ -640,6 +642,8 @@ namespace data_support::dto::erp_api {
         // Wrapper setters
         void setOperation(const std::string& value) { operation_ = value; }
         void setBusinessAccountId(const std::string& value) { business_account_id_ = value; }
+        void setId(const std::string& value) { id_ = value; }
+        void setTenantId(int value) { tenant_id_ = value; }
 
         // Basic setters
         void setName(const std::string& value) { name_ = value; }
@@ -698,6 +702,8 @@ namespace data_support::dto::erp_api {
     private:
         std::string operation_;
         std::string business_account_id_;
+        std::string id_;
+        int tenant_id_ {0};
 
         // Basic fields
         std::string name_;
@@ -768,6 +774,12 @@ namespace data_support::dto::erp_api {
         if (json.isMember("BusinessAccountId") && !json["BusinessAccountId"].isNull()) {
             setBusinessAccountId(json["BusinessAccountId"].asString());
         }
+        if (json.isMember("Id") && !json["Id"].isNull()) {
+            setId(json["Id"].asString());
+        }
+        if (json.isMember("TenantId") && !json["TenantId"].isNull()) {
+            tenant_id_ = json["TenantId"].asInt();
+        }
 
         // The entity fields may be nested under "data" or at the top level
         const Json::Value& data = json.isMember("data") ? json["data"] : json;
@@ -776,11 +788,15 @@ namespace data_support::dto::erp_api {
         if (data.isMember("Name") && !data["Name"].isNull()) {
             name_ = data["Name"].asString();
         }
+        if (data.isMember("Slug") && !data["Slug"].isNull()) {
+            slug_ = data["Slug"].asString();
+        }
         if (data.isMember("ShortDescription") && !data["ShortDescription"].isNull()) {
             short_description_ = data["ShortDescription"].asString();
         }
         if (data.isMember("FullDescription") && !data["FullDescription"].isNull()) {
-            full_description_ = data["FullDescription"].asString();
+            // FullDescription is a JSON array — assign it directly, never call asString()
+            full_description_ = data["FullDescription"];
         }
         if (data.isMember("AdminComment") && !data["AdminComment"].isNull()) {
             admin_comment_ = data["AdminComment"].asString();
@@ -834,8 +850,17 @@ namespace data_support::dto::erp_api {
         if (data.isMember("CategoryName") && !data["CategoryName"].isNull()) {
             category_name_ = data["CategoryName"].asString();
         }
-        if (data.isMember("TagList") && !data["TagList"].isNull()) {
+        if (data.isMember("CategorySlug") && !data["CategorySlug"].isNull()) {
+            category_slug_ = data["CategorySlug"].asString();
+        }
+        // Payload sends "Tags", not "TagList"
+        if (data.isMember("Tags") && !data["Tags"].isNull()) {
+            tag_list_ = data["Tags"];
+        } else if (data.isMember("TagList") && !data["TagList"].isNull()) {
             tag_list_ = data["TagList"];
+        }
+        if (data.isMember("Variants") && !data["Variants"].isNull()) {
+            variants_ = data["Variants"];
         }
         if (data.isMember("MinimumCartQuantity") && !data["MinimumCartQuantity"].isNull()) {
             minimum_cart_quantity_ = data["MinimumCartQuantity"].asInt();
@@ -895,8 +920,20 @@ namespace data_support::dto::erp_api {
         if (data.isMember("ProductAttributes") && !data["ProductAttributes"].isNull()) {
             product_attributes_ = data["ProductAttributes"];
         }
-        if (data.isMember("ProductSpecifications") && !data["ProductSpecifications"].isNull()) {
-            setProductSpecifications(data["ProductSpecifications"]);
+        // Payload sends "Specifications", not "ProductSpecifications"
+        if (data.isMember("Specifications") && !data["Specifications"].isNull()) {
+            specifications_ = data["Specifications"];
+        } else if (data.isMember("ProductSpecifications") && !data["ProductSpecifications"].isNull()) {
+            specifications_ = data["ProductSpecifications"];
+        }
+        if (data.isMember("BulkPricing") && !data["BulkPricing"].isNull()) {
+            bulk_pricing_ = data["BulkPricing"];
+        }
+        if (data.isMember("Rating") && !data["Rating"].isNull()) {
+            rating_ = data["Rating"].asInt();
+        }
+        if (data.isMember("ReviewsCount") && !data["ReviewsCount"].isNull()) {
+            reviews_count_ = data["ReviewsCount"].asInt();
         }
         if (data.isMember("MetaTitle") && !data["MetaTitle"].isNull()) {
             meta_title_ = data["MetaTitle"].asString();
