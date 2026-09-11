@@ -644,7 +644,7 @@ namespace data_support::dto::erp_api {
         // Basic setters
         void setName(const std::string& value) { name_ = value; }
         void setShortDescription(const std::string& value) { short_description_ = value; }
-        void setFullDescription(const std::string& value) { full_description_ = value; }
+        void setFullDescription(const Json::Value& value) { full_description_ = value; }
         void setAdminComment(const std::string& value) { admin_comment_ = value; }
         void setMerchantId(const std::string& value) { merchant_id_ = value; }
         void setMerchantName(const std::string& value) { merchant_name_ = value; }
@@ -703,7 +703,7 @@ namespace data_support::dto::erp_api {
         std::string name_;
         std::string slug_;
         std::string short_description_;
-        std::string full_description_;
+        Json::Value full_description_;
         std::string admin_comment_;
         std::string merchant_id_;
         std::string merchant_name_;
