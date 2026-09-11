@@ -70,12 +70,24 @@ namespace data_support::dto::smart_suite {
             setAmount(json["amount"].asDouble());
         }
 
+        if (json.isMember("description") && !json["description"].isNull()) {
+            setDescription(json["description"].asString());
+        }
+
         if (json.isMember("primaryCallbackUrl") && !json["primaryCallbackUrl"].isNull()) {
             setPrimaryCallbackUrl(json["primaryCallbackUrl"].asString());
         }
 
         if (json.isMember("cancellationUrl") && !json["cancellationUrl"].isNull()) {
             setCancellationUrl(json["cancellationUrl"].asString());
+        }
+
+        if (json.isMember("returnUrl") && !json["returnUrl"].isNull()) {
+            setReturnUrl(json["returnUrl"].asString());
+        }
+
+        if (json.isMember("transactionType") && !json["transactionType"].isNull()) {
+            setTransactionType(json["transactionType"].asString());
         }
 
         if (json.isMember("accountType") && !json["accountType"].isNull()) {

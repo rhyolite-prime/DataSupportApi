@@ -21,9 +21,36 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   ADD_METHOD_TO(ThirdPartyController::initializeFlexyWithdrawalToBank,std::string(PREFIX) + "smart-suite/initialize-flexy-withdrawal-to-bank", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::initializeFlexyWithdrawalToMomo,std::string(PREFIX) + "smart-suite/initialize-flexy-withdrawal-to-momo", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::interAccountTransfer,std::string(PREFIX) + "smart-suite/inter-account-transfer", Post, Options);
-  ADD_METHOD_TO(ThirdPartyController::submitWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-withdrawal-request", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::flexyToKiddyTransfer,std::string(PREFIX) + "smart-suite/flexy-to-kiddy-transfer", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::submitKiddyWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-kiddy-withdrawal-request", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::submitSavingsWithdrawalRequest,std::string(PREFIX) + "smart-suite/submit-savings-withdrawal-request", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::notifyLowPrepaidBalance, std::string(PREFIX) + "smart-suite/notify-low-prepaid-balance", Get, Options);
+
+  //ERP-POS
+  ADD_METHOD_TO(ThirdPartyController::getPosInventoryCategories, std::string(PREFIX) +"erp-pos/get-categories", Get, Options);
+  ADD_METHOD_TO(ThirdPartyController::getPosInventoryItems, std::string(PREFIX) +"erp-pos/get-items", Post, Options);
+
+  //ERP-SCHOOL MANAGER
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "erp-sm/create-merchant", Post, Options);
+
+  //ERP-HR
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "erp-hr/create-merchant", Post, Options);
+
+
+  //ERP-PAYROLL
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "erp-pr/create-merchant", Post, Options);
+
+
 
   //WAEC eVoucher
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "waec/create-merchant", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::individualVoucherSale, std::string(PREFIX) + "waec/voucher-sale", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::handleBulkVoucherSale, std::string(PREFIX) + "waec/bulk-voucher-sale", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::handleAffiliateVoucherSale, std::string(PREFIX) + "waec/affiliate-voucher-sale", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::getMerchantDashboardStats, std::string(PREFIX) + "waec/get-merchant-stats", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::getMerchantTransactions, std::string(PREFIX) + "waec/get-merchant-transactions", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::requestMerchantStatement, std::string(PREFIX) + "waec/request-merchant-statement", Post, Options);
+
   METHOD_LIST_END
 
   Task<HttpResponsePtr> verifyCustomerAccount(HttpRequestPtr req);
@@ -35,7 +62,29 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   Task<HttpResponsePtr> initializeFlexyWithdrawalToBank(HttpRequestPtr req);
   Task<HttpResponsePtr> initializeFlexyWithdrawalToMomo(HttpRequestPtr req);
   Task<HttpResponsePtr> interAccountTransfer(HttpRequestPtr req);
-  Task<HttpResponsePtr> submitWithdrawalRequest(HttpRequestPtr req);
+  Task<HttpResponsePtr> flexyToKiddyTransfer(HttpRequestPtr req);
+  Task<HttpResponsePtr> submitKiddyWithdrawalRequest(HttpRequestPtr req);
+  Task<HttpResponsePtr> submitSavingsWithdrawalRequest(HttpRequestPtr req);
+
+  //ERP-SCHOOL MANAGER
+  Task<HttpResponsePtr> getPosInventoryCategories(HttpRequestPtr req);
+  Task<HttpResponsePtr> getPosInventoryItems(HttpRequestPtr req);
+
+
+
+  //utils
+  Task<HttpResponsePtr> notifyLowPrepaidBalance(HttpRequestPtr req);
+
+
+    //waec vouchers
+  Task<HttpResponsePtr> createMerchantAccount(HttpRequestPtr req);
+  Task<HttpResponsePtr> individualVoucherSale(HttpRequestPtr req);
+  Task<HttpResponsePtr> handleBulkVoucherSale(HttpRequestPtr req);
+  Task<HttpResponsePtr> handleAffiliateVoucherSale(HttpRequestPtr req);
+  Task<HttpResponsePtr> getMerchantDashboardStats(HttpRequestPtr req);
+  Task<HttpResponsePtr> getMerchantTransactions(HttpRequestPtr req);
+  Task<HttpResponsePtr> requestMerchantStatement(HttpRequestPtr req);
+
 
   private:
   struct AuthResult {

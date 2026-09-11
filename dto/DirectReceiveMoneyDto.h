@@ -126,13 +126,15 @@ namespace data_support::dto {
 
     class TransactionResponse {
     public:
+        std::string accountType;
+        std::string accountBalance;
         std::string message;
         std::string clientReference;
         int code {0};
         std::string checkoutUrl;
     };
 
-    class WebCheckoutDto {
+    class HubtelWebCheckoutDto {
     public:
         std::string phoneNo;
         double totalAmount {0};
@@ -152,6 +154,20 @@ namespace data_support::dto {
         [[nodiscard]] const std::string& getClientReference() const { return clientReference; }
     };
 
+    class PaystackWebCheckoutDto {
+    public:
+        std::string email;
+        double amount {0};
+        std::string callbackUrl;
+        std::string reference;
+
+        // Getters
+        [[nodiscard]] const std::string& getEmail() const { return email; }
+        [[nodiscard]] double getTotalAmount() const { return amount; }
+        [[nodiscard]] const std::string& getCallbackUrl() const { return callbackUrl; }
+        [[nodiscard]] const std::string& getClientReference() const { return reference; }
+    };
+
     class HubtelWebCheckoutResponse {
     public:
         struct Data {
@@ -168,16 +184,33 @@ namespace data_support::dto {
 
         static HubtelWebCheckoutResponse fromJson(const Json::Value &json) {
             HubtelWebCheckoutResponse res;
-            if (json.isMember("ResponseCode")) res.responseCode = json["ResponseCode"].asString();
-            if (json.isMember("Status")) res.status = json["Status"].asString();
+            // API returns camelCase: responseCode, status, data
+            if (json.isMember("responseCode")) res.responseCode = json["responseCode"].asString();
+            else if (json.isMember("ResponseCode")) res.responseCode = json["ResponseCode"].asString();
 
-            if (json.isMember("Data") && json["Data"].isObject()) {
-                const auto &d = json["Data"];
-                if (d.isMember("CheckoutUrl")) res.data.checkoutUrl = d["CheckoutUrl"].asString();
-                if (d.isMember("CheckoutId")) res.data.checkoutId = d["CheckoutId"].asString();
-                if (d.isMember("ClientReference")) res.data.clientReference = d["ClientReference"].asString();
-                if (d.isMember("Message")) res.data.message = d["Message"].asString();
-                if (d.isMember("CheckoutDirectUrl")) res.data.checkoutDirectUrl = d["CheckoutDirectUrl"].asString();
+            if (json.isMember("status")) res.status = json["status"].asString();
+            else if (json.isMember("Status")) res.status = json["Status"].asString();
+
+            const Json::Value *dataNode = nullptr;
+            if (json.isMember("data") && json["data"].isObject()) dataNode = &json["data"];
+            else if (json.isMember("Data") && json["Data"].isObject()) dataNode = &json["Data"];
+
+            if (dataNode) {
+                const auto &d = *dataNode;
+                if (d.isMember("checkoutUrl")) res.data.checkoutUrl = d["checkoutUrl"].asString();
+                else if (d.isMember("CheckoutUrl")) res.data.checkoutUrl = d["CheckoutUrl"].asString();
+
+                if (d.isMember("checkoutId")) res.data.checkoutId = d["checkoutId"].asString();
+                else if (d.isMember("CheckoutId")) res.data.checkoutId = d["CheckoutId"].asString();
+
+                if (d.isMember("clientReference")) res.data.clientReference = d["clientReference"].asString();
+                else if (d.isMember("ClientReference")) res.data.clientReference = d["ClientReference"].asString();
+
+                if (d.isMember("message")) res.data.message = d["message"].asString();
+                else if (d.isMember("Message")) res.data.message = d["Message"].asString();
+
+                if (d.isMember("checkoutDirectUrl")) res.data.checkoutDirectUrl = d["checkoutDirectUrl"].asString();
+                else if (d.isMember("CheckoutDirectUrl")) res.data.checkoutDirectUrl = d["CheckoutDirectUrl"].asString();
             }
             return res;
         }
@@ -194,6 +227,119 @@ namespace data_support::dto {
             d["CheckoutDirectUrl"] = data.checkoutDirectUrl;
             json["Data"] = d;
             return json;
+        }
+    };
+
+    class PaystackWebCheckoutResponse {
+    public:
+        struct Data {
+            std::string authorizationUrl;
+            std::string accessCode;
+            std::string reference;
+        };
+
+        std::string message;
+        bool status {false};
+        Data data;
+
+        static PaystackWebCheckoutResponse fromJson(const Json::Value &json) {
+            PaystackWebCheckoutResponse res;
+            // API returns camelCase: responseCode, status, data
+            if (json.isMember("message")) res.message = json["message"].asString();
+            else if (json.isMember("message")) res.message = json["message"].asString();
+
+            if (json.isMember("status")) res.status = json["status"].asBool();
+            else if (json.isMember("Status")) res.status = json["Status"].asBool();
+
+            const Json::Value *dataNode = nullptr;
+            if (json.isMember("data") && json["data"].isObject()) dataNode = &json["data"];
+            else if (json.isMember("Data") && json["Data"].isObject()) dataNode = &json["Data"];
+
+            if (dataNode) {
+
+                const auto &d = *dataNode;
+
+                if (d.isMember("authorization_url")) res.data.authorizationUrl = d["authorization_url"].asString();
+
+                if (d.isMember("access_code")) res.data.accessCode = d["access_code"].asString();
+
+                if (d.isMember("reference")) res.data.reference = d["reference"].asString();
+
+            }
+            return res;
+        }
+    };
+
+    class PaystackTransactionStatusResponse {
+        public:
+        struct Data {
+            std::string gatewayResponse;
+            std::string channel;
+            std::string reference;
+            std::string status;
+            std::string transactionDate;
+        };
+
+        std::string message;
+        bool status {false};
+        Data data;
+
+        static PaystackTransactionStatusResponse fromJson(const Json::Value &json) {
+            PaystackTransactionStatusResponse res;
+            // API returns camelCase: responseCode, status, data
+            if (json.isMember("message")) res.message = json["message"].asString();
+            else if (json.isMember("message")) res.message = json["message"].asString();
+
+            if (json.isMember("status")) res.status = json["status"].asBool();
+            else if (json.isMember("Status")) res.status = json["Status"].asBool();
+
+            const Json::Value *dataNode = nullptr;
+            if (json.isMember("data") && json["data"].isObject()) dataNode = &json["data"];
+            else if (json.isMember("Data") && json["Data"].isObject()) dataNode = &json["Data"];
+
+            if (dataNode) {
+
+                const auto &d = *dataNode;
+
+                if (d.isMember("gateway_response")) res.data.gatewayResponse = d["gateway_response"].asString();
+
+                if (d.isMember("transaction_date")) res.data.transactionDate = d["transaction_date"].asString();
+
+                if (d.isMember("reference")) res.data.reference = d["reference"].asString();
+
+                if (d.isMember("status")) res.data.status = d["status"].asString();
+
+                if (d.isMember("channel")) res.data.channel = d["channel"].asString();
+
+            }
+            return res;
+        }
+
+    };
+
+    class AccountBalanceResponse {
+    public:
+        struct Data {
+            double amount {0};
+        };
+
+        std::string responseCode;
+        std::string message;
+        Data data;
+
+        static AccountBalanceResponse fromJson(const Json::Value &json) {
+            AccountBalanceResponse res;
+
+            if (json.isMember("responseCode")) res.responseCode = json["responseCode"].asString();
+            if (json.isMember("message")) res.message = json["message"].asString();
+
+            if (json.isMember("Data") && json["Data"].isObject()) {
+                const auto &d = json["Data"];
+
+                if (d.isMember("amount")) res.data.amount = d["amount"].asDouble();
+
+            }
+            return res;
         }
     };
 

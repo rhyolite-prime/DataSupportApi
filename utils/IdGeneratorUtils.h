@@ -30,6 +30,8 @@ namespace data_support::utils {
          * @return A random alphanumeric string
          */
         static std::string generateAlphanumericId(size_t length = 6);
+
+        static std::string generateTimeStampReference();
     };
 
 }

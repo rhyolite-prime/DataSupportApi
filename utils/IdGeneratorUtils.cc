@@ -3,6 +3,8 @@
 //
 
 #include "IdGeneratorUtils.h"
+#include <chrono>
+#include <iomanip>
 #include <random>
 #include <sstream>
 
@@ -57,6 +59,18 @@ namespace data_support::utils {
             id += charset[dist(gen)];
         }
         return id;
+    }
+
+    std::string IdGeneratorUtils::generateTimeStampReference() {
+
+        auto now = std::chrono::system_clock::now();
+        std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+        std::ostringstream timeStream;
+        timeStream << std::put_time(std::localtime(&now_c), "%Y%m%d%H%M%S");
+        std::string timestampRef = timeStream.str();
+
+        return timestampRef;
+
     }
 
 }

@@ -10,10 +10,14 @@
 
 #include "services/business_account/BusinessAccountService.h"
 #include "services/business_api_keys/BusinessApiKeyService.h"
+#include "services/email/EmailApi.h"
+#include "services/erp_api/ErpApi.h"
 #include "services/hubtel_api/HubtelApi.h"
+#include "services/pay_stack_api/PaystackApi.h"
 #include "services/quartz/QuartzApi.h"
 #include "services/redis/RedisCacheManager.h"
 #include "services/smart_suite_banking/SmartSuiteBankingService.h"
+#include "services/waec_evoucher/WaecVoucherService.h"
 
 namespace data_support::plugins {
 
@@ -33,18 +37,26 @@ namespace data_support::plugins {
 
         services::QuartzApi &getQuartzApi() { return quartzApi_; }
         services::HubtelApi &getHubtelApi() { return hubtelApi_; }
+        services::PaystackApi &getPaystackApi() { return paystackApi_; }
+        services::EmailApi &getEmailApi() { return emailApi_; }
+        services::ErpApi &getErpApi() { return erpApi_; }
         services::RedisCacheManager &getRedisCacheManager() { return redisCacheService_; }
         services::BusinessAccountService &getBusinessAccountService() { return businessAccountService_; }
         services::BusinessApiKeyService &getBusinessApiKeyService() { return businessApiKeyService_; }
         services::SmartSuiteBankingService &getSmartSuiteBankingService() { return smartSuiteBankingService_; }
+        services::WaecVoucherService &getWaecVoucherService() { return waecVoucherService_; }
 
     private:
         services::QuartzApi quartzApi_;
         services::HubtelApi hubtelApi_;
+        services::PaystackApi paystackApi_;
+        services::EmailApi emailApi_;
+        services::ErpApi erpApi_;
         services::RedisCacheManager redisCacheService_;
         services::BusinessAccountService businessAccountService_;
         services::BusinessApiKeyService businessApiKeyService_;
         services::SmartSuiteBankingService smartSuiteBankingService_;
+        services::WaecVoucherService waecVoucherService_;
     };
 
 }

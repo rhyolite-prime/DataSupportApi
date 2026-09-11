@@ -48,7 +48,7 @@ const std::vector<typename SmartSuiteTransactions::MetaData> SmartSuiteTransacti
 {"amount","std::string","numeric",0,0,0,1},
 {"account_type","std::string","character varying",10,0,0,0},
 {"transaction_type","std::string","character varying",50,0,0,0},
-{"status","std::string","character varying",20,0,0,0},
+{"status","int32_t","integer",4,0,0,0},
 {"reference","std::string","character varying",25,0,0,0},
 {"integration_channel","std::string","character varying",50,0,0,0},
 {"integrating_service","std::string","character varying",50,0,0,0},
@@ -60,7 +60,7 @@ const std::vector<typename SmartSuiteTransactions::MetaData> SmartSuiteTransacti
 {"bank_code","std::string","character varying",15,0,0,0},
 {"bank_account_name","std::string","character varying",150,0,0,0},
 {"recipient_name","std::string","character varying",150,0,0,0},
-{"pin","std::string","character varying",20,0,0,0},
+{"pin","std::string","character varying",100,0,0,0},
 {"callback_url","std::string","character varying",150,0,0,0},
 {"created_at","::trantor::Date","timestamp with time zone",0,0,0,1},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
@@ -104,7 +104,7 @@ SmartSuiteTransactions::SmartSuiteTransactions(const Row &r, const ssize_t index
         }
         if(!r["status"].isNull())
         {
-            status_=std::make_shared<std::string>(r["status"].as<std::string>());
+            status_=std::make_shared<int32_t>(r["status"].as<int32_t>());
         }
         if(!r["reference"].isNull())
         {
@@ -250,7 +250,7 @@ SmartSuiteTransactions::SmartSuiteTransactions(const Row &r, const ssize_t index
         index = offset + 7;
         if(!r[index].isNull())
         {
-            status_=std::make_shared<std::string>(r[index].as<std::string>());
+            status_=std::make_shared<int32_t>(r[index].as<int32_t>());
         }
         index = offset + 8;
         if(!r[index].isNull())
@@ -435,7 +435,7 @@ SmartSuiteTransactions::SmartSuiteTransactions(const Json::Value &pJson, const s
         dirtyFlag_[7] = true;
         if(!pJson[pMasqueradingVector[7]].isNull())
         {
-            status_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
+            status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
         }
     }
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
@@ -659,7 +659,7 @@ SmartSuiteTransactions::SmartSuiteTransactions(const Json::Value &pJson) noexcep
         dirtyFlag_[7]=true;
         if(!pJson["status"].isNull())
         {
-            status_=std::make_shared<std::string>(pJson["status"].asString());
+            status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
     if(pJson.isMember("reference"))
@@ -888,7 +888,7 @@ void SmartSuiteTransactions::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[7] = true;
         if(!pJson[pMasqueradingVector[7]].isNull())
         {
-            status_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
+            status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
         }
     }
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
@@ -1111,7 +1111,7 @@ void SmartSuiteTransactions::updateByJson(const Json::Value &pJson) noexcept(fal
         dirtyFlag_[7] = true;
         if(!pJson["status"].isNull())
         {
-            status_=std::make_shared<std::string>(pJson["status"].asString());
+            status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
     if(pJson.isMember("reference"))
@@ -1446,25 +1446,20 @@ void SmartSuiteTransactions::setTransactionTypeToNull() noexcept
     dirtyFlag_[6] = true;
 }
 
-const std::string &SmartSuiteTransactions::getValueOfStatus() const noexcept
+const int32_t &SmartSuiteTransactions::getValueOfStatus() const noexcept
 {
-    static const std::string defaultValue = std::string();
+    static const int32_t defaultValue = int32_t();
     if(status_)
         return *status_;
     return defaultValue;
 }
-const std::shared_ptr<std::string> &SmartSuiteTransactions::getStatus() const noexcept
+const std::shared_ptr<int32_t> &SmartSuiteTransactions::getStatus() const noexcept
 {
     return status_;
 }
-void SmartSuiteTransactions::setStatus(const std::string &pStatus) noexcept
+void SmartSuiteTransactions::setStatus(const int32_t &pStatus) noexcept
 {
-    status_ = std::make_shared<std::string>(pStatus);
-    dirtyFlag_[7] = true;
-}
-void SmartSuiteTransactions::setStatus(std::string &&pStatus) noexcept
-{
-    status_ = std::make_shared<std::string>(std::move(pStatus));
+    status_ = std::make_shared<int32_t>(pStatus);
     dirtyFlag_[7] = true;
 }
 void SmartSuiteTransactions::setStatusToNull() noexcept
@@ -3891,17 +3886,9 @@ bool SmartSuiteTransactions::validJsonOfField(size_t index,
             {
                 return true;
             }
-            if(!pJson.isString())
+            if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
-                return false;
-            }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
-            {
-                err="String length exceeds limit for the " +
-                    fieldName +
-                    " field (the maximum value is 20)";
                 return false;
             }
             break;
@@ -4125,11 +4112,11 @@ bool SmartSuiteTransactions::validJsonOfField(size_t index,
                 return false;
             }
             if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
+                .from_bytes(pJson.asCString()).size() > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
-                    " field (the maximum value is 20)";
+                    " field (the maximum value is 100)";
                 return false;
             }
             break;
