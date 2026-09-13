@@ -31,7 +31,6 @@ namespace data_support::dto::erp_api {
         void setCategorySlug(const std::string& value) { categorySlug_ = value; }
         void setSortBy(const std::string& value) { sortBy_ = value; }
 
-
     private:
 
         int pageNo_ {1};
