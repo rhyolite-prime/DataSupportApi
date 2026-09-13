@@ -5,8 +5,8 @@ int main() {
     //Set HTTP listener address and port
 
     //Load config file
-    drogon::app().loadConfigFile("config.json");
-    //drogon::app().loadConfigFile("../config.json");
+    //drogon::app().loadConfigFile("config.json");
+    drogon::app().loadConfigFile("../config.json");
 
     drogon::app().registerPostHandlingAdvice(
       [](const drogon::HttpRequestPtr &req,

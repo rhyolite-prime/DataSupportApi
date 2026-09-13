@@ -21,14 +21,15 @@ namespace data_support::dto::erp_api {
         [[nodiscard]] const std::string& getCategoryId() const { return categoryId_; }
         [[nodiscard]] const std::string& getKeywords() const { return keywords_; }
         [[nodiscard]] const std::string& getCategorySlug() const { return categorySlug_; }
+        [[nodiscard]] const std::string& getSortBy() const { return sortBy_; }
 
 
-        // Currency setters
         void setPageNo(const int value) { pageNo_ = value; }
         void setPageSize(const int value) { pageSize_ = value; }
         void setCategoryId(const std::string& value) { categoryId_ = value; }
         void setKeywords(const std::string& value) { keywords_ = value; }
         void setCategorySlug(const std::string& value) { categorySlug_ = value; }
+        void setSortBy(const std::string& value) { sortBy_ = value; }
 
 
     private:
@@ -38,6 +39,7 @@ namespace data_support::dto::erp_api {
         std::string categoryId_;
         std::string categorySlug_;
         std::string keywords_;
+        std::string sortBy_;
 
     };
 
@@ -60,8 +62,12 @@ namespace data_support::dto::erp_api {
             setKeywords(json["keywords"].asString());
         }
 
-        if (json.isMember("slug") && !json["slug"].isNull()) {
-            setCategorySlug(json["slug"].asString());
+        if (json.isMember("categorySlug") && !json["categorySlug"].isNull()) {
+            setCategorySlug(json["categorySlug"].asString());
+        }
+
+        if (json.isMember("sortBy") && !json["sortBy"].isNull()) {
+            setCategorySlug(json["sortBy"].asString());
         }
 
     }

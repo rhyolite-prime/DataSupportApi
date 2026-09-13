@@ -7,6 +7,7 @@
 
 #include <drogon/drogon.h>
 #include "dto/BaseApiResponse.h"
+#include "dto/erp_api/BasePosDto.h"
 #include "dto/erp_api/SyncApiCredentialDto.h"
 #include "dto/erp_api/UnifiedFilterDto.h"
 #include "dto/erp_api/UnifiedSyncDto.h"
@@ -26,8 +27,11 @@ namespace data_support::services {
 
         //auth
         drogon::Task<dto::BaseApiResponse> verifyCustomer();
-        drogon::Task<dto::BaseApiResponse> signup();
-        drogon::Task<dto::BaseApiResponse> login();
+
+        drogon::Task<dto::erp_api::ErpOperationResponse> posCustomerSignup(const std::string &businessId, const dto::erp_api::PosCustomerSignupDto &dto);
+
+        drogon::Task<dto::erp_api::ErpOperationResponse> posCustomerLogin(const std::string &businessId, const dto::erp_api::PosCustomerLoginDto &dto);
+
         drogon::Task<dto::BaseApiResponse> resetPassword();
         drogon::Task<dto::BaseApiResponse> verifyOtp();
 
