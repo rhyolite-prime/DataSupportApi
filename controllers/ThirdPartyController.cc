@@ -411,6 +411,61 @@ Task<HttpResponsePtr> ThirdPartyController::getPosInventoryItems(HttpRequestPtr 
 
 }
 
+Task<HttpResponsePtr> ThirdPartyController::posCustomerSignup(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::erp_api::PosCustomerSignupDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.posCustomerSignup(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::posCustomerLogin(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto jsonPtr = req->getJsonObject();
+    if (!jsonPtr) {
+        data_support::dto::BaseApiResponse response;
+        response.success = false;
+        response.error["message"] = "Invalid JSON body";
+        auto resp = HttpResponse::newHttpJsonResponse(response.toJson());
+        resp->setStatusCode(k400BadRequest);
+        co_return resp;
+    }
+
+    data_support::dto::erp_api::PosCustomerLoginDto dto;
+    dto.fromJson(*jsonPtr);
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.posCustomerLogin(authResult.businessId, dto);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
 
 //utils
 

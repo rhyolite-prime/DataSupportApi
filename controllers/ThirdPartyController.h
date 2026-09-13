@@ -29,6 +29,8 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   //ERP-POS
   ADD_METHOD_TO(ThirdPartyController::getPosInventoryCategories, std::string(PREFIX) +"erp-pos/get-categories", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosInventoryItems, std::string(PREFIX) +"erp-pos/get-items", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::posCustomerSignup, std::string(PREFIX) +"erp-pos/customer-signup", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::posCustomerLogin, std::string(PREFIX) +"erp-pos/customer-login", Post, Options);
 
   //ERP-SCHOOL MANAGER
   ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "erp-sm/create-merchant", Post, Options);
@@ -69,6 +71,8 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   //ERP-SCHOOL MANAGER
   Task<HttpResponsePtr> getPosInventoryCategories(HttpRequestPtr req);
   Task<HttpResponsePtr> getPosInventoryItems(HttpRequestPtr req);
+  Task<HttpResponsePtr> posCustomerSignup(HttpRequestPtr req);
+  Task<HttpResponsePtr> posCustomerLogin(HttpRequestPtr req);
 
 
 
