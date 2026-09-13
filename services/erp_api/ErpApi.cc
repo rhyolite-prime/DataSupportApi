@@ -359,10 +359,8 @@ namespace data_support::services {
 
     }
 
-    drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems(
-    const std::string &businessId,
-    const dto::erp_api::InventoryItemFilterDto &dto)
-{
+    drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems(const std::string &businessId, const dto::erp_api::InventoryItemFilterDto &dto){
+
     dto::BaseApiResponse response;
 
     LOG_INFO << "[getInventoryItems] Entering method. businessId: '" << businessId
@@ -539,7 +537,7 @@ namespace data_support::services {
             + " LIMIT " + limitPh + " OFFSET " + offsetPh;
 
         auto dataResult = co_await runSql(
-            dbClient, dataSql, filterParams, pageSize, offset);
+            dbClient, dataSql, filterParams, (int64_t)pageSize, (int64_t)offset);
 
         LOG_DEBUG << "[getInventoryItems] Fetched " << dataResult.size()
                   << " rows for page " << pageNo;
