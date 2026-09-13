@@ -14,6 +14,8 @@ namespace data_support::dto::erp_api {
         std::string message;
         int code {1};
         bool success {false};
+        std::string customerId;
+        std::string token;
 
         [[nodiscard]]
         Json::Value toJson() const {
@@ -21,6 +23,12 @@ namespace data_support::dto::erp_api {
             json["code"] = code;
             json["message"] = message;
             json["success"] = success;
+            if (!customerId.empty()) {
+                json["customerId"] = customerId;
+            }
+            if (!token.empty()) {
+                json["token"] = token;
+            }
             return json;
         }
 
@@ -89,8 +97,6 @@ namespace data_support::dto::erp_api {
         if (json.isMember("password") && !json["password"].isNull()) {
             setUsername(json["password"].asString());
         }
-
-
 
     }
 
