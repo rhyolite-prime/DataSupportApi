@@ -237,44 +237,180 @@ namespace data_support::services {
 
     drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::posCustomerSignup(const std::string &businessId, const dto::erp_api::PosCustomerSignupDto &dto) {
 
-        // direct call
         dto::erp_api::ErpOperationResponse response;
+        response.success = false;
+        response.code = 1;
 
-        auto dbClient = drogon::app().getDbClient();
-        drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
-        auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
-        auto configStr = businessAccount.getValueOfConfigurationData();
+        try {
+            auto dbClient = drogon::app().getDbClient();
+            drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
+            auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+            auto configStr = businessAccount.getValueOfConfigurationData();
 
-        Json::Value configJson;
-        Json::CharReaderBuilder readerBuilder;
-        std::string errs;
-        std::istringstream iss(configStr);
+            Json::Value configJson;
+            Json::CharReaderBuilder readerBuilder;
+            std::string errs;
+            std::istringstream iss(configStr);
 
-        if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
-            LOG_ERROR << "[PosCustomerSignup] Step 1 FAILED: Could not parse ConfigurationData - " << errs;
-            response.message = "Failed to initialize customer signup.";
-            response.code = 1;
-            co_return response;
+            if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+                LOG_ERROR << "[posCustomerSignup] FAILED: Could not parse ConfigurationData - " << errs;
+                response.message = "Failed to initialize customer signup. Configuration error.";
+                co_return response;
+            }
+
+            if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+                LOG_ERROR << "[posCustomerSignup] FAILED: ErpApi configuration missing";
+                response.message = "ERP API not configured for this account.";
+                co_return response;
+            }
+
+            std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+            std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
+
+            auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+            auto req = drogon::HttpRequest::newHttpRequest();
+            req->setMethod(drogon::Post);
+            req->setPath("/api/services/app/Customer/Register");
+            req->addHeader("AccountId", accountId);
+            req->addHeader("AccountSecret", accountSecret);
+            req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+
+            Json::Value reqJson;
+            reqJson["Username"] = dto.getUsername();
+            reqJson["FirstName"] = dto.getFirstName();
+            reqJson["LastName"] = dto.getLastName();
+            reqJson["PhoneNumber"] = dto.getPhoneNo();
+            reqJson["Email"] = dto.getEmail();
+            reqJson["Pin"] = dto.getPassword();
+            
+            Json::StreamWriterBuilder writer;
+            writer["indentation"] = "";
+            req->setBody(Json::writeString(writer, reqJson));
+
+            auto resp = co_await client->sendRequestCoro(req);
+
+            if (resp) {
+                auto respJson = resp->getJsonObject();
+                if (resp->getStatusCode() == drogon::k200OK) {
+                    response.success = true;
+                    response.code = 0;
+                    response.message = "Signup successful";
+                    
+                    if (respJson && respJson->isMember("success") && !(*respJson)["success"].asBool()) {
+                        response.success = false;
+                        response.code = 1;
+                        if (respJson->isMember("error") && !(*respJson)["error"].isNull()) {
+                            response.message = (*respJson)["error"]["message"].asString();
+                        } else {
+                            response.message = "Signup failed";
+                        }
+                    }
+                } else {
+                    response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
+                    if (respJson && respJson->isMember("error") && !(*respJson)["error"].isNull()) {
+                        response.message = (*respJson)["error"]["message"].asString();
+                    }
+                }
+            } else {
+                response.message = "Network error. Failed to reach the server.";
+            }
+
+        } catch (const drogon::orm::UnexpectedRows &e) {
+            LOG_ERROR << "[posCustomerSignup] Business account not found: " << e.what();
+            response.message = "Business account not found.";
+        } catch (const std::exception &e) {
+            LOG_ERROR << "[posCustomerSignup] Exception: " << e.what();
+            response.message = "An error occurred during signup.";
         }
-        LOG_INFO << "[PosCustomerSignup] Step 1: ConfigurationData parsed successfully";
-
-        std::string accountId = configJson["ErpApi"]["AccountId"].asString();
-        std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
-
-        //make an api call to the main erp-api ...
-
-
 
         co_return response;
     }
 
-
     drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::posCustomerLogin(const std::string &businessId, const dto::erp_api::PosCustomerLoginDto &dto) {
 
-        // direct call
-        // keep customers logged in for 6 months
-        dto::erp_api::ErpOperationResponse res;
-        co_return res;
+        dto::erp_api::ErpOperationResponse response;
+        response.success = false;
+        response.code = 1;
+
+        try {
+            auto dbClient = drogon::app().getDbClient();
+            drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
+            auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+            auto configStr = businessAccount.getValueOfConfigurationData();
+
+            Json::Value configJson;
+            Json::CharReaderBuilder readerBuilder;
+            std::string errs;
+            std::istringstream iss(configStr);
+
+            if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+                LOG_ERROR << "[posCustomerLogin] FAILED: Could not parse ConfigurationData - " << errs;
+                response.message = "Failed to initialize customer login. Configuration error.";
+                co_return response;
+            }
+
+            if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+                LOG_ERROR << "[posCustomerLogin] FAILED: ErpApi configuration missing";
+                response.message = "ERP API not configured for this account.";
+                co_return response;
+            }
+
+            std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+            std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
+
+            auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+            auto req = drogon::HttpRequest::newHttpRequest();
+            req->setMethod(drogon::Post);
+            req->setPath("/api/services/app/Customer/Login");
+            req->addHeader("AccountId", accountId);
+            req->addHeader("AccountSecret", accountSecret);
+            req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+
+            Json::Value reqJson;
+            reqJson["AccountIdentifier"] = dto.getCustomerIdentifier();
+            reqJson["Password"] = dto.getPassword();
+            
+            Json::StreamWriterBuilder writer;
+            writer["indentation"] = "";
+            req->setBody(Json::writeString(writer, reqJson));
+
+            auto resp = co_await client->sendRequestCoro(req);
+
+            if (resp) {
+                auto respJson = resp->getJsonObject();
+                if (resp->getStatusCode() == drogon::k200OK) {
+                    response.success = true;
+                    response.code = 0;
+                    response.message = "Login successful";
+                    
+                    if (respJson && respJson->isMember("success") && !(*respJson)["success"].asBool()) {
+                        response.success = false;
+                        response.code = 1;
+                        if (respJson->isMember("error") && !(*respJson)["error"].isNull()) {
+                            response.message = (*respJson)["error"]["message"].asString();
+                        } else {
+                            response.message = "Login failed";
+                        }
+                    }
+                } else {
+                    response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
+                    if (respJson && respJson->isMember("error") && !(*respJson)["error"].isNull()) {
+                        response.message = (*respJson)["error"]["message"].asString();
+                    }
+                }
+            } else {
+                response.message = "Network error. Failed to reach the server.";
+            }
+
+        } catch (const drogon::orm::UnexpectedRows &e) {
+            LOG_ERROR << "[posCustomerLogin] Business account not found: " << e.what();
+            response.message = "Business account not found.";
+        } catch (const std::exception &e) {
+            LOG_ERROR << "[posCustomerLogin] Exception: " << e.what();
+            response.message = "An error occurred during login.";
+        }
+
+        co_return response;
     }
 
     drogon::Task<dto::BaseApiResponse> ErpApi::resetPassword() {

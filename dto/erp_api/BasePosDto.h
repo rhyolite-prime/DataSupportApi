@@ -107,7 +107,6 @@ namespace data_support::dto::erp_api {
         [[nodiscard]] const std::string& getCustomerIdentifier() const { return customer_identifier_; }
         [[nodiscard]] const std::string& getPassword() const { return password_; }
 
-
         // Setters
         void setCustomerIdentifier(const std::string& value) { customer_identifier_ = value; }
         void setPassword(const std::string& value) { password_ = value; }
@@ -122,10 +121,10 @@ namespace data_support::dto::erp_api {
 
     inline void PosCustomerLoginDto::fromJson(const Json::Value& json) {
 
-        // Parse wrapper fields (top-level)
         if (json.isMember("customerIdentifier") && !json["customerIdentifier"].isNull()) {
             setCustomerIdentifier(json["customerIdentifier"].asString());
         }
+
         if (json.isMember("password") && !json["password"].isNull()) {
             setPassword(json["password"].asString());
         }
