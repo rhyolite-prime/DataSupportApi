@@ -16,6 +16,50 @@
 #include "PosPickupPoints.h"
 #include "utils/JsonUtils.h"
 
+namespace {
+
+    // Max number of *dynamic* filter parameters we allow. Current filters are:
+    //   businessId, keywords, categoryId, categorySlug  →  4
+    // If you add more filters, bump this constant and add the corresponding case.
+    constexpr std::size_t kMaxDynamicParams = 4;
+
+    // Binds a std::vector<std::string> of filter values into execSqlCoro,
+    // followed by any extra trailing parameters (e.g. pageSize, offset).
+    template <typename... Tail>
+    drogon::Task<drogon::orm::Result> runSql(
+        const drogon::orm::DbClientPtr &client,
+        const std::string &sql,
+        const std::vector<std::string> &dynamicParams,
+        Tail &&...tail)
+    {
+        switch (dynamicParams.size()) {
+            case 0:
+                co_return co_await client->execSqlCoro(
+                    sql, std::forward<Tail>(tail)...);
+            case 1:
+                co_return co_await client->execSqlCoro(
+                    sql, dynamicParams[0], std::forward<Tail>(tail)...);
+            case 2:
+                co_return co_await client->execSqlCoro(
+                    sql, dynamicParams[0], dynamicParams[1],
+                    std::forward<Tail>(tail)...);
+            case 3:
+                co_return co_await client->execSqlCoro(
+                    sql, dynamicParams[0], dynamicParams[1], dynamicParams[2],
+                    std::forward<Tail>(tail)...);
+            case 4:
+                co_return co_await client->execSqlCoro(
+                    sql, dynamicParams[0], dynamicParams[1], dynamicParams[2],
+                    dynamicParams[3], std::forward<Tail>(tail)...);
+            default:
+                throw std::runtime_error(
+                    "runSql: too many dynamic parameters (increase "
+                    "kMaxDynamicParams and add a case)");
+        }
+    }
+
+}  // namespace
+
 namespace data_support::services {
 
     drogon::Task<dto::BaseApiResponse> ErpApi::getBranches() {
@@ -315,8 +359,10 @@ namespace data_support::services {
 
     }
 
-    drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems(const std::string &businessId, const dto::erp_api::InventoryItemFilterDto &dto) {
-
+    drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems(
+    const std::string &businessId,
+    const dto::erp_api::InventoryItemFilterDto &dto)
+{
     dto::BaseApiResponse response;
 
     LOG_INFO << "[getInventoryItems] Entering method. businessId: '" << businessId
@@ -348,10 +394,9 @@ namespace data_support::services {
             response.success = false;
             co_return response;
         }
-        LOG_DEBUG << "[getInventoryItems] Database client obtained.";
 
         // ---------------------------------------------------------------
-        // 2. Validate and clamp pagination parameters
+        // 2. Pagination
         // ---------------------------------------------------------------
         int pageNo   = dto.getPageNo();
         int pageSize = dto.getPageSize();
@@ -365,59 +410,87 @@ namespace data_support::services {
         }
         const int offset = (pageNo - 1) * pageSize;
 
-        LOG_DEBUG << "[getInventoryItems] Effective pagination — pageNo: " << pageNo
-                  << ", pageSize: " << pageSize
-                  << ", offset: " << offset;
+        // ---------------------------------------------------------------
+        // 3. Predicate builder
+        //
+        //  - Each filter is only appended when it has a value.
+        //  - Parameters are bound in the order the placeholders appear,
+        //    so the returned placeholder is stable across count and data
+        //    queries (they share the same whereClause + filterParams).
+        // ---------------------------------------------------------------
+        std::vector<std::string> whereClauses;
+        std::vector<std::string> filterParams;
+
+        auto bindParam = [&](const std::string &value) -> std::string {
+            filterParams.push_back(value);
+            return "$" + std::to_string(filterParams.size());
+        };
+
+        // 3a. business_id — always applied
+        whereClauses.push_back("t.business_id = " + bindParam(businessId));
+
+        // 3b. keywords — case-insensitive substring match, only if set
+        if (!dto.getKeywords().empty()) {
+            const std::string p = bindParam(dto.getKeywords());
+            whereClauses.push_back(
+                "(COALESCE(t.name, '') ILIKE '%' || " + p + " || '%'"
+                " OR COALESCE(t.short_description, '') ILIKE '%' || " + p + " || '%')");
+
+            LOG_DEBUG << "[getInventoryItems] Applied keywords filter: '"
+                      << dto.getKeywords() << "'";
+        }
+
+        // 3c. category — id and/or slug (OR-combined), only if either is set
+        const bool hasCategoryId   = !dto.getCategoryId().empty();
+        const bool hasCategorySlug = !dto.getCategorySlug().empty();
+
+        if (hasCategoryId || hasCategorySlug) {
+            std::vector<std::string> catClauses;
+
+            if (hasCategoryId) {
+                catClauses.push_back("t.category_id = " + bindParam(dto.getCategoryId()));
+                LOG_DEBUG << "[getInventoryItems] Applied categoryId filter: "
+                          << dto.getCategoryId();
+            }
+            if (hasCategorySlug) {
+                catClauses.push_back("t.category_slug = " + bindParam(dto.getCategorySlug()));
+                LOG_DEBUG << "[getInventoryItems] Applied categorySlug filter: "
+                          << dto.getCategorySlug();
+            }
+
+            std::string joined;
+            for (std::size_t i = 0; i < catClauses.size(); ++i) {
+                if (i) joined += " OR ";
+                joined += catClauses[i];
+            }
+            whereClauses.push_back("(" + joined + ")");
+        }
+
+        // 3d. Assemble the WHERE clause
+        std::string whereClause;
+        if (!whereClauses.empty()) {
+            whereClause = " WHERE ";
+            for (std::size_t i = 0; i < whereClauses.size(); ++i) {
+                if (i) whereClause += " AND ";
+                whereClause += whereClauses[i];
+            }
+        }
+
+        LOG_DEBUG << "[getInventoryItems] Built WHERE with "
+                  << filterParams.size() << " bound parameter(s): "
+                  << whereClause;
 
         // ---------------------------------------------------------------
-        // 3. Extract filter values once
-        // ---------------------------------------------------------------
-        const std::string& keywords     = dto.getKeywords();
-        const std::string& categoryId   = dto.getCategoryId();
-        const std::string& categorySlug = dto.getCategorySlug();
-        const std::string& sortBy       = dto.getSortBy();
-
-        // ---------------------------------------------------------------
-        // 4. Shared WHERE clause — always parameterized ($1..$4)
+        // 4. ORDER BY — sortBy whitelisted, safe to interpolate
         //
-        //  $1 = businessId
-        //  $2 = keywords    (empty string == no keyword filter)
-        //  $3 = categoryId  (empty string == not filtering by id)
-        //  $4 = categorySlug(empty string == not filtering by slug)
-        //
-        // Category logic (matches previous ORM behaviour):
-        //   * both empty            -> no category filter
-        //   * only id provided      -> match category_id
-        //   * only slug provided    -> match category_slug
-        //   * both provided         -> match either
+        //    featured          -> items tagged 'featured' first, then name
+        //    newest            -> created_at DESC
+        //    price:high-to-low -> selling_price DESC
+        //    price:low-to-high -> selling_price ASC
+        //    top-rates         -> rating DESC
+        //    (default)         -> name ASC
         // ---------------------------------------------------------------
-        const std::string whereClause =
-            " WHERE t.business_id = $1"
-            "   AND ("
-            "        $2 = ''"
-            "        OR t.name ILIKE '%' || $2 || '%'"
-            "        OR t.short_description ILIKE '%' || $2 || '%'"
-            "   )"
-            "   AND ("
-            "        ($3 = '' AND $4 = '')"
-            "     OR ($3 <> '' AND t.category_id = $3)"
-            "     OR ($4 <> '' AND t.category_slug = $4)"
-            "   )";
-
-        // ---------------------------------------------------------------
-        // 5. ORDER BY — sortBy is whitelisted, so it is safe to interpolate
-        //
-        //  featured          -> items tagged 'featured' first, then name
-        //  newest            -> created_at DESC
-        //  price:high-to-low -> selling_price DESC (numeric cast)
-        //  price:low-to-high -> selling_price ASC  (numeric cast)
-        //  top-rates         -> rating DESC
-        //  (default)         -> name ASC
-        //
-        // `tags` is stored as a JSON-encoded string in a text column,
-        // e.g. '["rice", "grains"]'. NULLIF keeps NULL/empty values safe
-        // from the jsonb cast.
-        // ---------------------------------------------------------------
+        const std::string &sortBy = dto.getSortBy();
         std::string orderBy;
         if (sortBy == "featured") {
             orderBy =
@@ -439,48 +512,46 @@ namespace data_support::services {
                   << (sortBy.empty() ? "name (default)" : sortBy) << "'";
 
         // ---------------------------------------------------------------
-        // 6. Count total matches (same WHERE, no ORDER / pagination)
+        // 5. Count
         // ---------------------------------------------------------------
         const std::string countSql =
             "SELECT COUNT(*)::bigint AS total FROM pos_inventory_items t"
             + whereClause;
 
-        auto countResult = co_await dbClient->execSqlCoro(
-            countSql,
-            businessId, keywords, categoryId, categorySlug);
-
+        auto countResult = co_await runSql(dbClient, countSql, filterParams);
         const int64_t totalCount = countResult[0]["total"].as<int64_t>();
+
         LOG_DEBUG << "[getInventoryItems] Total matching items: " << totalCount;
 
         // ---------------------------------------------------------------
-        // 7. Fetch the requested page.
-        //    to_jsonb(t) hands the whole row back to us as JSON so we
-        //    don't have to enumerate every column.
+        // 6. Data page — LIMIT/OFFSET placeholders continue after the
+        //    filter placeholders, so numbering stays contiguous.
         // ---------------------------------------------------------------
+        const std::size_t nextParamNo = filterParams.size() + 1;
+        const std::string limitPh  = "$" + std::to_string(nextParamNo);
+        const std::string offsetPh = "$" + std::to_string(nextParamNo + 1);
+
         const std::string dataSql =
             "SELECT to_jsonb(t) AS row_json"
             "  FROM pos_inventory_items t"
             + whereClause
             + orderBy
-            + " LIMIT $5 OFFSET $6";
+            + " LIMIT " + limitPh + " OFFSET " + offsetPh;
 
-        auto dataResult = co_await dbClient->execSqlCoro(
-            dataSql,
-            businessId, keywords, categoryId, categorySlug,
-            pageSize, offset);
+        auto dataResult = co_await runSql(
+            dbClient, dataSql, filterParams, pageSize, offset);
 
         LOG_DEBUG << "[getInventoryItems] Fetched " << dataResult.size()
                   << " rows for page " << pageNo;
 
         // ---------------------------------------------------------------
-        // 8. Helper: deserialize a JSON-array column stored as text
+        // 7. Deserialize JSON-array-as-text columns
         // ---------------------------------------------------------------
         auto parseArrayField = [](const Json::Value &src,
                                   const std::string &key) -> Json::Value {
             if (!src.isMember(key)) {
                 return Json::Value(Json::arrayValue);
             }
-            // Already an array / object — keep as-is
             if (!src[key].isString()) {
                 return src[key];
             }
@@ -499,7 +570,7 @@ namespace data_support::services {
         };
 
         // ---------------------------------------------------------------
-        // 9. Build the JSON response — camelCase
+        // 8. Build the JSON response — camelCase
         // ---------------------------------------------------------------
         Json::Value data = Json::arrayValue;
 
@@ -528,9 +599,9 @@ namespace data_support::services {
             data.append(j);
         }
 
-        const int totalPages =
-            (totalCount == 0) ? 0
-                              : (int)((totalCount + pageSize - 1) / pageSize);
+        const int totalPages = (totalCount == 0)
+            ? 0
+            : (int)((totalCount + pageSize - 1) / pageSize);
 
         response.success = true;
         response.message  = "Inventory items retrieved successfully.";
