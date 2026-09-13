@@ -47,7 +47,7 @@ namespace data_support::dto::erp_api {
         }
 
         if (json.isMember("businessAccountId") && !json["businessAccountId"].isNull()) {
-            setAccountSecret(json["businessAccountId"].asString());
+            setBusinessAccountId(json["businessAccountId"].asString());
         }
 
     }
