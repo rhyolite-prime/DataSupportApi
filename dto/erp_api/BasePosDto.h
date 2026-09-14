@@ -14,8 +14,7 @@ namespace data_support::dto::erp_api {
         std::string message;
         int code {1};
         bool success {false};
-        std::string customerId;
-        std::string token;
+        Json::Value result;
 
         [[nodiscard]]
         Json::Value toJson() const {
@@ -23,12 +22,7 @@ namespace data_support::dto::erp_api {
             json["code"] = code;
             json["message"] = message;
             json["success"] = success;
-            if (!customerId.empty()) {
-                json["customerId"] = customerId;
-            }
-            if (!token.empty()) {
-                json["token"] = token;
-            }
+            json["result"] = result;
             return json;
         }
 
@@ -133,6 +127,42 @@ namespace data_support::dto::erp_api {
 
         if (json.isMember("password") && !json["password"].isNull()) {
             setPassword(json["password"].asString());
+        }
+
+    }
+
+    class PosShopCartDto {
+    public:
+
+        PosShopCartDto() = default;
+
+        void fromJson(const Json::Value& json);
+
+        // Getters
+        [[nodiscard]] const std::string& getItemId() const { return itemId_; }
+        [[nodiscard]] int32_t getQuantity() const { return quantity_; }
+
+        // Setters
+        void setItemId(const std::string& value) { itemId_ = value; }
+        void setQuantity(const int32_t value) { quantity_ = value; }
+
+
+    private:
+
+        std::string itemId_;
+        int32_t quantity_ {1};
+
+    };
+
+
+    inline void PosShopCartDto::fromJson(const Json::Value& json) {
+
+        if (json.isMember("itemId") && !json["itemId"].isNull()) {
+            setItemId(json["itemId"].asString());
+        }
+
+        if (json.isMember("quantity") && !json["quantity"].isNull()) {
+            setQuantity(json["quantity"].asInt());
         }
 
     }

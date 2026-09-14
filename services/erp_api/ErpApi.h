@@ -32,19 +32,19 @@ namespace data_support::services {
 
         drogon::Task<dto::erp_api::ErpOperationResponse> posCustomerLogin(const std::string &businessId, const dto::erp_api::PosCustomerLoginDto &dto);
 
-        drogon::Task<dto::BaseApiResponse> resetPassword();
-        drogon::Task<dto::BaseApiResponse> verifyOtp();
+        drogon::Task<dto::BaseApiResponse> resetPassword(const std::string &businessId, const std::string &customerHeader);
+        drogon::Task<dto::BaseApiResponse> verifyOtp(const std::string &businessId, const std::string &customerHeader);
 
         // cart
-        drogon::Task<dto::BaseApiResponse> addItemToCart();
+        drogon::Task<dto::erp_api::ErpOperationResponse> addItemToCart(const std::string &businessId, const std::string &customerHeader, const dto::erp_api::PosShopCartDto &dto);
         drogon::Task<dto::BaseApiResponse> addMultipleItemsToCart();
         drogon::Task<dto::BaseApiResponse> removeItemFromCart();
         drogon::Task<dto::BaseApiResponse> removeMultipleItemsFromCart();
-        drogon::Task<dto::BaseApiResponse> clearCart();
+        drogon::Task<dto::BaseApiResponse> clearCart(const std::string &businessId, const std::string &customerHeader);
 
         //checkout
-        drogon::Task<dto::BaseApiResponse> initializeWebCheckout();
-        drogon::Task<dto::BaseApiResponse> initializeUssdCheckout();
+        drogon::Task<dto::BaseApiResponse> initializeWebCheckout(const std::string &businessId, const std::string &customerHeader);
+        drogon::Task<dto::BaseApiResponse> initializeUssdCheckout(const std::string &businessId, const std::string &customerHeader);
         drogon::Task<dto::BaseApiResponse> processPaymentCallback();
 
         //inventory
@@ -53,13 +53,13 @@ namespace data_support::services {
         drogon::Task<dto::BaseApiResponse> getInventoryItemDetail(const std::string &businessId, const std::string &slug);
 
         //sales
-        drogon::Task<dto::BaseApiResponse> getOrderHistory();
+        drogon::Task<dto::BaseApiResponse> getCustomerOrderHistory(const std::string &businessId, const std::string &customerHeader);
 
         //profile
-        drogon::Task<dto::BaseApiResponse> getUserProfile();
-        drogon::Task<dto::BaseApiResponse> changePassword();
-        drogon::Task<dto::BaseApiResponse> updateUserProfile();
-        drogon::Task<dto::BaseApiResponse> getNotifications();
+        drogon::Task<dto::BaseApiResponse> getUserProfile(const std::string &businessId, const std::string &customerHeader);
+        drogon::Task<dto::BaseApiResponse> changePassword(const std::string &businessId, const std::string &customerHeader);
+        drogon::Task<dto::BaseApiResponse> updateUserProfile(const std::string &businessId, const std::string &customerHeader);
+        drogon::Task<dto::BaseApiResponse> getNotifications(const std::string &businessId, const std::string &customerHeader);
 
 
         //------- PAYROLL FUNCTIONS ----------

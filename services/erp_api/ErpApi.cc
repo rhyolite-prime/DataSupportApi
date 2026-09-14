@@ -180,11 +180,8 @@ ErpApi::getCategories(const std::string &businessId, int pageNo, int pageSize) {
     response.result["pageNo"] = pageNo;
     response.result["pageSize"] = pageSize;
     response.result["totalPages"] = totalPages;
-    response.result["lowerBound"] =
-        totalCount == 0 ? 0 : (Json::UInt64)(offset + 1);
-    response.result["upperBound"] =
-        (Json::UInt64)(pageNo == totalPages ? totalCount
-                                            : (int64_t)pageNo * pageSize);
+    response.result["lowerBound"] = totalCount == 0 ? 0 : (Json::UInt64)(offset + 1);
+    response.result["upperBound"] =  (Json::UInt64)(pageNo == totalPages ? totalCount : (int64_t)pageNo * pageSize);
 
     LOG_INFO << "[getCategories] Exiting method. Returned " << data.size()
              << " of " << totalCount << " categories (page " << pageNo << "/"
@@ -222,8 +219,7 @@ drogon::Task<dto::BaseApiResponse> ErpApi::verifyCustomer() {
   co_return res;
 }
 
-drogon::Task<dto::erp_api::ErpOperationResponse>
-ErpApi::posCustomerSignup(const std::string &businessId,
+drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::posCustomerSignup(const std::string &businessId,
                           const dto::erp_api::PosCustomerSignupDto &dto) {
 
   dto::erp_api::ErpOperationResponse response;
@@ -333,8 +329,7 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::posCustomerLogin(const 
 
   try {
     auto dbClient = drogon::app().getDbClient();
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        bizMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
 
@@ -397,11 +392,20 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::posCustomerLogin(const 
         } else if (respJson && respJson->isMember("result") && !(*respJson)["result"].isNull()) {
           auto result = (*respJson)["result"];
           if (result.isMember("customerId") && !result["customerId"].isNull()) {
-            response.customerId = result["customerId"].asString();
+            response.result["customerId"] = result["customerId"].asString();
           }
           if (result.isMember("token") && !result["token"].isNull()) {
-            response.token = result["token"].asString();
+            response.result["token"] = result["token"].asString();
           }
+
+          if (result.isMember("email") && !result["email"].isNull()) {
+            response.result["email"] = result["email"].asString();
+          }
+
+          if (result.isMember("username") && !result["username"].isNull()) {
+            response.result["username"] = result["username"].asString();
+          }
+
         }
       } else {
         response.message = "Request failed with status code " +
@@ -426,25 +430,95 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::posCustomerLogin(const 
   co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::resetPassword() {
+drogon::Task<dto::BaseApiResponse> ErpApi::resetPassword(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
   dto::BaseApiResponse res;
   co_return res;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::verifyOtp() {
+drogon::Task<dto::BaseApiResponse> ErpApi::verifyOtp(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
   dto::BaseApiResponse res;
   co_return res;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::addItemToCart() {
+drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std::string &businessId, const std::string &customerHeader, const dto::erp_api::PosShopCartDto &dto){
 
   // direct call
-  dto::BaseApiResponse res;
-  co_return res;
+   dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR
+          << "[addItemToCart] FAILED: Could not parse ConfigurationData - "
+          << errs;
+      response.message = "Failed to initialize add item to cart. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR << "[posCustomerLogin] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Post);
+    req->setPath("/api/services/app/ShopCart/AddToCart");
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+
+    Json::Value reqJson;
+    reqJson["ItemId"] = dto.getItemId();
+    reqJson["Quantity"] = dto.getQuantity();
+
+    Json::StreamWriterBuilder writer;
+    writer["indentation"] = "";
+    req->setBody(Json::writeString(writer, reqJson));
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (resp) {
+      auto respJson = resp->getJsonObject();
+      if (resp->getStatusCode() == drogon::k200OK) {
+        response.success = true;
+        response.code = 0;
+        response.message = "Item Added Successfully.";
+      }
+    } else {
+      response.message = "Network error. Failed to reach the server.";
+    }
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[addItemToCart] Business account not found: " << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[addItemToCart] Exception: " << e.what();
+    response.message = "An error occurred during login.";
+  }
+
+  co_return response;
+
 }
 
 drogon::Task<dto::BaseApiResponse> ErpApi::addMultipleItemsToCart() {
@@ -468,7 +542,7 @@ drogon::Task<dto::BaseApiResponse> ErpApi::removeMultipleItemsFromCart() {
   co_return res;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::clearCart() {
+drogon::Task<dto::BaseApiResponse> ErpApi::clearCart(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
   dto::BaseApiResponse res;
@@ -477,14 +551,14 @@ drogon::Task<dto::BaseApiResponse> ErpApi::clearCart() {
 
 // checkout
 
-drogon::Task<dto::BaseApiResponse> ErpApi::initializeWebCheckout() {
+drogon::Task<dto::BaseApiResponse> ErpApi::initializeWebCheckout(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
   dto::BaseApiResponse res;
   co_return res;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::initializeUssdCheckout() {
+drogon::Task<dto::BaseApiResponse> ErpApi::initializeUssdCheckout(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
   dto::BaseApiResponse res;
@@ -779,8 +853,7 @@ drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems(const std::string &
 }
 
 
-drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItemDetail(const std::string &businessId,
-                               const std::string &slug) {
+drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItemDetail(const std::string &businessId, const std::string &slug) {
 
   dto::BaseApiResponse response;
 
@@ -923,29 +996,29 @@ drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItemDetail(const std::str
 
 
 
-drogon::Task<dto::BaseApiResponse> ErpApi::getOrderHistory() {
-
-  // direct call
-  dto::BaseApiResponse response;
-
-  co_return response;
-}
-
-drogon::Task<dto::BaseApiResponse> ErpApi::getUserProfile() {
+drogon::Task<dto::BaseApiResponse> ErpApi::getCustomerOrderHistory(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
   dto::BaseApiResponse response;
   co_return response;
+
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::changePassword() {
+drogon::Task<dto::BaseApiResponse> ErpApi::getUserProfile(const std::string &businessId, const std::string &customerHeader) {
+
+  // direct call
+  dto::BaseApiResponse response;
+  co_return response;
+}
+
+drogon::Task<dto::BaseApiResponse> ErpApi::changePassword(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
   dto::BaseApiResponse res;
   co_return res;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::updateUserProfile() {
+drogon::Task<dto::BaseApiResponse> ErpApi::updateUserProfile(const std::string &businessId, const std::string &customerHeader) {
 
   // direct call
 
@@ -953,7 +1026,7 @@ drogon::Task<dto::BaseApiResponse> ErpApi::updateUserProfile() {
   co_return res;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::getNotifications() {
+drogon::Task<dto::BaseApiResponse> ErpApi::getNotifications(const std::string &businessId, const std::string &customerHeader) {
 
   // rely on synced data
   dto::BaseApiResponse res;
@@ -962,8 +1035,7 @@ drogon::Task<dto::BaseApiResponse> ErpApi::getNotifications() {
 
 //------- SYNC API RESOURCES ----------
 
-drogon::Task<dto::BaseApiResponse>
-ErpApi::syncApiCredentials(const dto::erp_api::SyncApiCredentialDto &dto) {
+drogon::Task<dto::BaseApiResponse> ErpApi::syncApiCredentials(const dto::erp_api::SyncApiCredentialDto &dto) {
 
   dto::BaseApiResponse response;
 
@@ -1017,8 +1089,7 @@ ErpApi::syncApiCredentials(const dto::erp_api::SyncApiCredentialDto &dto) {
   co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse>
-ErpApi::syncPosBranches(const dto::erp_api::SyncPosBranchDto &dto) {
+drogon::Task<dto::BaseApiResponse> ErpApi::syncPosBranches(const dto::erp_api::SyncPosBranchDto &dto) {
   dto::BaseApiResponse response;
 
   LOG_INFO << "[syncPosBranches] Entering method. Operation: '"
@@ -1142,8 +1213,7 @@ ErpApi::syncPosBranches(const dto::erp_api::SyncPosBranchDto &dto) {
   co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryCategories(
-    const dto::erp_api::SyncInventoryCategoryDto &dto) {
+drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryCategories(const dto::erp_api::SyncInventoryCategoryDto &dto) {
 
   dto::BaseApiResponse response;
 
