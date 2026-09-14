@@ -498,9 +498,7 @@ drogon::Task<dto::BaseApiResponse> ErpApi::processPaymentCallback() {
   co_return res;
 }
 
-drogon::Task<dto::BaseApiResponse>
-ErpApi::getInventoryItems(const std::string &businessId,
-                          const dto::erp_api::InventoryItemFilterDto &dto) {
+drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItems(const std::string &businessId, const dto::erp_api::InventoryItemFilterDto &dto) {
 
   dto::BaseApiResponse response;
 
@@ -779,6 +777,151 @@ ErpApi::getInventoryItems(const std::string &businessId,
 
   co_return response;
 }
+
+
+drogon::Task<dto::BaseApiResponse> ErpApi::getInventoryItemDetail(const std::string &businessId,
+                               const std::string &slug) {
+
+  dto::BaseApiResponse response;
+
+  LOG_INFO << "[getInventoryItemDetail] Entering method. businessId: '"
+           << businessId << "', slug: '" << slug << "'";
+
+  // ---------------------------------------------------------------
+  // 0. Validate inputs
+  // ---------------------------------------------------------------
+  if (businessId.empty()) {
+    LOG_WARN << "[getInventoryItemDetail] businessId is empty. Aborting.";
+    response.message = "BusinessAccountId is required.";
+    response.success = false;
+    co_return response;
+  }
+
+  if (slug.empty()) {
+    LOG_WARN << "[getInventoryItemDetail] slug is empty. Aborting.";
+    response.message = "Item slug is required.";
+    response.success = false;
+    co_return response;
+  }
+
+  try {
+    // ---------------------------------------------------------------
+    // 1. Database client
+    // ---------------------------------------------------------------
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[getInventoryItemDetail] Failed to get database client!";
+      response.message = "Database client unavailable.";
+      response.success = false;
+      co_return response;
+    }
+
+    // ---------------------------------------------------------------
+    // 2. Query single item scoped to business + slug
+    // ---------------------------------------------------------------
+    const std::string sql =
+        "SELECT to_jsonb(t) AS row_json"
+        "  FROM pos_inventory_items t"
+        " WHERE t.business_id = $1"
+        "   AND t.slug = $2"
+        " LIMIT 1";
+
+    auto result = co_await dbClient->execSqlCoro(sql, businessId, slug);
+
+    if (result.empty()) {
+      LOG_WARN << "[getInventoryItemDetail] No item found for business '"
+               << businessId << "' with slug '" << slug << "'.";
+      response.message = "Inventory item not found.";
+      response.success = false;
+      co_return response;
+    }
+
+    // ---------------------------------------------------------------
+    // 3. Parse the row JSON
+    // ---------------------------------------------------------------
+    const std::string rowJson = result[0]["row_json"].as<std::string>();
+
+    Json::Value parsed;
+    Json::CharReaderBuilder rb;
+    std::string errs;
+    std::istringstream iss(rowJson);
+    if (!Json::parseFromStream(rb, iss, &parsed, &errs) ||
+        !parsed.isObject()) {
+      LOG_ERROR << "[getInventoryItemDetail] Failed to parse row JSON: "
+                << errs;
+      response.message = "Failed to parse inventory item data.";
+      response.success = false;
+      co_return response;
+    }
+
+    // ---------------------------------------------------------------
+    // 4. Convert to camelCase
+    // ---------------------------------------------------------------
+    Json::Value j = utils::JsonUtils::convertKeysToCamelCase(parsed);
+
+    // ---------------------------------------------------------------
+    // 5. Deserialize JSON-array-as-text columns
+    // ---------------------------------------------------------------
+    auto parseArrayField = [](const Json::Value &src,
+                              const std::string &key) -> Json::Value {
+      if (!src.isMember(key)) {
+        return Json::Value(Json::arrayValue);
+      }
+      if (!src[key].isString()) {
+        return src[key];
+      }
+      const std::string &raw = src[key].asString();
+      if (raw.empty()) {
+        return Json::Value(Json::arrayValue);
+      }
+      Json::Value out;
+      Json::CharReaderBuilder rr;
+      std::string e;
+      std::istringstream s(raw);
+      if (Json::parseFromStream(rr, s, &out, &e) && out.isArray()) {
+        return out;
+      }
+      return Json::Value(Json::arrayValue);
+    };
+
+    j["fullDescription"] = parseArrayField(j, "fullDescription");
+    j["images"] = parseArrayField(j, "images");
+    j["tags"] = parseArrayField(j, "tags");
+    j["variants"] = parseArrayField(j, "variants");
+    j["productAttributes"] = parseArrayField(j, "productAttributes");
+    j["specifications"] = parseArrayField(j, "specifications");
+    j["bulkPricing"] = parseArrayField(j, "bulkPricing");
+
+    // ---------------------------------------------------------------
+    // 6. Build response
+    // ---------------------------------------------------------------
+    response.success = true;
+    response.message = "Inventory item retrieved successfully.";
+    response.result["data"] = j;
+
+    LOG_INFO << "[getInventoryItemDetail] Exiting method. Returned item '"
+             << slug << "' for business '" << businessId << "'.";
+
+  } catch (const drogon::orm::DrogonDbException &e) {
+    LOG_ERROR << "[getInventoryItemDetail] Database error: "
+              << e.base().what();
+    response.message =
+        "Database error occurred while fetching inventory item: " +
+        std::string(e.base().what());
+    response.success = false;
+
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[getInventoryItemDetail] General exception: " << e.what();
+    response.message =
+        "Failed to fetch inventory item. Please try again. Error: " +
+        std::string(e.what());
+    response.success = false;
+  }
+
+  co_return response;
+}
+
+
 
 drogon::Task<dto::BaseApiResponse> ErpApi::getOrderHistory() {
 

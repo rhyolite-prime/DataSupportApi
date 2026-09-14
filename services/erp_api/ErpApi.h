@@ -50,6 +50,8 @@ namespace data_support::services {
         //inventory
         drogon::Task<dto::BaseApiResponse> getInventoryItems(const std::string &businessId, const dto::erp_api::InventoryItemFilterDto &dto);
 
+        drogon::Task<dto::BaseApiResponse> getInventoryItemDetail(const std::string &businessId, const std::string &slug);
+
         //sales
         drogon::Task<dto::BaseApiResponse> getOrderHistory();
 
