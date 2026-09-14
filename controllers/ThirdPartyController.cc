@@ -498,6 +498,40 @@ Task<HttpResponsePtr> ThirdPartyController::posAddItemToCart(HttpRequestPtr req)
 }
 
 
+Task<HttpResponsePtr> ThirdPartyController::getPosCartItemCount(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto customerHeader = req->getHeader("X-Customer");
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.getCartItemCount(authResult.businessId, customerHeader);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+Task<HttpResponsePtr> ThirdPartyController::getPosCartItems(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto customerHeader = req->getHeader("X-Customer");
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.getCartItems(authResult.businessId, customerHeader);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+
+
 //utils
 
 Task<HttpResponsePtr> ThirdPartyController::notifyLowPrepaidBalance(HttpRequestPtr req) {

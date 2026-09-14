@@ -408,8 +408,7 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::posCustomerLogin(const 
 
         }
       } else {
-        response.message = "Request failed with status code " +
-                           std::to_string(resp->getStatusCode());
+        response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
         if (respJson && respJson->isMember("error") &&
             !(*respJson)["error"].isNull()) {
           response.message = (*respJson)["error"]["message"].asString();
@@ -447,7 +446,7 @@ drogon::Task<dto::BaseApiResponse> ErpApi::verifyOtp(const std::string &business
 drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std::string &businessId, const std::string &customerHeader, const dto::erp_api::PosShopCartDto &dto){
 
   // direct call
-   dto::erp_api::ErpOperationResponse response;
+  dto::erp_api::ErpOperationResponse response;
   response.success = false;
   response.code = 1;
 
@@ -521,7 +520,257 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
 
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::addMultipleItemsToCart() {
+
+  drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getCartItemCount(const std::string &businessId,
+                         const std::string &customerHeader) {
+  dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[getCartItemCount] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[getCartItemCount] FAILED: Could not parse "
+                   "ConfigurationData - "
+                << errs;
+      response.message = "Failed to get cart count. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR << "[getCartItemCount] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret =
+        configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client =
+        drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/ShopCart/GetCartItemCount");
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " +
+                         std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") &&
+          !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+    // ABP wrapper: { result, success, error, ... }
+    if (respJson && respJson->isMember("success") &&
+        !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to retrieve cart item count.";
+      }
+      co_return response;
+    }
+
+    int cartCount = 0;
+    if (respJson && respJson->isMember("result") &&
+        !(*respJson)["result"].isNull() &&
+        (*respJson)["result"].isNumeric()) {
+      cartCount = (*respJson)["result"].asInt();
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Cart item count retrieved successfully.";
+    response.result["cartCount"] = cartCount;
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[getCartItemCount] Business account not found: " << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[getCartItemCount] Exception: " << e.what();
+    response.message = "An error occurred while fetching cart item count.";
+  }
+
+  co_return response;
+}
+
+  drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getCartItems(const std::string &businessId,
+                     const std::string &customerHeader) {
+  dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[getCartItems] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[getCartItems] FAILED: Could not parse ConfigurationData - "
+                << errs;
+      response.message = "Failed to get cart items. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR << "[getCartItems] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret =
+        configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client =
+        drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/ShopCart/GetCartItems");
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " +
+                         std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") &&
+          !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+    // ABP wrapper failure: { success: false, error: { message } }
+    if (respJson && respJson->isMember("success") &&
+        !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to retrieve cart items.";
+      }
+      co_return response;
+    }
+
+    Json::Value items(Json::arrayValue);
+    int cartCount = 0; // sum of quantities, matches GetCartItemCount (1+1+3=5)
+    double subTotal = 0.0;
+
+    if (respJson && respJson->isMember("result") &&
+        (*respJson)["result"].isArray()) {
+      for (const auto &it : (*respJson)["result"]) {
+        items.append(it);
+        int qty = it.isMember("quantity") && it["quantity"].isNumeric()
+                      ? it["quantity"].asInt()
+                      : 0;
+        double price = it.isMember("unitPrice") && it["unitPrice"].isNumeric()
+                           ? it["unitPrice"].asDouble()
+                           : 0.0;
+        cartCount += qty;
+        subTotal += qty * price;
+      }
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Cart items retrieved successfully.";
+    response.result["items"] = items;
+    response.result["itemCount"] = (Json::UInt)items.size();
+    response.result["cartCount"] = cartCount;
+    response.result["subTotal"] = subTotal;
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[getCartItems] Business account not found: " << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[getCartItems] Exception: " << e.what();
+    response.message = "An error occurred while fetching cart items.";
+  }
+
+  co_return response;
+}
+
+
+
+  drogon::Task<dto::BaseApiResponse> ErpApi::addMultipleItemsToCart() {
 
   // direct call
   dto::BaseApiResponse res;

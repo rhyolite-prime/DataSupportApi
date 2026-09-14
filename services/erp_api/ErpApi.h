@@ -38,6 +38,8 @@ namespace data_support::services {
         // cart
         drogon::Task<dto::erp_api::ErpOperationResponse> addItemToCart(const std::string &businessId, const std::string &customerHeader, const dto::erp_api::PosShopCartDto &dto);
         drogon::Task<dto::BaseApiResponse> addMultipleItemsToCart();
+        drogon::Task<dto::erp_api::ErpOperationResponse> getCartItemCount(const std::string &businessId, const std::string &customerHeader);
+        drogon::Task<dto::erp_api::ErpOperationResponse> getCartItems(const std::string &businessId, const std::string &customerHeader);
         drogon::Task<dto::BaseApiResponse> removeItemFromCart();
         drogon::Task<dto::BaseApiResponse> removeMultipleItemsFromCart();
         drogon::Task<dto::BaseApiResponse> clearCart(const std::string &businessId, const std::string &customerHeader);
