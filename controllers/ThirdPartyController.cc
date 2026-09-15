@@ -497,7 +497,6 @@ Task<HttpResponsePtr> ThirdPartyController::posAddItemToCart(HttpRequestPtr req)
 
 }
 
-
 Task<HttpResponsePtr> ThirdPartyController::getPosCartItemCount(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -528,6 +527,58 @@ Task<HttpResponsePtr> ThirdPartyController::getPosCartItems(HttpRequestPtr req) 
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::posAddItemToWishlist(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto customerHeader = req->getHeader("X-Customer");
+
+    auto itemId = req->getParameter("itemId");
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.addItemToWishlist(authResult.businessId, customerHeader, itemId);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+
+Task<HttpResponsePtr> ThirdPartyController::getPosWishlistItemCount(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto customerHeader = req->getHeader("X-Customer");
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.getWishlistItemCount(authResult.businessId, customerHeader);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+}
+
+
+
+Task<HttpResponsePtr> ThirdPartyController::getPosWishlistItems(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto customerHeader = req->getHeader("X-Customer");
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.getWishlistItems(authResult.businessId, customerHeader);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
 }
 
 

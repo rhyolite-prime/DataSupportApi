@@ -520,9 +520,7 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
 
 }
 
-
-  drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getCartItemCount(const std::string &businessId,
-                         const std::string &customerHeader) {
+  drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getCartItemCount(const std::string &businessId, const std::string &customerHeader) {
   dto::erp_api::ErpOperationResponse response;
   response.success = false;
   response.code = 1;
@@ -638,8 +636,7 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
   co_return response;
 }
 
-  drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getCartItems(const std::string &businessId,
-                     const std::string &customerHeader) {
+  drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getCartItems(const std::string &businessId, const std::string &customerHeader) {
   dto::erp_api::ErpOperationResponse response;
   response.success = false;
   response.code = 1;
@@ -769,33 +766,693 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
 }
 
 
+  drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::removeItemFromCart(const std::string &businessId, const std::string &customerHeader, const std::string &itemId) {
 
-  drogon::Task<dto::BaseApiResponse> ErpApi::addMultipleItemsToCart() {
+  dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
 
-  // direct call
-  dto::BaseApiResponse res;
-  co_return res;
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[removeItemFromCart] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[removeItemFromCart] FAILED: Could not parse ConfigurationData - "
+                << errs;
+      response.message = "Failed to get cart items. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR << "[removeItemFromCart] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/ShopCart/RemoveItem");
+    req->setParameter("itemId", itemId);
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") && !(*respJson)["error"].isNull() && (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+
+    if (respJson && respJson->isMember("success") && !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() && (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to remove item from cart.";
+      }
+      co_return response;
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Cart item removed successfully.";
+
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[removeItemFromCart] Business account not found: " << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[removeItemFromCart] Exception: " << e.what();
+    response.message = "An error occurred while removing cart items.";
+  }
+
+  co_return response;
+
+ }
+
+
+drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::clearCart(const std::string &businessId, const std::string &customerHeader) {
+
+    dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[removeItemFromCart] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[removeItemFromCart] FAILED: Could not parse ConfigurationData - "
+                << errs;
+      response.message = "Failed to get cart items. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR << "[removeItemFromCart] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/ShopCart/ClearCart");
+
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") && !(*respJson)["error"].isNull() && (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+
+    if (respJson && respJson->isMember("success") && !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() && (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to remove item from cart.";
+      }
+      co_return response;
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Cart item removed successfully.";
+
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[removeItemFromCart] Business account not found: " << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[removeItemFromCart] Exception: " << e.what();
+    response.message = "An error occurred while removing cart items.";
+  }
+
+  co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::removeItemFromCart() {
 
-  // direct call
-  dto::BaseApiResponse res;
-  co_return res;
+  //wishlist
+
+drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToWishlist(const std::string &businessId,
+                          const std::string &customerHeader,
+                          const std::string &itemId) {
+
+  dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+  if (itemId.empty()) {
+    response.message = "ItemId is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[addItemToWishlist] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>  bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[addItemToWishlist] FAILED: Could not parse "
+                   "ConfigurationData - "
+                << errs;
+      response.message =
+          "Failed to add item to wishlist. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR << "[addItemToWishlist] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret =  configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Post);
+    req->setPath("/api/services/app/Wishlist/AddToWishlist");
+    req->setParameter("itemId", itemId);
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+    req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " +
+                         std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") &&
+          !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+    if (respJson && respJson->isMember("success") &&
+        !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to add item to wishlist.";
+      }
+      co_return response;
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Item added to wishlist successfully.";
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[addItemToWishlist] Business account not found: " << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[addItemToWishlist] Exception: " << e.what();
+    response.message = "An error occurred while adding item to wishlist.";
+  }
+
+  co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::removeMultipleItemsFromCart() {
 
-  // direct call
-  dto::BaseApiResponse res;
-  co_return res;
+drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::removeItemFromWishlist(const std::string &businessId,
+                               const std::string &customerHeader,
+                               const std::string &itemId) {
+
+  dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+  if (itemId.empty()) {
+    response.message = "ItemId is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[removeItemFromWishlist] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[removeItemFromWishlist] FAILED: Could not parse "
+                   "ConfigurationData - "
+                << errs;
+      response.message =
+          "Failed to remove item from wishlist. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR
+          << "[removeItemFromWishlist] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/Wishlist/RemoveItem");
+    req->setParameter("itemId", itemId);
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " +
+                         std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") &&
+          !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+    if (respJson && respJson->isMember("success") &&
+        !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to remove item from wishlist.";
+      }
+      co_return response;
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Wishlist item removed successfully.";
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[removeItemFromWishlist] Business account not found: "
+              << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[removeItemFromWishlist] Exception: " << e.what();
+    response.message = "An error occurred while removing wishlist items.";
+  }
+
+  co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::clearCart(const std::string &businessId, const std::string &customerHeader) {
 
-  // direct call
-  dto::BaseApiResponse res;
-  co_return res;
+drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getWishlistItemCount(const std::string &businessId,
+                             const std::string &customerHeader) {
+
+  dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[getWishlistItemCount] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[getWishlistItemCount] FAILED: Could not parse "
+                   "ConfigurationData - "
+                << errs;
+      response.message =
+          "Failed to get wishlist count. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR
+          << "[getWishlistItemCount] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret =
+        configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client =
+        drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/Wishlist/GetWishlistItemCount");
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " +
+                         std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") &&
+          !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+    // ABP wrapper: { result, success, error, ... }
+    if (respJson && respJson->isMember("success") &&
+        !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to retrieve wishlist item count.";
+      }
+      co_return response;
+    }
+
+    int wishlistCount = 0;
+    if (respJson && respJson->isMember("result") &&
+        !(*respJson)["result"].isNull() &&
+        (*respJson)["result"].isNumeric()) {
+      wishlistCount = (*respJson)["result"].asInt();
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Wishlist item count retrieved successfully.";
+    response.result["wishlistCount"] = wishlistCount;
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[getWishlistItemCount] Business account not found: "
+              << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[getWishlistItemCount] Exception: " << e.what();
+    response.message =
+        "An error occurred while fetching wishlist item count.";
+  }
+
+  co_return response;
+}
+
+
+drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::getWishlistItems(const std::string &businessId,
+                         const std::string &customerHeader) {
+
+  dto::erp_api::ErpOperationResponse response;
+  response.success = false;
+  response.code = 1;
+
+  if (businessId.empty()) {
+    response.message = "BusinessAccountId is required.";
+    co_return response;
+  }
+  if (customerHeader.empty()) {
+    response.message = "Customer authentication is required.";
+    co_return response;
+  }
+
+  try {
+    auto dbClient = drogon::app().getDbClient();
+    if (!dbClient) {
+      LOG_ERROR << "[getWishlistItems] Database client unavailable";
+      response.message = "Database client unavailable.";
+      co_return response;
+    }
+
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
+        bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[getWishlistItems] FAILED: Could not parse "
+                   "ConfigurationData - "
+                << errs;
+      response.message =
+          "Failed to get wishlist items. Configuration error.";
+      co_return response;
+    }
+
+    if (!configJson.isMember("ErpApi") || !configJson["ErpApi"].isObject()) {
+      LOG_ERROR << "[getWishlistItems] FAILED: ErpApi configuration missing";
+      response.message = "ERP API not configured for this account.";
+      co_return response;
+    }
+
+    std::string accountId = configJson["ErpApi"]["AccountId"].asString();
+    std::string accountSecret =
+        configJson["ErpApi"]["AccountSecret"].asString();
+
+    auto client =
+        drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/Wishlist/GetWishlistItems");
+    req->addHeader("AccountId", accountId);
+    req->addHeader("AccountSecret", accountSecret);
+    req->addHeader("X-Customer", customerHeader);
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (!resp) {
+      response.message = "Network error. Failed to reach the server.";
+      co_return response;
+    }
+
+    auto respJson = resp->getJsonObject();
+
+    if (resp->getStatusCode() != drogon::k200OK) {
+      response.message = "Request failed with status code " +
+                         std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") &&
+          !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      }
+      co_return response;
+    }
+
+    // ABP wrapper failure: { success: false, error: { message } }
+    if (respJson && respJson->isMember("success") &&
+        !(*respJson)["success"].asBool()) {
+      response.success = false;
+      response.code = 1;
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() &&
+          (*respJson)["error"].isMember("message")) {
+        response.message = (*respJson)["error"]["message"].asString();
+      } else {
+        response.message = "Failed to retrieve wishlist items.";
+      }
+      co_return response;
+    }
+
+    Json::Value items(Json::arrayValue);
+
+    if (respJson && respJson->isMember("result") &&
+        (*respJson)["result"].isArray()) {
+      for (const auto &it : (*respJson)["result"]) {
+        items.append(it);
+      }
+    }
+
+    response.success = true;
+    response.code = 0;
+    response.message = "Wishlist items retrieved successfully.";
+    response.result["items"] = items;
+    response.result["itemCount"] = (Json::UInt)items.size();
+    response.result["wishlistCount"] = (Json::UInt)items.size();
+
+  } catch (const drogon::orm::UnexpectedRows &e) {
+    LOG_ERROR << "[getWishlistItems] Business account not found: " << e.what();
+    response.message = "Business account not found.";
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[getWishlistItems] Exception: " << e.what();
+    response.message = "An error occurred while fetching wishlist items.";
+  }
+
+  co_return response;
 }
 
 // checkout
