@@ -36,7 +36,7 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   ADD_METHOD_TO(ThirdPartyController::getPosCartItemCount, std::string(PREFIX) +"erp-pos/get-cart-item-count", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosCartItems, std::string(PREFIX) +"erp-pos/get-cart-items", Get, Options);
 
-  ADD_METHOD_TO(ThirdPartyController::posAddItemToWishlist, std::string(PREFIX) +"erp-pos/add-to-wishlist", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::posAddItemToWishlist, std::string(PREFIX) +"erp-pos/add-to-wishlist", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosWishlistItemCount, std::string(PREFIX) +"erp-pos/get-wishlist-item-count", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosWishlistItems, std::string(PREFIX) +"erp-pos/get-wishlist-items", Get, Options);
 
