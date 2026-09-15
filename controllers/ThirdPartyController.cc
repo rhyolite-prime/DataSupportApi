@@ -497,6 +497,25 @@ Task<HttpResponsePtr> ThirdPartyController::posAddItemToCart(HttpRequestPtr req)
 
 }
 
+Task<HttpResponsePtr> ThirdPartyController::posRemoveItemFromCart(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto customerHeader = req->getHeader("X-Customer");
+
+    auto itemId = req->getParameter("itemId");
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.removeItemFromCart(authResult.businessId, customerHeader, itemId);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+
 Task<HttpResponsePtr> ThirdPartyController::getPosCartItemCount(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -530,6 +549,7 @@ Task<HttpResponsePtr> ThirdPartyController::getPosCartItems(HttpRequestPtr req) 
 }
 
 
+
 Task<HttpResponsePtr> ThirdPartyController::posAddItemToWishlist(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -547,6 +567,28 @@ Task<HttpResponsePtr> ThirdPartyController::posAddItemToWishlist(HttpRequestPtr 
     co_return resp;
 
 }
+
+
+
+Task<HttpResponsePtr> ThirdPartyController::posRemoveItemFromWishlist(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+    auto customerHeader = req->getHeader("X-Customer");
+
+    auto itemId = req->getParameter("itemId");
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.removeItemFromWishlist(authResult.businessId, customerHeader, itemId);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
+
 
 
 Task<HttpResponsePtr> ThirdPartyController::getPosWishlistItemCount(HttpRequestPtr req) {

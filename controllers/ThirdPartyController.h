@@ -33,10 +33,12 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   ADD_METHOD_TO(ThirdPartyController::posCustomerLogin, std::string(PREFIX) +"erp-pos/customer-login", Post, Options);
 
   ADD_METHOD_TO(ThirdPartyController::posAddItemToCart, std::string(PREFIX) +"erp-pos/add-to-cart", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::posRemoveItemFromCart, std::string(PREFIX) +"erp-pos/remove-from-cart", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosCartItemCount, std::string(PREFIX) +"erp-pos/get-cart-item-count", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosCartItems, std::string(PREFIX) +"erp-pos/get-cart-items", Get, Options);
 
   ADD_METHOD_TO(ThirdPartyController::posAddItemToWishlist, std::string(PREFIX) +"erp-pos/add-to-wishlist", Get, Options);
+  ADD_METHOD_TO(ThirdPartyController::posRemoveItemFromWishlist, std::string(PREFIX) +"erp-pos/remove-from-wishlist", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosWishlistItemCount, std::string(PREFIX) +"erp-pos/get-wishlist-item-count", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::getPosWishlistItems, std::string(PREFIX) +"erp-pos/get-wishlist-items", Get, Options);
 
@@ -83,10 +85,12 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   Task<HttpResponsePtr> posCustomerLogin(HttpRequestPtr req);
 
   Task<HttpResponsePtr> posAddItemToCart(HttpRequestPtr req);
+  Task<HttpResponsePtr> posRemoveItemFromCart(HttpRequestPtr req);
   Task<HttpResponsePtr> getPosCartItemCount(HttpRequestPtr req);
   Task<HttpResponsePtr> getPosCartItems(HttpRequestPtr req);
 
   Task<HttpResponsePtr> posAddItemToWishlist(HttpRequestPtr req);
+  Task<HttpResponsePtr> posRemoveItemFromWishlist(HttpRequestPtr req);
   Task<HttpResponsePtr> getPosWishlistItemCount(HttpRequestPtr req);
   Task<HttpResponsePtr> getPosWishlistItems(HttpRequestPtr req);
 
