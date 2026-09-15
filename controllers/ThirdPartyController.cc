@@ -549,7 +549,6 @@ Task<HttpResponsePtr> ThirdPartyController::getPosCartItems(HttpRequestPtr req) 
 }
 
 
-
 Task<HttpResponsePtr> ThirdPartyController::posAddItemToWishlist(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -567,7 +566,6 @@ Task<HttpResponsePtr> ThirdPartyController::posAddItemToWishlist(HttpRequestPtr 
     co_return resp;
 
 }
-
 
 
 Task<HttpResponsePtr> ThirdPartyController::posRemoveItemFromWishlist(HttpRequestPtr req) {
@@ -589,8 +587,6 @@ Task<HttpResponsePtr> ThirdPartyController::posRemoveItemFromWishlist(HttpReques
 }
 
 
-
-
 Task<HttpResponsePtr> ThirdPartyController::getPosWishlistItemCount(HttpRequestPtr req) {
 
     auto authResult = co_await authenticateRequest(req);
@@ -605,7 +601,6 @@ Task<HttpResponsePtr> ThirdPartyController::getPosWishlistItemCount(HttpRequestP
     auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
     co_return resp;
 }
-
 
 
 Task<HttpResponsePtr> ThirdPartyController::getPosWishlistItems(HttpRequestPtr req) {

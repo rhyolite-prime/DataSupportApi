@@ -1035,7 +1035,7 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToWishlist(const
 
     auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
     auto req = drogon::HttpRequest::newHttpRequest();
-    req->setMethod(drogon::Post);
+    req->setMethod(drogon::Get);
     req->setPath("/api/services/app/Wishlist/AddToWishlist");
     req->setParameter("itemId", itemId);
     req->addHeader("AccountId", accountId);
