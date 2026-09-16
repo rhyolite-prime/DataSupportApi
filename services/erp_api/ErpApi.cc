@@ -1053,22 +1053,18 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToWishlist(const
     auto respJson = resp->getJsonObject();
 
     if (resp->getStatusCode() != drogon::k200OK) {
-      response.message = "Request failed with status code " +
-                         std::to_string(resp->getStatusCode());
-      if (respJson && respJson->isMember("error") &&
-          !(*respJson)["error"].isNull() &&
+      response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
+      if (respJson && respJson->isMember("error") && !(*respJson)["error"].isNull() &&
           (*respJson)["error"].isMember("message")) {
         response.message = (*respJson)["error"]["message"].asString();
       }
       co_return response;
     }
 
-    if (respJson && respJson->isMember("success") &&
-        !(*respJson)["success"].asBool()) {
+    if (respJson && respJson->isMember("success") && !(*respJson)["success"].asBool()) {
       response.success = false;
       response.code = 1;
-      if (respJson->isMember("error") && !(*respJson)["error"].isNull() &&
-          (*respJson)["error"].isMember("message")) {
+      if (respJson->isMember("error") && !(*respJson)["error"].isNull() && (*respJson)["error"].isMember("message")) {
         response.message = (*respJson)["error"]["message"].asString();
       } else {
         response.message = "Failed to add item to wishlist.";
