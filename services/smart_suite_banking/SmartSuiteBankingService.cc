@@ -593,7 +593,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     receiveDto.setCustomerMsisdn(dto.getCustomerMsisdn());
     receiveDto.setCustomerEmail(dto.getCustomerEmail());
     receiveDto.setAmount(dto.getAmount());
-    receiveDto.setPrimaryCallbackUrl(dto.getPrimaryCallbackUrl());
+    receiveDto.setPrimaryCallbackUrl("https://ultra-magnus.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/" + businessId);
     receiveDto.setDescription(dto.getDescription());
     receiveDto.setProvider(dto.getProvider());
     receiveDto.setClientReference(clientRef);
