@@ -365,14 +365,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
         payload["CustomerEmail"] = dto.getCustomerEmail();
         payload["Channel"] = provider;
         payload["Amount"] = dto.getAmount();
-
-        std::string callbackUrl = dto.getPrimaryCallbackUrl() + businessId;
-
-        if (callbackUrl.empty()) {
-            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/"+businessId;
-        }
-
-        payload["PrimaryCallbackUrl"] = callbackUrl;
+        payload["PrimaryCallbackUrl"] = dto.getPrimaryCallbackUrl();
         payload["Description"] = dto.getDescription();
         payload["ClientReference"] = dto.getClientReference();
 
