@@ -386,8 +386,21 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
         
         auto httpResp = co_await client->sendRequestCoro(req);
 
-        LOG_INFO << "[initializeDirectSendToMomo] Hubtel Direct Send Money API response: " << httpResp->getBody();
+        if (httpResp == nullptr) {
+            LOG_ERROR << "[initializeDirectSendToMomo] Hubtel Direct Send Money API "
+                         "returned a null response (transport failure). "
+                         "Reference: " << dto.getClientReference();
+            response.code = 1;
+            response.message = "Failed to initiate withdrawal to mobile money transaction. Please try again.";
+            co_return response;
+        }
 
+        const std::string responseStr = std::string(httpResp->getBody());
+
+        LOG_INFO << "[initializeDirectSendToMomo] Hubtel Direct Send Money API "
+         << "status=" << httpResp->statusCode()
+         << ", bodyLen=" << responseStr.size()
+         << ", body=" << responseStr;
         if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
             const std::string responseStr = std::string(httpResp->getBody());
             
