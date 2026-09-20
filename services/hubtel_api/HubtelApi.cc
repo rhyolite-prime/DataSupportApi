@@ -83,7 +83,6 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
     std::string auth = username + ":" + password;
     std::string authHeader = "Basic " + drogon::utils::base64Encode((const unsigned char*)auth.data(), auth.length());
 
-
       // Fire-and-forget: detached async task that owns all its data
       drogon::async_run([posSalesAccountId, body, authHeader]() -> drogon::Task<> {
           // This runs independently — no connection to the original coroutine
@@ -394,12 +393,15 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
         
         auto httpResp = co_await client->sendRequestCoro(req);
 
+        LOG_INFO << "[initializeDirectSendToMomo] Hubtel Direct Send Money API response: " << httpResp->getBody();
+
         if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
             const std::string responseStr = std::string(httpResp->getBody());
             
             Json::Value jsonResponse;
             std::istringstream respIss(responseStr);
             if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
+
                 auto result = dto::TransactionStatusResponse::fromJson(jsonResponse);
                 
                 LOG_INFO << "DirectSendMobileMoney response => " << responseStr << ", Reference: " << dto.getClientReference() << ", channel: " << provider << ", amount: " << dto.getAmount() << ", phone: " << dto.getRecipientMsisdn();

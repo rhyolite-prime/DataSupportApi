@@ -382,7 +382,7 @@ namespace data_support::dto {
             return res;
         }
 
-        Json::Value toJson() const {
+        [[nodiscard]] Json::Value toJson() const {
             Json::Value json;
             json["ResponseCode"] = responseCode;
             json["Status"] = status;

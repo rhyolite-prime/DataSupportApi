@@ -1095,10 +1095,11 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     sendDto.setRecipientMsisdn(dto.getRecipientMsisdn());
     sendDto.setCustomerEmail(dto.getCustomerEmail());
     sendDto.setAmount(dto.getAmount());
-    sendDto.setPrimaryCallbackUrl(dto.getPrimaryCallbackUrl());
+    sendDto.setPrimaryCallbackUrl("https://ultra-magnus.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-send-mobile-money/" + businessId);
     sendDto.setDescription(dto.getDescription());
     sendDto.setProvider(dto.getProvider());
     sendDto.setClientReference(clientRef);
+
     LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 9: Hubtel payload ready - recipientName=[" << dto.getRecipientName()
              << "] recipientMsisdn=[" << dto.getRecipientMsisdn()
              << "] provider=[" << dto.getProvider()
