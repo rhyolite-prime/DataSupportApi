@@ -542,8 +542,7 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
       co_return response;
     }
 
-    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts>
-        bizMapper(dbClient);
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
     auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
     auto configStr = businessAccount.getValueOfConfigurationData();
 
@@ -567,11 +566,9 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
     }
 
     std::string accountId = configJson["ErpApi"]["AccountId"].asString();
-    std::string accountSecret =
-        configJson["ErpApi"]["AccountSecret"].asString();
+    std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
 
-    auto client =
-        drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Get);
     req->setPath("/api/services/app/ShopCart/GetCartItemCount");
@@ -589,8 +586,7 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
     auto respJson = resp->getJsonObject();
 
     if (resp->getStatusCode() != drogon::k200OK) {
-      response.message = "Request failed with status code " +
-                         std::to_string(resp->getStatusCode());
+      response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
       if (respJson && respJson->isMember("error") &&
           !(*respJson)["error"].isNull() &&
           (*respJson)["error"].isMember("message")) {
@@ -681,11 +677,9 @@ drogon::Task<dto::erp_api::ErpOperationResponse> ErpApi::addItemToCart(const std
     }
 
     std::string accountId = configJson["ErpApi"]["AccountId"].asString();
-    std::string accountSecret =
-        configJson["ErpApi"]["AccountSecret"].asString();
+    std::string accountSecret = configJson["ErpApi"]["AccountSecret"].asString();
 
-    auto client =
-        drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto client =  drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
     auto req = drogon::HttpRequest::newHttpRequest();
     req->setMethod(drogon::Get);
     req->setPath("/api/services/app/ShopCart/GetCartItems");
@@ -2985,8 +2979,7 @@ ErpApi::syncPosPickupPoints(const dto::erp_api::SyncPosPickupPointDto &dto) {
   co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryItems(
-    const dto::erp_api::SyncPosInventoryItemDto &dto) {
+  drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryItems(const dto::erp_api::SyncPosInventoryItemDto &dto) {
 
   dto::BaseApiResponse response;
 
@@ -3234,5 +3227,11 @@ drogon::Task<dto::BaseApiResponse> ErpApi::syncPosInventoryItems(
 
   co_return response;
 }
+
+
+
+  // drogon::Task<dto::BaseApiResponse> ErpApi::syncPosBannerSliders(const dto::erp_api::SyncPosBannerSliderDto &dto) {
+  //
+  // }
 
 } // namespace data_support::services

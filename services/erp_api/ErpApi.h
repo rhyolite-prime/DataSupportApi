@@ -100,6 +100,8 @@ namespace data_support::services {
 
         drogon::Task<dto::BaseApiResponse> syncPosInventoryItems(const dto::erp_api::SyncPosInventoryItemDto &dto);
 
+        //drogon::Task<dto::BaseApiResponse> syncPosBannerSliders(const dto::erp_api::SyncPosBannerSliderDto &dto);
+
 
     };
 

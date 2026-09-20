@@ -952,6 +952,68 @@ namespace data_support::dto::erp_api {
 
     }
 
+    class SyncPosBannerSliderDto {
+    public:
+        SyncPosBannerSliderDto() = default;
+
+        void fromJson(const Json::Value& json);
+
+        // Wrapper getters
+        [[nodiscard]] const std::string& getOperation() const { return operation_; }
+        [[nodiscard]] const std::string& getBusinessAccountId() const { return business_account_id_; }
+
+        // Banner slider getters
+        [[nodiscard]] const std::string& getImage() const { return image_; }
+        [[nodiscard]] const std::string& getImageMobile() const { return imageMobile_; }
+        [[nodiscard]] const std::string& getImageAlt() const { return imageAlt_; }
+        [[nodiscard]] const std::string& getLink() const { return link_; }
+
+        // Wrapper setters
+        void setOperation(const std::string& value) { operation_ = value; }
+        void setBusinessAccountId(const std::string& value) { business_account_id_ = value; }
+
+        // Banner slider setters
+        void setImage(const std::string& value) { image_ = value; }
+        void setImageMobile(const std::string& value) { imageMobile_ = value; }
+        void setImageAlt(const std::string& value) { imageAlt_ = value; }
+        void setLink(const std::string& value) { link_ = value; }
+
+    private:
+        std::string operation_;
+        std::string business_account_id_;
+
+        std::string image_;
+        std::string imageMobile_;
+        std::string imageAlt_;
+        std::string link_;
+    };
+
+    inline void SyncPosBannerSliderDto::fromJson(const Json::Value& json) {
+
+    // Parse wrapper fields (top-level)
+    if (json.isMember("Operation") && !json["Operation"].isNull()) {
+        setOperation(json["Operation"].asString());
+    }
+    if (json.isMember("BusinessAccountId") && !json["BusinessAccountId"].isNull()) {
+        setBusinessAccountId(json["BusinessAccountId"].asString());
+    }
+
+    // The entity fields may be nested under "data" or at the top level
+    const Json::Value& data = json.isMember("data") ? json["data"] : json;
+
+    if (data.isMember("Image") && !data["Image"].isNull()) {
+        image_ = data["Image"].asString();
+    }
+    if (data.isMember("ImageMobile") && !data["ImageMobile"].isNull()) {
+        imageMobile_ = data["ImageMobile"].asString();
+    }
+    if (data.isMember("ImageAlt") && !data["ImageAlt"].isNull()) {
+        imageAlt_ = data["ImageAlt"].asString();
+    }
+    if (data.isMember("Link") && !data["Link"].isNull()) {
+        link_ = data["Link"].asString();
+    }
+}
 
 
 }

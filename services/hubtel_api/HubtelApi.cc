@@ -72,9 +72,11 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
     payload["Channel"] = provider;
     payload["Amount"] = dto.getAmount();
     
-    std::string callbackUrl = dto.getPrimaryCallbackUrl() + "/" + businessId;
+    std::string callbackUrl = dto.getPrimaryCallbackUrl();
     if (callbackUrl.empty()) {
-        callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/"+businessId;
+        callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-receive-money/" + businessId;
+    } else {
+        callbackUrl += "/" + businessId;
     }
     payload["PrimaryCallbackUrl"] = callbackUrl;
     payload["Description"] = dto.getDescription();
@@ -87,25 +89,44 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
     std::string auth = username + ":" + password;
     std::string authHeader = "Basic " + drogon::utils::base64Encode((const unsigned char*)auth.data(), auth.length());
 
-    // Make the delayed HTTP call (6 seconds delay) to allow USSD session to properly end
-    drogon::app().getLoop()->runAfter(5.0, [posSalesAccountId, body, authHeader]() {
-        auto client = drogon::HttpClient::newHttpClient("https://rmp.hubtel.com");
-        auto req = drogon::HttpRequest::newHttpRequest();
-        req->setMethod(drogon::Post);
-        req->setPath("/merchantaccount/merchants/" + posSalesAccountId + "/receive/mobilemoney");
-        req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
-        req->setBody(body);
-        req->addHeader("Authorization", authHeader);
-        
-        client->sendRequest(req, [](drogon::ReqResult res, const drogon::HttpResponsePtr &httpResp) {
-            if (res == drogon::ReqResult::Ok && httpResp) {
-                LOG_INFO << "Delayed Hubtel API call success: " << httpResp->getBody();
-            } else {
-                LOG_ERROR << "Delayed Hubtel API call failed.";
-            }
-        });
-    });
 
+      // Fire-and-forget: detached async task that owns all its data
+      drogon::async_run([posSalesAccountId, body, authHeader]() -> drogon::Task<> {
+          // This runs independently — no connection to the original coroutine
+          co_await drogon::sleepCoro(drogon::app().getLoop(), 5.0);
+
+          auto client = drogon::HttpClient::newHttpClient("https://rmp.hubtel.com");
+          auto req = drogon::HttpRequest::newHttpRequest();
+          req->setMethod(drogon::Post);
+          req->setPath("/merchantaccount/merchants/" + posSalesAccountId + "/receive/mobilemoney");
+          req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+          req->setBody(body);
+          req->addHeader("Authorization", authHeader);
+
+        try {
+            auto httpResp = co_await client->sendRequestCoro(req, 10.0);
+
+            if (httpResp == nullptr) {
+                LOG_ERROR << "Delayed Hubtel API call failed. Null response.";
+                co_return;
+            }
+
+            if (httpResp->getStatusCode() == drogon::k200OK ||
+                httpResp->getStatusCode() == drogon::k201Created) {
+                LOG_INFO << "Delayed Hubtel API call success: "
+                         << httpResp->getBody();
+            } else {
+                LOG_ERROR << "Delayed Hubtel API call failed. Status: "
+                          << httpResp->getStatusCode()
+                          << ", body: " << httpResp->getBody();
+            }
+        } catch (const std::exception &e) {
+            LOG_ERROR << "Delayed Hubtel API call failed with exception: " << e.what();
+        }
+
+       co_return;
+
+      });
 
     response.code = 0;
     response.message = promptMessage;
@@ -120,6 +141,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
     co_return response;
   }
 }
+
+
 
 
 drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const std::string &businessId, const dto::HubtelWebCheckoutDto &dto) {
