@@ -359,12 +359,15 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
             provider = "tigo-gh";
         }
 
+        std::ostringstream amountStream;
+        amountStream << std::fixed << std::setprecision(2) << dto.getAmount();
+
         Json::Value payload;
         payload["RecipientName"] = dto.getRecipientName();
         payload["RecipientMsisdn"] = dto.getRecipientMsisdn();
         payload["CustomerEmail"] = dto.getCustomerEmail();
         payload["Channel"] = provider;
-        payload["Amount"] = dto.getAmount();
+        payload["Amount"] = std::round(dto.getAmount() * 100.0) / 100.0;
         payload["PrimaryCallbackUrl"] = dto.getPrimaryCallbackUrl();
         payload["Description"] = dto.getDescription();
         payload["ClientReference"] = dto.getClientReference();
