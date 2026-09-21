@@ -367,7 +367,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
         payload["RecipientMsisdn"] = dto.getRecipientMsisdn();
         payload["CustomerEmail"] = dto.getCustomerEmail();
         payload["Channel"] = provider;
-        payload["Amount"] = std::round(dto.getAmount() * 100.0) / 100.0;
+        payload["Amount"] = std::stod(amountStream.str());
         payload["PrimaryCallbackUrl"] = dto.getPrimaryCallbackUrl();
         payload["Description"] = dto.getDescription();
         payload["ClientReference"] = dto.getClientReference();
