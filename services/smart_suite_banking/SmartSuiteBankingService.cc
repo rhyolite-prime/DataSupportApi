@@ -439,8 +439,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
 
     auto httpResp = co_await client->sendRequestCoro(req);
 
-    if (httpResp && (httpResp->statusCode() == drogon::k200OK ||
-                     httpResp->statusCode() == drogon::k201Created)) {
+    if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
 
       Json::Value jsonResponse;
@@ -452,8 +451,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
         std::string respDescLower = result.getRespdesc();
         std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
 
-        bool isSuccess =
-            (result.getRespcode() == "0" && respDescLower == "success");
+        bool isSuccess = (result.getRespcode() == "0" && respDescLower == "success");
 
         if (accountTypeUpper == "K") {
           if (!isSuccess) {
@@ -466,8 +464,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
               std::ostringstream sb;
               sb << "** Kiddy Account Balances **\n";
               for (const auto &kiddy : respData) {
-                sb << kiddy["SURNAME"].asString()
-                   << " - Balance: " << kiddy["BALANCE"].asString() << "\n";
+                sb << kiddy["SURNAME"].asString() << " - Balance: " << kiddy["BALANCE"].asString() << "\n";
               }
               response.message = sb.str();
             }
@@ -535,6 +532,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     co_return response;
   }
 }
+
 
 drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::initializeDepositViaUssd(
     const std::string &businessId,
@@ -700,6 +698,78 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     co_return response;
   }
 }
+
+
+drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::getAllBanks(const std::string &businessId) {
+
+  dto::smart_suite::SmartSuiteOperationResponse response;
+
+  try {
+
+    // --- Step 1: Load business account and parse configuration ---
+    LOG_INFO << "[getAllBanks] Step 1: Fetching business account config for businessId=[" << businessId << "]";
+    auto dbClient = drogon::app().getDbClient();
+    drogon::orm::CoroMapper<drogon_model::DataSupportDb::BusinessAccounts> bizMapper(dbClient);
+    auto businessAccount = co_await bizMapper.findByPrimaryKey(businessId);
+    auto configStr = businessAccount.getValueOfConfigurationData();
+    LOG_INFO << "[getAllBanks] Step 1: Business account config fetched successfully";
+
+    Json::Value configJson;
+    Json::CharReaderBuilder readerBuilder;
+    std::string errs;
+    std::istringstream iss(configStr);
+
+    if (!Json::parseFromStream(readerBuilder, iss, &configJson, &errs)) {
+      LOG_ERROR << "[getAllBanks] Step 1 FAILED: Could not parse ConfigurationData - " << errs;
+      response.message = "Failed to retrieve bank codes.";
+      response.code = 1;
+      response.success = false;
+      co_return response;
+    }
+
+    // --- Step 2: Extract HubtelPaymentApi.BankCodes ---
+    LOG_INFO << "[getAllBanks] Step 2: Extracting BankCodes from HubtelPaymentApi config";
+
+    const auto &hubtelPaymentApiConfig = configJson["HubtelPaymentApi"];
+    if (hubtelPaymentApiConfig.isNull() || !hubtelPaymentApiConfig.isMember("BankCodes")) {
+      LOG_ERROR << "[getAllBanks] Step 2 FAILED: HubtelPaymentApi or BankCodes key is missing from config";
+      response.message = "Bank codes configuration is missing.";
+      response.code = 1;
+      response.success = false;
+      co_return response;
+    }
+
+    const auto &bankCodesJson = hubtelPaymentApiConfig["BankCodes"];
+    if (!bankCodesJson.isArray() || bankCodesJson.empty()) {
+      LOG_ERROR << "[getAllBanks] Step 2 FAILED: BankCodes is not a non-empty array";
+      response.message = "No bank codes found in configuration.";
+      response.code = 1;
+      response.success = false;
+      co_return response;
+    }
+
+    // --- Step 3: Build and return the response ---
+    // Each entry in bankCodesJson: { "BankCode": "300302", "BankChannel": "STANDARD CHARTERED BANK" }
+    LOG_INFO << "[getAllBanks] Step 3: Found " << bankCodesJson.size() << " bank(s) — returning list";
+
+    response.code = 0;
+    response.success = true;
+    response.message = "Banks retrieved successfully.";
+    response.data = bankCodesJson;
+
+    LOG_INFO << "[getAllBanks] END - businessId=[" << businessId << "] banks=[" << bankCodesJson.size() << "]";
+    co_return response;
+
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[getAllBanks] EXCEPTION: " << e.what();
+    response.message = "Failed to retrieve bank codes.";
+    response.code = 1;
+    response.success = false;
+    co_return response;
+  }
+
+}
+
 
 drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::initializeFlexyWithdrawalToBank(
     const std::string &businessId,
@@ -2238,7 +2308,6 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     co_return response;
   }
 }
-
 
 
 drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingService::sendLowPrepaidBalanceNotification(const std::string &businessId) {

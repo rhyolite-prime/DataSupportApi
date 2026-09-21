@@ -37,6 +37,8 @@ namespace data_support::services {
 
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> initializeFlexyWithdrawalToBank(const std::string &businessId, const dto::smart_suite::FlexyWithdrawalToBankDto &dto);
 
+        drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> getAllBanks(const std::string &businessId);
+
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> initializeFlexyWithdrawalToMomo(const std::string &businessId, const dto::smart_suite::FlexyWithdrawalToMomoDto &dto);
 
         drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> completeFlexyWithdrawalToBank(const std::string &businessId, const std::string &reference, const std::string &recipientName, bool isSuccessful);

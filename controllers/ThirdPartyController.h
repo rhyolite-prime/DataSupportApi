@@ -18,6 +18,7 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   ADD_METHOD_TO(ThirdPartyController::getAccountBalance,std::string(PREFIX) + "smart-suite/get-account-balance", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::initializeDepositViaUssd,std::string(PREFIX) + "smart-suite/initialize-deposit-via-ussd", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::initializeDepositViaWebCheckout,std::string(PREFIX) + "smart-suite/initialize-deposit-via-web-checkout", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::getBanks,std::string(PREFIX) + "smart-suite/get-banks", Get, Options);
   ADD_METHOD_TO(ThirdPartyController::initializeFlexyWithdrawalToBank,std::string(PREFIX) + "smart-suite/initialize-flexy-withdrawal-to-bank", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::initializeFlexyWithdrawalToMomo,std::string(PREFIX) + "smart-suite/initialize-flexy-withdrawal-to-momo", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::interAccountTransfer,std::string(PREFIX) + "smart-suite/inter-account-transfer", Post, Options);
@@ -71,6 +72,7 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   Task<HttpResponsePtr> getAccountBalance(HttpRequestPtr req);
   Task<HttpResponsePtr> initializeDepositViaUssd(HttpRequestPtr req);
   Task<HttpResponsePtr> initializeDepositViaWebCheckout(HttpRequestPtr req);
+  Task<HttpResponsePtr> getBanks(HttpRequestPtr req);
   Task<HttpResponsePtr> initializeFlexyWithdrawalToBank(HttpRequestPtr req);
   Task<HttpResponsePtr> initializeFlexyWithdrawalToMomo(HttpRequestPtr req);
   Task<HttpResponsePtr> interAccountTransfer(HttpRequestPtr req);

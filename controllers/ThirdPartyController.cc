@@ -205,6 +205,21 @@ Task<HttpResponsePtr> ThirdPartyController::initializeDepositViaWebCheckout(Http
     co_return resp;
 }
 
+Task<HttpResponsePtr> ThirdPartyController::getBanks(HttpRequestPtr req) {
+
+    auto authResult = co_await authenticateRequest(req);
+    if (!authResult.isValid) co_return authResult.errorResponse;
+
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &smartSuiteBankingService = plugin->getSmartSuiteBankingService();
+
+    auto result = co_await smartSuiteBankingService.getAllBanks(authResult.businessId);
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+
+}
+
 Task<HttpResponsePtr> ThirdPartyController::initializeFlexyWithdrawalToBank(HttpRequestPtr req) {
     auto authResult = co_await authenticateRequest(req);
     if (!authResult.isValid) co_return authResult.errorResponse;

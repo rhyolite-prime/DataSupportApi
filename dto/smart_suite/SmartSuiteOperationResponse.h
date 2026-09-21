@@ -14,6 +14,7 @@ namespace data_support::dto::smart_suite {
         bool success {false};
         std::string checkoutUrl;
         std::string transactionReference;
+        Json::Value data {Json::nullValue};
 
         [[nodiscard]]
         Json::Value toJson() const {
@@ -24,6 +25,9 @@ namespace data_support::dto::smart_suite {
             json["success"] = success;
             if (!transactionReference.empty()) {
                 json["transactionReference"] = transactionReference;
+            }
+            if (!data.isNull()) {
+                json["data"] = data;
             }
             return json;
         }
