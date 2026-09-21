@@ -22,7 +22,6 @@ namespace data_support::dto::smart_suite {
         [[nodiscard]] const std::string& getRecipientMsisdn() const { return recipient_msisdn_; }
         [[nodiscard]] const std::string& getSenderMsisdn() const { return sender_msisdn_; }
         [[nodiscard]] const std::string& getCustomerEmail() const { return customer_email_; }
-        [[nodiscard]] const std::string& getPrimaryCallbackUrl() const { return primary_callback_url_; }
         [[nodiscard]] const std::string& getDescription() const { return description_; }
         [[nodiscard]] const std::string& getProvider() const { return provider_; }
         [[nodiscard]] const std::string& getTransactionType() const { return transaction_type_; }
@@ -38,7 +37,6 @@ namespace data_support::dto::smart_suite {
         void setRecipientMsisdn(const std::string& value) { recipient_msisdn_ = value; }
         void setSenderMsisdn(const std::string& value) { sender_msisdn_ = value; }
         void setCustomerEmail(const std::string& value) { customer_email_ = value; }
-        void setPrimaryCallbackUrl(const std::string& value) { primary_callback_url_ = value; }
         void setDescription(const std::string& value) { description_ = value; }
         void setProvider(const std::string& value) { provider_ = value; }
         void setTransactionType(const std::string& value) { transaction_type_ = value; }
@@ -54,7 +52,6 @@ namespace data_support::dto::smart_suite {
         std::string recipient_msisdn_;
         std::string sender_msisdn_;
         std::string customer_email_;
-        std::string primary_callback_url_;
         std::string description_;
         std::string provider_;
         std::string transaction_type_;
@@ -86,10 +83,6 @@ namespace data_support::dto::smart_suite {
 
         if (json.isMember("amount") && !json["amount"].isNull()) {
             setAmount(json["amount"].asDouble());
-        }
-
-        if (json.isMember("primaryCallbackUrl") && !json["primaryCallbackUrl"].isNull()) {
-            setPrimaryCallbackUrl(json["primaryCallbackUrl"].asString());
         }
 
         if (json.isMember("description") && !json["description"].isNull()) {

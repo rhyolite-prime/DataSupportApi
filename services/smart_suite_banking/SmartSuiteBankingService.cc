@@ -1032,10 +1032,11 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     bool ssSuccess = false;
     if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
       const std::string responseStr = std::string(httpResp->getBody());
-      LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 6: SmartSuite API responded with HTTP " << httpResp->statusCode()
-               << " body=[" << responseStr << "]";
+
+      LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 6: SmartSuite API responded with HTTP " << httpResp->statusCode() << " body=[" << responseStr << "]";
       Json::Value jsonResponse;
       std::istringstream respIss(responseStr);
+
       if (Json::parseFromStream(readerBuilder, respIss, &jsonResponse, &errs)) {
         auto result = dto::SmartSuiteApiResponseModel<Json::Value>::fromJson(jsonResponse);
         std::string respDescLower = result.getRespdesc();
@@ -1069,11 +1070,14 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     }
     LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 7: Flexy Withdrawal succeeded for clientRef=[" << clientRef << "]";
 
+    std::string callbackUrl = "https://ultra-magnus.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-send-mobile-money/" + businessId;
+
     // --- Step 8: Persist transaction record ---
     LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 8: Saving PENDING transaction record to DB (clientRef=[" << clientRef << "])";
     drogon_model::DataSupportDb::SmartSuiteTransactions transaction;
     transaction.setBusinessId(businessId);
-    transaction.setPhoneNo(dto.getSenderMsisdn());
+    transaction.setPhoneNo(dto.getRecipientMsisdn());
+    transaction.setSenderPhoneNumber(dto.getSenderMsisdn());
     transaction.setAmount(std::to_string(dto.getAmount()));
     transaction.setAccountType(dto.getAccountType());
     transaction.setTransactionType(dto.getTransactionType());
@@ -1082,6 +1086,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     transaction.setIntegrationChannel(dto.getIntegrationChannel());
     transaction.setIntegratingService(dto.getIntegrationService());
     transaction.setChildAccountNumber(dto.getKiddyAccountSerialNo());
+    transaction.setCallbackUrl(callbackUrl);
     transaction.setPin(utils::CryptoUtils::encrypt(dto.getPin(), encryptionKey));
 
     drogon::orm::CoroMapper<drogon_model::DataSupportDb::SmartSuiteTransactions> txnMapper(dbClient);
@@ -1095,7 +1100,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     sendDto.setRecipientMsisdn(dto.getRecipientMsisdn());
     sendDto.setCustomerEmail(dto.getCustomerEmail());
     sendDto.setAmount(dto.getAmount());
-    sendDto.setPrimaryCallbackUrl("https://ultra-magnus.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-send-mobile-money/" + businessId);
+    sendDto.setPrimaryCallbackUrl(callbackUrl);
     sendDto.setDescription(dto.getDescription());
     sendDto.setProvider(dto.getProvider());
     sendDto.setClientReference(clientRef);
@@ -1103,8 +1108,8 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
     LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 9: Hubtel payload ready - recipientName=[" << dto.getRecipientName()
              << "] recipientMsisdn=[" << dto.getRecipientMsisdn()
              << "] provider=[" << dto.getProvider()
-             << "] amount=[" << dto.getAmount()
-             << "] callbackUrl=[" << dto.getPrimaryCallbackUrl() << "]";
+             << "] amount=[" << sendDto.getAmount()
+             << "] callbackUrl=[" << sendDto.getPrimaryCallbackUrl() << "]";
 
     // --- Step 10: Send DirectSendToMomo request to Hubtel ---
     LOG_INFO << "[initializeFlexyWithdrawalToMomo] Step 10: Dispatching Hubtel DirectSendToMomo request for clientRef=[" << clientRef << "]";

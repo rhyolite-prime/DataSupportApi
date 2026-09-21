@@ -383,6 +383,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
         req->setContentTypeCode(drogon::CT_APPLICATION_JSON);
         req->setBody(body);
         req->addHeader("Authorization", authHeader);
+
+        LOG_INFO << "[initializeDirectSendToMomo] Body: " << req->getBody();
         
         auto httpResp = co_await client->sendRequestCoro(req);
 
