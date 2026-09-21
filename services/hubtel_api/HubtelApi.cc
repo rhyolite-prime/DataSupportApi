@@ -78,6 +78,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
 
     Json::StreamWriterBuilder writer;
     writer["indentation"] = "";
+    writer["precision"] = 2;
+    writer["precisionType"] = "decimal";
     std::string body = Json::writeString(writer, payload);
 
     std::string auth = username + ":" + password;
@@ -186,6 +188,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const st
 
         Json::StreamWriterBuilder writer;
         writer["indentation"] = "";
+        writer["precision"] = 2;
+        writer["precisionType"] = "decimal";
         std::string body = Json::writeString(writer, payload);
 
         std::string auth = username + ":" + password;
@@ -359,21 +363,20 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
             provider = "tigo-gh";
         }
 
-        std::ostringstream amountStream;
-        amountStream << std::fixed << std::setprecision(2) << dto.getAmount();
-
         Json::Value payload;
         payload["RecipientName"] = dto.getRecipientName();
         payload["RecipientMsisdn"] = dto.getRecipientMsisdn();
         payload["CustomerEmail"] = dto.getCustomerEmail();
         payload["Channel"] = provider;
-        payload["Amount"] = std::stod(amountStream.str());
+        payload["Amount"] = dto.getAmount();
         payload["PrimaryCallbackUrl"] = dto.getPrimaryCallbackUrl();
         payload["Description"] = dto.getDescription();
         payload["ClientReference"] = dto.getClientReference();
 
         Json::StreamWriterBuilder writer;
         writer["indentation"] = "";
+        writer["precision"] = 2;
+        writer["precisionType"] = "decimal";
         std::string body = Json::writeString(writer, payload);
 
         std::string auth = username + ":" + password;
@@ -513,6 +516,8 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
 
         Json::StreamWriterBuilder writer;
         writer["indentation"] = "";
+        writer["precision"] = 2;
+        writer["precisionType"] = "decimal";
         std::string body = Json::writeString(writer, payload);
 
         std::string auth = username + ":" + password;
