@@ -26,7 +26,6 @@ namespace data_support::dto::smart_suite {
         [[nodiscard]] const std::string& getBankBranchCode() const { return bank_branch_code_; }
         [[nodiscard]] const std::string& getBankAccountNumber() const { return bank_account_number_; }
         [[nodiscard]] const std::string& getBankAccountName() const { return bank_account_name_; }
-        [[nodiscard]] const std::string& getPrimaryCallbackUrl() const { return primary_callback_url_; }
         [[nodiscard]] const std::string& getDescription() const { return description_; }
         [[nodiscard]] const std::string& getAccountType() const { return account_type_; }
         [[nodiscard]] const std::string& getSenderMsisdn() const { return sender_msisdn_; }
@@ -43,7 +42,6 @@ namespace data_support::dto::smart_suite {
         void setBankBranchCode(const std::string& value) { bank_branch_code_ = value; }
         void setBankAccountNumber(const std::string& value) { bank_account_number_ = value; }
         void setBankAccountName(const std::string& value) { bank_account_name_ = value; }
-        void setPrimaryCallbackUrl(const std::string& value) { primary_callback_url_ = value; }
         void setDescription(const std::string& value) { description_ = value; }
         void setAccountType(const std::string& value) { account_type_ = value; }
         void setSenderMsisdn(const std::string& value) { sender_msisdn_ = value; }
@@ -60,7 +58,6 @@ namespace data_support::dto::smart_suite {
         std::string bank_branch_code_;
         std::string bank_account_number_;
         std::string bank_account_name_;
-        std::string primary_callback_url_;
         std::string description_;
         std::string account_type_;
         std::string recipient_phone_number_;
@@ -95,10 +92,6 @@ namespace data_support::dto::smart_suite {
 
         if (json.isMember("bankAccountName") && !json["bankAccountName"].isNull()) {
             setBankAccountName(json["bankAccountName"].asString());
-        }
-
-        if (json.isMember("primaryCallbackUrl") && !json["primaryCallbackUrl"].isNull()) {
-            setPrimaryCallbackUrl(json["primaryCallbackUrl"].asString());
         }
 
         if (json.isMember("description") && !json["description"].isNull()) {

@@ -941,9 +941,12 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
       LOG_ERROR << "[initializeFlexyWithdrawalToBank] Step 9: Could not parse amount to double (amount=[" << dto.getAmount() << "]) — defaulting to 0.0";
       sendToBankDto.setAmount(0.0);
     }
+
+    std::string callbackUrl = "https://ultra-magnus.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-send-to-bank/" + businessId;
+
     sendToBankDto.setBankAccountNumber(dto.getBankAccountNumber());
     sendToBankDto.setBankAccountName("");
-    sendToBankDto.setPrimaryCallbackUrl(dto.getPrimaryCallbackUrl());
+    sendToBankDto.setPrimaryCallbackUrl(callbackUrl);
     sendToBankDto.setDescription(dto.getDescription());
     sendToBankDto.setSenderMsisdn(dto.getSenderMsisdn());
     sendToBankDto.setRecipientPhoneNumber(dto.getRecipientPhoneNo());
@@ -954,7 +957,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
              << "] bankAccountNumber=[" << dto.getBankAccountNumber()
              << "] recipientPhoneNo=[" << dto.getRecipientPhoneNo()
              << "] amount=[" << dto.getAmount()
-             << "] callbackUrl=[" << dto.getPrimaryCallbackUrl() << "]";
+             << "] callbackUrl=[" << callbackUrl << "]";
 
     // --- Step 10: Send DirectSendToBank request to Hubtel ---
     LOG_INFO << "[initializeFlexyWithdrawalToBank] Step 10: Dispatching Hubtel DirectSendToBank request for clientRef=[" << clientRef << "]";
