@@ -409,6 +409,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToMomo(con
          << "status=" << httpResp->statusCode()
          << ", bodyLen=" << responseStr.size()
          << ", body=" << responseStr;
+
         if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
             const std::string responseStr = std::string(httpResp->getBody());
             
@@ -497,11 +498,6 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
         std::string password = hubtelConfig["ApiKeyOrPassword"].asString();
         std::string prepaidAccountId = hubtelConfig["PrepaidAccountId"].asString();
 
-        std::string callbackUrl = dto.getPrimaryCallbackUrl() + "/" + businessId;
-        if (callbackUrl.empty()) {
-            callbackUrl = "https://ds-api.rhyoliteprime.com/api/v1/hubtel-callback-processor/smart-suite/direct-send-to-bank/"+businessId;
-        }
-
         Json::Value payload;
         payload["BankName"] = dto.getBankName();
         payload["BankBranch"] = dto.getBankBranch();
@@ -509,7 +505,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
         payload["BankAccountNumber"] = dto.getBankAccountNumber();
         payload["BankAccountName"] = dto.getBankAccountName();
         payload["Amount"] = dto.getAmount();
-        payload["PrimaryCallbackUrl"] = callbackUrl;
+        payload["PrimaryCallbackUrl"] = dto.getPrimaryCallbackUrl();
         payload["Description"] = dto.getDescription();
         payload["RecipientPhoneNumber"] = dto.getRecipientPhoneNumber();
         payload["ClientReference"] = dto.getClientReference();
@@ -533,6 +529,13 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
         
         auto httpResp = co_await client->sendRequestCoro(req);
 
+        const std::string responseStr = std::string(httpResp->getBody());
+
+        LOG_INFO << "[initializeDirectSendToBank] Hubtel Direct Send Money API "
+         << "status=" << httpResp->statusCode()
+         << ", bodyLen=" << responseStr.size()
+         << ", body=" << responseStr;
+
         if (httpResp && (httpResp->statusCode() == drogon::k200OK || httpResp->statusCode() == drogon::k201Created)) {
             const std::string responseStr = std::string(httpResp->getBody());
             
@@ -544,7 +547,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectSendToBank(con
                 LOG_INFO << "DirectSendToBank response => " << responseStr << ", Reference: " << dto.getClientReference() << ", bank: " << dto.getBankName() << ", amount: " << dto.getAmount() << ", phone: " << dto.getRecipientPhoneNumber();
 
                 response.code = (result.responseCode == constants::TransactionStatusCode::HUBTEL_TRANSACTION_REQUEST_ACCEPTED) ? 0 : 1;
-                response.message = (result.responseCode == constants::TransactionStatusCode::HUBTEL_TRANSACTION_REQUEST_ACCEPTED) ? "Request accepted and being processed." : "Failed to initiate transaction. Please try again.";
+                response.message = (result.responseCode == constants::TransactionStatusCode::HUBTEL_TRANSACTION_REQUEST_ACCEPTED) ? "Withdrawal Request accepted and being processed." : "Failed to initiate withdrawal to bank. Please try again.";
                 co_return response;
             }
         }
