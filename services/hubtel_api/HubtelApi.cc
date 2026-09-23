@@ -138,8 +138,6 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
 }
 
 
-
-
 drogon::Task<dto::TransactionResponse> HubtelApi::initializeWebCheckout(const std::string &businessId, const dto::HubtelWebCheckoutDto &dto) {
 
     dto::TransactionResponse response;

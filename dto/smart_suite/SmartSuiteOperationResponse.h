@@ -34,6 +34,11 @@ namespace data_support::dto::smart_suite {
 
     };
 
+    struct KiddyAccount {
+        std::string childNo;
+        std::string surname;
+        std::string balance;
+    };
 
 }
 #endif //DATASUPPORTAPI_SMARTSUITEOPERATIONRESPONSE_H
