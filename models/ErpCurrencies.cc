@@ -1,3 +1,4 @@
+
 /**
  *
  *  ErpCurrencies.cc
@@ -6,26 +7,46 @@
  */
 
 #include "ErpCurrencies.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string ErpCurrencies::Cols::_id = "\"id\"";
+
 const std::string ErpCurrencies::Cols::_business_id = "\"business_id\"";
+
 const std::string ErpCurrencies::Cols::_name = "\"name\"";
+
 const std::string ErpCurrencies::Cols::_code = "\"code\"";
+
 const std::string ErpCurrencies::Cols::_minor_name = "\"minor_name\"";
+
 const std::string ErpCurrencies::Cols::_buy_rate = "\"buy_rate\"";
+
 const std::string ErpCurrencies::Cols::_sell_rate = "\"sell_rate\"";
+
 const std::string ErpCurrencies::Cols::_is_default = "\"is_default\"";
+
 const std::string ErpCurrencies::Cols::_tenant_id = "\"tenant_id\"";
+
 const std::string ErpCurrencies::Cols::_created_at = "\"created_at\"";
+
 const std::string ErpCurrencies::Cols::_updated_at = "\"updated_at\"";
+
+
 const std::string ErpCurrencies::primaryKeyName = "id";
+
+
 const bool ErpCurrencies::hasPrimaryKey = true;
+
 const std::string ErpCurrencies::tableName = "\"erp_currencies\"";
 
 const std::vector<typename ErpCurrencies::MetaData> ErpCurrencies::metaData_={
@@ -40,6 +61,7 @@ const std::vector<typename ErpCurrencies::MetaData> ErpCurrencies::metaData_={
 {"tenant_id","int32_t","integer",4,0,0,1},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &ErpCurrencies::getColumnName(size_t index) noexcept(false)
 {
@@ -50,47 +72,76 @@ ErpCurrencies::ErpCurrencies(const Row &r, const ssize_t indexOffset) noexcept
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["name"].isNull())
         {
+
             name_=std::make_shared<std::string>(r["name"].as<std::string>());
+
         }
+
         if(!r["code"].isNull())
         {
+
             code_=std::make_shared<std::string>(r["code"].as<std::string>());
+
         }
+
         if(!r["minor_name"].isNull())
         {
+
             minorName_=std::make_shared<std::string>(r["minor_name"].as<std::string>());
+
         }
+
         if(!r["buy_rate"].isNull())
         {
+
             buyRate_=std::make_shared<std::string>(r["buy_rate"].as<std::string>());
+
         }
+
         if(!r["sell_rate"].isNull())
         {
+
             sellRate_=std::make_shared<std::string>(r["sell_rate"].as<std::string>());
+
         }
+
         if(!r["is_default"].isNull())
         {
+
             isDefault_=std::make_shared<bool>(r["is_default"].as<bool>());
+
         }
+
         if(!r["tenant_id"].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r["tenant_id"].as<int32_t>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -108,11 +159,13 @@ ErpCurrencies::ErpCurrencies(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["updated_at"].isNull())
         {
             auto timeStr = r["updated_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -130,6 +183,7 @@ ErpCurrencies::ErpCurrencies(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -140,57 +194,86 @@ ErpCurrencies::ErpCurrencies(const Row &r, const ssize_t indexOffset) noexcept
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             name_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             code_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             minorName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             buyRate_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
+
             sellRate_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             isDefault_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 9;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -208,12 +291,14 @@ ErpCurrencies::ErpCurrencies(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 10;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -231,6 +316,7 @@ ErpCurrencies::ErpCurrencies(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -242,6 +328,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -250,6 +337,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -258,6 +346,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -266,6 +355,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             name_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -274,6 +364,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             code_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -282,6 +373,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             minorName_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -290,6 +382,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             buyRate_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -298,6 +391,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             sellRate_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -306,6 +400,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             isDefault_=std::make_shared<bool>(pJson[pMasqueradingVector[7]].asBool());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -314,6 +409,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[8]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -322,6 +418,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             auto timeStr = pJson[pMasqueradingVector[9]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -340,6 +437,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             }
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -348,6 +446,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             auto timeStr = pJson[pMasqueradingVector[10]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -366,10 +465,12 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson, const std::vector<std::st
             }
         }
     }
+
 }
 
 ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -378,6 +479,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
@@ -386,6 +488,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("name"))
     {
         dirtyFlag_[2]=true;
@@ -394,6 +497,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             name_=std::make_shared<std::string>(pJson["name"].asString());
         }
     }
+
     if(pJson.isMember("code"))
     {
         dirtyFlag_[3]=true;
@@ -402,6 +506,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             code_=std::make_shared<std::string>(pJson["code"].asString());
         }
     }
+
     if(pJson.isMember("minor_name"))
     {
         dirtyFlag_[4]=true;
@@ -410,6 +515,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             minorName_=std::make_shared<std::string>(pJson["minor_name"].asString());
         }
     }
+
     if(pJson.isMember("buy_rate"))
     {
         dirtyFlag_[5]=true;
@@ -418,6 +524,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             buyRate_=std::make_shared<std::string>(pJson["buy_rate"].asString());
         }
     }
+
     if(pJson.isMember("sell_rate"))
     {
         dirtyFlag_[6]=true;
@@ -426,6 +533,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             sellRate_=std::make_shared<std::string>(pJson["sell_rate"].asString());
         }
     }
+
     if(pJson.isMember("is_default"))
     {
         dirtyFlag_[7]=true;
@@ -434,6 +542,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             isDefault_=std::make_shared<bool>(pJson["is_default"].asBool());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[8]=true;
@@ -442,6 +551,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[9]=true;
@@ -450,6 +560,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -468,6 +579,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[10]=true;
@@ -476,6 +588,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -494,6 +607,7 @@ ErpCurrencies::ErpCurrencies(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
@@ -504,6 +618,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         if(!pJson[pMasqueradingVector[0]].isNull())
@@ -511,6 +626,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -519,6 +635,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -527,6 +644,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             name_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -535,6 +653,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             code_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -543,6 +662,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             minorName_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -551,6 +671,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             buyRate_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -559,6 +680,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             sellRate_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -567,6 +689,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             isDefault_=std::make_shared<bool>(pJson[pMasqueradingVector[7]].asBool());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -575,6 +698,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[8]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -583,6 +707,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[9]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -601,6 +726,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -609,6 +735,7 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[10]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -627,10 +754,12 @@ void ErpCurrencies::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
 }
 
 void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         if(!pJson["id"].isNull())
@@ -638,6 +767,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
@@ -646,6 +776,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("name"))
     {
         dirtyFlag_[2] = true;
@@ -654,6 +785,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             name_=std::make_shared<std::string>(pJson["name"].asString());
         }
     }
+
     if(pJson.isMember("code"))
     {
         dirtyFlag_[3] = true;
@@ -662,6 +794,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             code_=std::make_shared<std::string>(pJson["code"].asString());
         }
     }
+
     if(pJson.isMember("minor_name"))
     {
         dirtyFlag_[4] = true;
@@ -670,6 +803,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             minorName_=std::make_shared<std::string>(pJson["minor_name"].asString());
         }
     }
+
     if(pJson.isMember("buy_rate"))
     {
         dirtyFlag_[5] = true;
@@ -678,6 +812,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             buyRate_=std::make_shared<std::string>(pJson["buy_rate"].asString());
         }
     }
+
     if(pJson.isMember("sell_rate"))
     {
         dirtyFlag_[6] = true;
@@ -686,6 +821,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             sellRate_=std::make_shared<std::string>(pJson["sell_rate"].asString());
         }
     }
+
     if(pJson.isMember("is_default"))
     {
         dirtyFlag_[7] = true;
@@ -694,6 +830,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             isDefault_=std::make_shared<bool>(pJson["is_default"].asBool());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[8] = true;
@@ -702,6 +839,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[9] = true;
@@ -710,6 +848,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -728,6 +867,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[10] = true;
@@ -736,6 +876,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -754,6 +895,7 @@ void ErpCurrencies::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 const std::string &ErpCurrencies::getValueOfId() const noexcept
@@ -1027,6 +1169,7 @@ void ErpCurrencies::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &ErpCurrencies::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -1041,12 +1184,14 @@ const std::vector<std::string> &ErpCurrencies::insertColumns() noexcept
         "tenant_id",
         "created_at",
         "updated_at"
+
     };
     return inCols;
 }
 
 void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1058,6 +1203,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1069,6 +1215,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getName())
@@ -1080,6 +1227,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getCode())
@@ -1091,6 +1239,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getMinorName())
@@ -1102,6 +1251,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getBuyRate())
@@ -1113,6 +1263,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getSellRate())
@@ -1124,6 +1275,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getIsDefault())
@@ -1135,6 +1287,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getTenantId())
@@ -1146,6 +1299,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getCreatedAt())
@@ -1157,6 +1311,7 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getUpdatedAt())
@@ -1168,60 +1323,74 @@ void ErpCurrencies::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> ErpCurrencies::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     if(dirtyFlag_[9])
     {
         ret.push_back(getColumnName(9));
     }
+
     if(dirtyFlag_[10])
     {
         ret.push_back(getColumnName(10));
     }
+
     return ret;
 }
 
 void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1233,6 +1402,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1244,6 +1414,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getName())
@@ -1255,6 +1426,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getCode())
@@ -1266,6 +1438,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getMinorName())
@@ -1277,6 +1450,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getBuyRate())
@@ -1288,6 +1462,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getSellRate())
@@ -1299,6 +1474,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getIsDefault())
@@ -1310,6 +1486,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getTenantId())
@@ -1321,6 +1498,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getCreatedAt())
@@ -1332,6 +1510,7 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getUpdatedAt())
@@ -1343,98 +1522,133 @@ void ErpCurrencies::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 Json::Value ErpCurrencies::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getName())
     {
+
         ret["name"]=getValueOfName();
+
     }
     else
     {
         ret["name"]=Json::Value();
     }
+
     if(getCode())
     {
+
         ret["code"]=getValueOfCode();
+
     }
     else
     {
         ret["code"]=Json::Value();
     }
+
     if(getMinorName())
     {
+
         ret["minor_name"]=getValueOfMinorName();
+
     }
     else
     {
         ret["minor_name"]=Json::Value();
     }
+
     if(getBuyRate())
     {
+
         ret["buy_rate"]=getValueOfBuyRate();
+
     }
     else
     {
         ret["buy_rate"]=Json::Value();
     }
+
     if(getSellRate())
     {
+
         ret["sell_rate"]=getValueOfSellRate();
+
     }
     else
     {
         ret["sell_rate"]=Json::Value();
     }
+
     if(getIsDefault())
     {
+
         ret["is_default"]=getValueOfIsDefault();
+
     }
     else
     {
         ret["is_default"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -1449,293 +1663,376 @@ Json::Value ErpCurrencies::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 11)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getName())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfName();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getCode())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfCode();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getMinorName())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfMinorName();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getBuyRate())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfBuyRate();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getSellRate())
             {
+
                 ret[pMasqueradingVector[6]]=getValueOfSellRate();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getIsDefault())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfIsDefault();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getTenantId())
             {
+
                 ret[pMasqueradingVector[8]]=getValueOfTenantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[9].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[9]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[10].empty())
         {
             if(getUpdatedAt())
             {
+
                 ret[pMasqueradingVector[10]]=getUpdatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getName())
     {
+
         ret["name"]=getValueOfName();
+
     }
     else
     {
         ret["name"]=Json::Value();
     }
+
     if(getCode())
     {
+
         ret["code"]=getValueOfCode();
+
     }
     else
     {
         ret["code"]=Json::Value();
     }
+
     if(getMinorName())
     {
+
         ret["minor_name"]=getValueOfMinorName();
+
     }
     else
     {
         ret["minor_name"]=Json::Value();
     }
+
     if(getBuyRate())
     {
+
         ret["buy_rate"]=getValueOfBuyRate();
+
     }
     else
     {
         ret["buy_rate"]=Json::Value();
     }
+
     if(getSellRate())
     {
+
         ret["sell_rate"]=getValueOfSellRate();
+
     }
     else
     {
         ret["sell_rate"]=Json::Value();
     }
+
     if(getIsDefault())
     {
+
         ret["is_default"]=getValueOfIsDefault();
+
     }
     else
     {
         ret["is_default"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool ErpCurrencies::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     else
     {
         err="The id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     else
     {
         err="The business_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("name"))
     {
         if(!validJsonOfField(2, "name", pJson["name"], err, true))
             return false;
     }
+
     if(pJson.isMember("code"))
     {
         if(!validJsonOfField(3, "code", pJson["code"], err, true))
             return false;
     }
+
     if(pJson.isMember("minor_name"))
     {
         if(!validJsonOfField(4, "minor_name", pJson["minor_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("buy_rate"))
     {
         if(!validJsonOfField(5, "buy_rate", pJson["buy_rate"], err, true))
             return false;
     }
+
     if(pJson.isMember("sell_rate"))
     {
         if(!validJsonOfField(6, "sell_rate", pJson["sell_rate"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_default"))
     {
         if(!validJsonOfField(7, "is_default", pJson["is_default"], err, true))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(8, "tenant_id", pJson["tenant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The tenant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(9, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(10, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -1748,6 +2045,7 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -1755,12 +2053,15 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[0] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -1768,12 +2069,15 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[1] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -1781,7 +2085,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -1789,7 +2095,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -1797,7 +2105,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -1805,7 +2115,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -1813,7 +2125,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -1821,7 +2135,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -1829,12 +2145,15 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[8] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
@@ -1842,7 +2161,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[10].empty())
       {
           if(pJson.isMember(pMasqueradingVector[10]))
@@ -1850,7 +2171,9 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -1861,66 +2184,79 @@ bool ErpCurrencies::validateMasqueradedJsonForCreation(const Json::Value &pJson,
 }
 bool ErpCurrencies::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("name"))
     {
         if(!validJsonOfField(2, "name", pJson["name"], err, false))
             return false;
     }
+
     if(pJson.isMember("code"))
     {
         if(!validJsonOfField(3, "code", pJson["code"], err, false))
             return false;
     }
+
     if(pJson.isMember("minor_name"))
     {
         if(!validJsonOfField(4, "minor_name", pJson["minor_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("buy_rate"))
     {
         if(!validJsonOfField(5, "buy_rate", pJson["buy_rate"], err, false))
             return false;
     }
+
     if(pJson.isMember("sell_rate"))
     {
         if(!validJsonOfField(6, "sell_rate", pJson["sell_rate"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_default"))
     {
         if(!validJsonOfField(7, "is_default", pJson["is_default"], err, false))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(8, "tenant_id", pJson["tenant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(9, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(10, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool ErpCurrencies::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -1933,66 +2269,79 @@ bool ErpCurrencies::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
       {
           if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2009,157 +2358,203 @@ bool ErpCurrencies::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 9:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 10:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+

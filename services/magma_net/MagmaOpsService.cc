@@ -10,7 +10,7 @@
 
 #include "MagmaRadiusService.h"
 #include "MagmaSettings.h"
-#include "MagmaSmsService.h"
+#include "services/magma_sms/MagmaSmsService.h"
 #include "MagmaSupport.h"
 #include "utils/DbUtils.h"
 #include "utils/HmacUtils.h"
@@ -299,9 +299,9 @@ namespace data_support::services {
             result["token"] = HmacUtils::signToken(MagmaSettings::instance().hmacKey, businessId,
                                                    rows[0]["id"].as<std::string>(),
                                                    rows[0]["role"].as<std::string>(), 28800);
-            result["staffId"] = rows[0]["id"];
-            result["name"] = rows[0]["full_name"];
-            result["role"] = rows[0]["role"];
+            result["staffId"] = rows[0]["id"].as<std::string>();
+            result["name"] = rows[0]["full_name"].as<std::string>();
+            result["role"] = rows[0]["role"].as<std::string>();
             co_return okResponse("Staff logged in", result);
         } catch (const std::exception &e) {
             LOG_ERROR << "[MagmaNet] staffLogin error: " << e.what();

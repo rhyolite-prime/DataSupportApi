@@ -1,3 +1,4 @@
+
 /**
  *
  *  MerchantCommissionWithdrawals.h
@@ -39,6 +40,8 @@ namespace drogon_model
 namespace DataSupportDb
 {
 
+
+
 class MerchantCommissionWithdrawals
 {
   public:
@@ -58,14 +61,19 @@ class MerchantCommissionWithdrawals
         static const std::string _metadata;
         static const std::string _created_at;
         static const std::string _updated_at;
+
     };
 
     static const int primaryKeyNumber;
     static const std::string tableName;
     static const bool hasPrimaryKey;
+
     static const std::string primaryKeyName;
+
     using PrimaryKeyType = std::string;
     const PrimaryKeyType &getPrimaryKey() const;
+
+
 
     /**
      * @brief constructor
@@ -241,6 +249,7 @@ class MerchantCommissionWithdrawals
     void setUpdatedAtToNull() noexcept;
 
 
+
     static size_t getColumnNumber() noexcept {  return 14;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
@@ -248,6 +257,7 @@ class MerchantCommissionWithdrawals
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+
   private:
     friend drogon::orm::Mapper<MerchantCommissionWithdrawals>;
     friend drogon::orm::BaseBuilder<MerchantCommissionWithdrawals, true, true>;
@@ -277,6 +287,7 @@ class MerchantCommissionWithdrawals
     std::shared_ptr<std::string> metadata_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
+
     struct MetaData
     {
         const std::string colName_;
@@ -292,13 +303,19 @@ class MerchantCommissionWithdrawals
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
+
         static const std::string sql="select * from " + tableName + " where id = $1";
+
+
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
+
         static const std::string sql="delete from " + tableName + " where id = $1";
+
+
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -308,60 +325,72 @@ class MerchantCommissionWithdrawals
         needSelection = false;
         sql += "id,";
         ++parametersCount;
+
         if(!dirtyFlag_[0])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[1])
         {
             sql += "merchant_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[2])
         {
             sql += "business_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[3])
         {
             sql += "journal_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[4])
         {
             sql += "amount,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[5])
         {
             sql += "destination_account,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[6])
         {
             sql += "account_type,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[7])
         {
             sql += "provider,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[8])
         {
             sql += "status,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[9])
         {
             sql += "failure_reason,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[10])
         {
             sql += "external_reference,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[11])
         {
             sql += "metadata,";
@@ -369,15 +398,18 @@ class MerchantCommissionWithdrawals
         }
         sql += "created_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[12])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[13])
         {
             sql += "updated_at,";
             ++parametersCount;
         }
+
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -386,91 +418,138 @@ class MerchantCommissionWithdrawals
         else
             sql += ") values (";
 
+
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
+
         if(dirtyFlag_[0])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[1])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[2])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[3])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[4])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[5])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[6])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[7])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[8])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[9])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[10])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[11])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[12])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[13])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(parametersCount > 0)
         {
             sql.resize(sql.length() - 1);
         }
+
         if(needSelection)
         {
             sql.append(") returning *");
@@ -479,9 +558,11 @@ class MerchantCommissionWithdrawals
         {
             sql.append(1, ')');
         }
+
         LOG_TRACE << sql;
         return sql;
     }
 };
 } // namespace DataSupportDb
+
 } // namespace drogon_model

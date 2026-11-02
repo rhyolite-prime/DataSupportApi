@@ -7,7 +7,7 @@
 #include <bcrypt.h>
 
 #include "MagmaSettings.h"
-#include "MagmaSmsService.h"
+#include "services/magma_sms/MagmaSmsService.h"
 #include "MagmaSupport.h"
 #include "MagmaVoucherService.h"
 #include "services/magma_pay/MagmaPayService.h"
@@ -199,8 +199,8 @@ namespace data_support::services {
             Json::Value result;
             result["token"] = token;
             result["agentId"] = agentId;
-            result["agentCode"] = rows[0]["agent_code"];
-            result["name"] = rows[0]["name"];
+            result["agentCode"] = rows[0]["agent_code"].as<std::string>();
+            result["name"] = rows[0]["name"].as<std::string>();
             result["walletBalance"] = co_await getBalance(businessId, agentId);
             co_return okResponse("Agent logged in", result);
         } catch (const std::exception &e) {
@@ -448,13 +448,14 @@ namespace data_support::services {
             const std::string internalReference = "AS-" + HmacUtils::randomHex(6);
             const std::string msisdn = dto.msisdn.empty() ? agent[0]["msisdn"].as<std::string>()
                                                           : dto.msisdn;
+            const std::string paymentMethod = dto.provider.empty() ? "MOMO_MTN" : dto.provider;
 
             co_await db->execSqlCoro(
                 "INSERT INTO magma_transactions (id, business_id, agent_id, purpose, amount, "
                 "payment_method, provider, internal_reference, status) "
                 "VALUES ($1,$2,$3,'SETTLEMENT',$4,$5,'HUBTEL',$6,'PENDING')",
                 transactionId, businessId, dto.agentId, dto.amount,
-                dto.provider.empty() ? "MOMO_MTN" : dto.provider, internalReference);
+                paymentMethod, internalReference);
 
             auto payout = co_await payments_.payoutMomo(
                 businessId, msisdn, agent[0]["name"].as<std::string>(), dto.amount,

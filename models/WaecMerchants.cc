@@ -1,3 +1,4 @@
+
 /**
  *
  *  WaecMerchants.cc
@@ -6,31 +7,56 @@
  */
 
 #include "WaecMerchants.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string WaecMerchants::Cols::_id = "\"id\"";
+
 const std::string WaecMerchants::Cols::_business_id = "\"business_id\"";
+
 const std::string WaecMerchants::Cols::_merchant_name = "\"merchant_name\"";
+
 const std::string WaecMerchants::Cols::_phone_number = "\"phone_number\"";
+
 const std::string WaecMerchants::Cols::_email = "\"email\"";
+
 const std::string WaecMerchants::Cols::_pin_hash = "\"pin_hash\"";
+
 const std::string WaecMerchants::Cols::_status = "\"status\"";
+
 const std::string WaecMerchants::Cols::_commission_account_id = "\"commission_account_id\"";
+
 const std::string WaecMerchants::Cols::_main_account_id = "\"main_account_id\"";
+
 const std::string WaecMerchants::Cols::_account_type = "\"account_type\"";
+
 const std::string WaecMerchants::Cols::_account_provider = "\"account_provider\"";
+
 const std::string WaecMerchants::Cols::_bank_account_number = "\"bank_account_number\"";
+
 const std::string WaecMerchants::Cols::_total_commission_earned = "\"total_commission_earned\"";
+
 const std::string WaecMerchants::Cols::_commission_balance = "\"commission_balance\"";
+
 const std::string WaecMerchants::Cols::_created_at = "\"created_at\"";
+
 const std::string WaecMerchants::Cols::_updated_at = "\"updated_at\"";
+
+
 const std::string WaecMerchants::primaryKeyName = "id";
+
+
 const bool WaecMerchants::hasPrimaryKey = true;
+
 const std::string WaecMerchants::tableName = "\"waec_merchants\"";
 
 const std::vector<typename WaecMerchants::MetaData> WaecMerchants::metaData_={
@@ -50,6 +76,7 @@ const std::vector<typename WaecMerchants::MetaData> WaecMerchants::metaData_={
 {"commission_balance","std::string","numeric",0,0,0,0},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &WaecMerchants::getColumnName(size_t index) noexcept(false)
 {
@@ -60,67 +87,111 @@ WaecMerchants::WaecMerchants(const Row &r, const ssize_t indexOffset) noexcept
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["merchant_name"].isNull())
         {
+
             merchantName_=std::make_shared<std::string>(r["merchant_name"].as<std::string>());
+
         }
+
         if(!r["phone_number"].isNull())
         {
+
             phoneNumber_=std::make_shared<std::string>(r["phone_number"].as<std::string>());
+
         }
+
         if(!r["email"].isNull())
         {
+
             email_=std::make_shared<std::string>(r["email"].as<std::string>());
+
         }
+
         if(!r["pin_hash"].isNull())
         {
+
             pinHash_=std::make_shared<std::string>(r["pin_hash"].as<std::string>());
+
         }
+
         if(!r["status"].isNull())
         {
+
             status_=std::make_shared<int32_t>(r["status"].as<int32_t>());
+
         }
+
         if(!r["commission_account_id"].isNull())
         {
+
             commissionAccountId_=std::make_shared<std::string>(r["commission_account_id"].as<std::string>());
+
         }
+
         if(!r["main_account_id"].isNull())
         {
+
             mainAccountId_=std::make_shared<std::string>(r["main_account_id"].as<std::string>());
+
         }
+
         if(!r["account_type"].isNull())
         {
+
             accountType_=std::make_shared<std::string>(r["account_type"].as<std::string>());
+
         }
+
         if(!r["account_provider"].isNull())
         {
+
             accountProvider_=std::make_shared<std::string>(r["account_provider"].as<std::string>());
+
         }
+
         if(!r["bank_account_number"].isNull())
         {
+
             bankAccountNumber_=std::make_shared<std::string>(r["bank_account_number"].as<std::string>());
+
         }
+
         if(!r["total_commission_earned"].isNull())
         {
+
             totalCommissionEarned_=std::make_shared<std::string>(r["total_commission_earned"].as<std::string>());
+
         }
+
         if(!r["commission_balance"].isNull())
         {
+
             commissionBalance_=std::make_shared<std::string>(r["commission_balance"].as<std::string>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -138,11 +209,13 @@ WaecMerchants::WaecMerchants(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["updated_at"].isNull())
         {
             auto timeStr = r["updated_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -160,6 +233,7 @@ WaecMerchants::WaecMerchants(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -170,82 +244,126 @@ WaecMerchants::WaecMerchants(const Row &r, const ssize_t indexOffset) noexcept
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             merchantName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             phoneNumber_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             email_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             pinHash_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
+
             status_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             commissionAccountId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
+
             mainAccountId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 9;
         if(!r[index].isNull())
         {
+
             accountType_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 10;
         if(!r[index].isNull())
         {
+
             accountProvider_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 11;
         if(!r[index].isNull())
         {
+
             bankAccountNumber_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 12;
         if(!r[index].isNull())
         {
+
             totalCommissionEarned_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 13;
         if(!r[index].isNull())
         {
+
             commissionBalance_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 14;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -263,12 +381,14 @@ WaecMerchants::WaecMerchants(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 15;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -286,6 +406,7 @@ WaecMerchants::WaecMerchants(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -297,6 +418,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -305,6 +427,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -313,6 +436,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -321,6 +445,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             merchantName_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -329,6 +454,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             phoneNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -337,6 +463,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             email_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -345,6 +472,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             pinHash_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -353,6 +481,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[6]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -361,6 +490,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             commissionAccountId_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -369,6 +499,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             mainAccountId_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -377,6 +508,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             accountType_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -385,6 +517,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             accountProvider_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -393,6 +526,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             bankAccountNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -401,6 +535,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             totalCommissionEarned_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -409,6 +544,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             commissionBalance_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -417,6 +553,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             auto timeStr = pJson[pMasqueradingVector[14]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -435,6 +572,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             }
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -443,6 +581,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             auto timeStr = pJson[pMasqueradingVector[15]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -461,10 +600,12 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson, const std::vector<std::st
             }
         }
     }
+
 }
 
 WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -473,6 +614,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
@@ -481,6 +623,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_name"))
     {
         dirtyFlag_[2]=true;
@@ -489,6 +632,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             merchantName_=std::make_shared<std::string>(pJson["merchant_name"].asString());
         }
     }
+
     if(pJson.isMember("phone_number"))
     {
         dirtyFlag_[3]=true;
@@ -497,6 +641,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             phoneNumber_=std::make_shared<std::string>(pJson["phone_number"].asString());
         }
     }
+
     if(pJson.isMember("email"))
     {
         dirtyFlag_[4]=true;
@@ -505,6 +650,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             email_=std::make_shared<std::string>(pJson["email"].asString());
         }
     }
+
     if(pJson.isMember("pin_hash"))
     {
         dirtyFlag_[5]=true;
@@ -513,6 +659,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             pinHash_=std::make_shared<std::string>(pJson["pin_hash"].asString());
         }
     }
+
     if(pJson.isMember("status"))
     {
         dirtyFlag_[6]=true;
@@ -521,6 +668,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
+
     if(pJson.isMember("commission_account_id"))
     {
         dirtyFlag_[7]=true;
@@ -529,6 +677,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             commissionAccountId_=std::make_shared<std::string>(pJson["commission_account_id"].asString());
         }
     }
+
     if(pJson.isMember("main_account_id"))
     {
         dirtyFlag_[8]=true;
@@ -537,6 +686,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             mainAccountId_=std::make_shared<std::string>(pJson["main_account_id"].asString());
         }
     }
+
     if(pJson.isMember("account_type"))
     {
         dirtyFlag_[9]=true;
@@ -545,6 +695,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             accountType_=std::make_shared<std::string>(pJson["account_type"].asString());
         }
     }
+
     if(pJson.isMember("account_provider"))
     {
         dirtyFlag_[10]=true;
@@ -553,6 +704,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             accountProvider_=std::make_shared<std::string>(pJson["account_provider"].asString());
         }
     }
+
     if(pJson.isMember("bank_account_number"))
     {
         dirtyFlag_[11]=true;
@@ -561,6 +713,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             bankAccountNumber_=std::make_shared<std::string>(pJson["bank_account_number"].asString());
         }
     }
+
     if(pJson.isMember("total_commission_earned"))
     {
         dirtyFlag_[12]=true;
@@ -569,6 +722,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             totalCommissionEarned_=std::make_shared<std::string>(pJson["total_commission_earned"].asString());
         }
     }
+
     if(pJson.isMember("commission_balance"))
     {
         dirtyFlag_[13]=true;
@@ -577,6 +731,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             commissionBalance_=std::make_shared<std::string>(pJson["commission_balance"].asString());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[14]=true;
@@ -585,6 +740,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -603,6 +759,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[15]=true;
@@ -611,6 +768,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -629,6 +787,7 @@ WaecMerchants::WaecMerchants(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
@@ -639,6 +798,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         if(!pJson[pMasqueradingVector[0]].isNull())
@@ -646,6 +806,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -654,6 +815,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -662,6 +824,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             merchantName_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -670,6 +833,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             phoneNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -678,6 +842,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             email_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -686,6 +851,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             pinHash_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -694,6 +860,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[6]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -702,6 +869,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             commissionAccountId_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -710,6 +878,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             mainAccountId_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -718,6 +887,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             accountType_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -726,6 +896,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             accountProvider_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -734,6 +905,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             bankAccountNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -742,6 +914,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             totalCommissionEarned_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -750,6 +923,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             commissionBalance_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -758,6 +932,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[14]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -776,6 +951,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -784,6 +960,7 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[15]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -802,10 +979,12 @@ void WaecMerchants::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
 }
 
 void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         if(!pJson["id"].isNull())
@@ -813,6 +992,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
@@ -821,6 +1001,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_name"))
     {
         dirtyFlag_[2] = true;
@@ -829,6 +1010,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             merchantName_=std::make_shared<std::string>(pJson["merchant_name"].asString());
         }
     }
+
     if(pJson.isMember("phone_number"))
     {
         dirtyFlag_[3] = true;
@@ -837,6 +1019,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             phoneNumber_=std::make_shared<std::string>(pJson["phone_number"].asString());
         }
     }
+
     if(pJson.isMember("email"))
     {
         dirtyFlag_[4] = true;
@@ -845,6 +1028,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             email_=std::make_shared<std::string>(pJson["email"].asString());
         }
     }
+
     if(pJson.isMember("pin_hash"))
     {
         dirtyFlag_[5] = true;
@@ -853,6 +1037,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             pinHash_=std::make_shared<std::string>(pJson["pin_hash"].asString());
         }
     }
+
     if(pJson.isMember("status"))
     {
         dirtyFlag_[6] = true;
@@ -861,6 +1046,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
+
     if(pJson.isMember("commission_account_id"))
     {
         dirtyFlag_[7] = true;
@@ -869,6 +1055,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             commissionAccountId_=std::make_shared<std::string>(pJson["commission_account_id"].asString());
         }
     }
+
     if(pJson.isMember("main_account_id"))
     {
         dirtyFlag_[8] = true;
@@ -877,6 +1064,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             mainAccountId_=std::make_shared<std::string>(pJson["main_account_id"].asString());
         }
     }
+
     if(pJson.isMember("account_type"))
     {
         dirtyFlag_[9] = true;
@@ -885,6 +1073,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             accountType_=std::make_shared<std::string>(pJson["account_type"].asString());
         }
     }
+
     if(pJson.isMember("account_provider"))
     {
         dirtyFlag_[10] = true;
@@ -893,6 +1082,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             accountProvider_=std::make_shared<std::string>(pJson["account_provider"].asString());
         }
     }
+
     if(pJson.isMember("bank_account_number"))
     {
         dirtyFlag_[11] = true;
@@ -901,6 +1091,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             bankAccountNumber_=std::make_shared<std::string>(pJson["bank_account_number"].asString());
         }
     }
+
     if(pJson.isMember("total_commission_earned"))
     {
         dirtyFlag_[12] = true;
@@ -909,6 +1100,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             totalCommissionEarned_=std::make_shared<std::string>(pJson["total_commission_earned"].asString());
         }
     }
+
     if(pJson.isMember("commission_balance"))
     {
         dirtyFlag_[13] = true;
@@ -917,6 +1109,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             commissionBalance_=std::make_shared<std::string>(pJson["commission_balance"].asString());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[14] = true;
@@ -925,6 +1118,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -943,6 +1137,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[15] = true;
@@ -951,6 +1146,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -969,6 +1165,7 @@ void WaecMerchants::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 const std::string &WaecMerchants::getValueOfId() const noexcept
@@ -1382,6 +1579,7 @@ void WaecMerchants::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &WaecMerchants::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -1401,12 +1599,14 @@ const std::vector<std::string> &WaecMerchants::insertColumns() noexcept
         "commission_balance",
         "created_at",
         "updated_at"
+
     };
     return inCols;
 }
 
 void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1418,6 +1618,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1429,6 +1630,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getMerchantName())
@@ -1440,6 +1642,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getPhoneNumber())
@@ -1451,6 +1654,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getEmail())
@@ -1462,6 +1666,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getPinHash())
@@ -1473,6 +1678,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getStatus())
@@ -1484,6 +1690,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getCommissionAccountId())
@@ -1495,6 +1702,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getMainAccountId())
@@ -1506,6 +1714,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getAccountType())
@@ -1517,6 +1726,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getAccountProvider())
@@ -1528,6 +1738,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getBankAccountNumber())
@@ -1539,6 +1750,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getTotalCommissionEarned())
@@ -1550,6 +1762,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getCommissionBalance())
@@ -1561,6 +1774,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getCreatedAt())
@@ -1572,6 +1786,7 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getUpdatedAt())
@@ -1583,80 +1798,99 @@ void WaecMerchants::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> WaecMerchants::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     if(dirtyFlag_[9])
     {
         ret.push_back(getColumnName(9));
     }
+
     if(dirtyFlag_[10])
     {
         ret.push_back(getColumnName(10));
     }
+
     if(dirtyFlag_[11])
     {
         ret.push_back(getColumnName(11));
     }
+
     if(dirtyFlag_[12])
     {
         ret.push_back(getColumnName(12));
     }
+
     if(dirtyFlag_[13])
     {
         ret.push_back(getColumnName(13));
     }
+
     if(dirtyFlag_[14])
     {
         ret.push_back(getColumnName(14));
     }
+
     if(dirtyFlag_[15])
     {
         ret.push_back(getColumnName(15));
     }
+
     return ret;
 }
 
 void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1668,6 +1902,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1679,6 +1914,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getMerchantName())
@@ -1690,6 +1926,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getPhoneNumber())
@@ -1701,6 +1938,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getEmail())
@@ -1712,6 +1950,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getPinHash())
@@ -1723,6 +1962,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getStatus())
@@ -1734,6 +1974,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getCommissionAccountId())
@@ -1745,6 +1986,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getMainAccountId())
@@ -1756,6 +1998,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getAccountType())
@@ -1767,6 +2010,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getAccountProvider())
@@ -1778,6 +2022,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getBankAccountNumber())
@@ -1789,6 +2034,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getTotalCommissionEarned())
@@ -1800,6 +2046,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getCommissionBalance())
@@ -1811,6 +2058,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getCreatedAt())
@@ -1822,6 +2070,7 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getUpdatedAt())
@@ -1833,138 +2082,188 @@ void WaecMerchants::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 Json::Value WaecMerchants::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getMerchantName())
     {
+
         ret["merchant_name"]=getValueOfMerchantName();
+
     }
     else
     {
         ret["merchant_name"]=Json::Value();
     }
+
     if(getPhoneNumber())
     {
+
         ret["phone_number"]=getValueOfPhoneNumber();
+
     }
     else
     {
         ret["phone_number"]=Json::Value();
     }
+
     if(getEmail())
     {
+
         ret["email"]=getValueOfEmail();
+
     }
     else
     {
         ret["email"]=Json::Value();
     }
+
     if(getPinHash())
     {
+
         ret["pin_hash"]=getValueOfPinHash();
+
     }
     else
     {
         ret["pin_hash"]=Json::Value();
     }
+
     if(getStatus())
     {
+
         ret["status"]=getValueOfStatus();
+
     }
     else
     {
         ret["status"]=Json::Value();
     }
+
     if(getCommissionAccountId())
     {
+
         ret["commission_account_id"]=getValueOfCommissionAccountId();
+
     }
     else
     {
         ret["commission_account_id"]=Json::Value();
     }
+
     if(getMainAccountId())
     {
+
         ret["main_account_id"]=getValueOfMainAccountId();
+
     }
     else
     {
         ret["main_account_id"]=Json::Value();
     }
+
     if(getAccountType())
     {
+
         ret["account_type"]=getValueOfAccountType();
+
     }
     else
     {
         ret["account_type"]=Json::Value();
     }
+
     if(getAccountProvider())
     {
+
         ret["account_provider"]=getValueOfAccountProvider();
+
     }
     else
     {
         ret["account_provider"]=Json::Value();
     }
+
     if(getBankAccountNumber())
     {
+
         ret["bank_account_number"]=getValueOfBankAccountNumber();
+
     }
     else
     {
         ret["bank_account_number"]=Json::Value();
     }
+
     if(getTotalCommissionEarned())
     {
+
         ret["total_commission_earned"]=getValueOfTotalCommissionEarned();
+
     }
     else
     {
         ret["total_commission_earned"]=Json::Value();
     }
+
     if(getCommissionBalance())
     {
+
         ret["commission_balance"]=getValueOfCommissionBalance();
+
     }
     else
     {
         ret["commission_balance"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -1979,413 +2278,531 @@ Json::Value WaecMerchants::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 16)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getMerchantName())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfMerchantName();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getPhoneNumber())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfPhoneNumber();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getEmail())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfEmail();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getPinHash())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfPinHash();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getStatus())
             {
+
                 ret[pMasqueradingVector[6]]=getValueOfStatus();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getCommissionAccountId())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfCommissionAccountId();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getMainAccountId())
             {
+
                 ret[pMasqueradingVector[8]]=getValueOfMainAccountId();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[9].empty())
         {
             if(getAccountType())
             {
+
                 ret[pMasqueradingVector[9]]=getValueOfAccountType();
+
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[10].empty())
         {
             if(getAccountProvider())
             {
+
                 ret[pMasqueradingVector[10]]=getValueOfAccountProvider();
+
             }
             else
             {
                 ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[11].empty())
         {
             if(getBankAccountNumber())
             {
+
                 ret[pMasqueradingVector[11]]=getValueOfBankAccountNumber();
+
             }
             else
             {
                 ret[pMasqueradingVector[11]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[12].empty())
         {
             if(getTotalCommissionEarned())
             {
+
                 ret[pMasqueradingVector[12]]=getValueOfTotalCommissionEarned();
+
             }
             else
             {
                 ret[pMasqueradingVector[12]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[13].empty())
         {
             if(getCommissionBalance())
             {
+
                 ret[pMasqueradingVector[13]]=getValueOfCommissionBalance();
+
             }
             else
             {
                 ret[pMasqueradingVector[13]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[14].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[14]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[14]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[15].empty())
         {
             if(getUpdatedAt())
             {
+
                 ret[pMasqueradingVector[15]]=getUpdatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[15]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getMerchantName())
     {
+
         ret["merchant_name"]=getValueOfMerchantName();
+
     }
     else
     {
         ret["merchant_name"]=Json::Value();
     }
+
     if(getPhoneNumber())
     {
+
         ret["phone_number"]=getValueOfPhoneNumber();
+
     }
     else
     {
         ret["phone_number"]=Json::Value();
     }
+
     if(getEmail())
     {
+
         ret["email"]=getValueOfEmail();
+
     }
     else
     {
         ret["email"]=Json::Value();
     }
+
     if(getPinHash())
     {
+
         ret["pin_hash"]=getValueOfPinHash();
+
     }
     else
     {
         ret["pin_hash"]=Json::Value();
     }
+
     if(getStatus())
     {
+
         ret["status"]=getValueOfStatus();
+
     }
     else
     {
         ret["status"]=Json::Value();
     }
+
     if(getCommissionAccountId())
     {
+
         ret["commission_account_id"]=getValueOfCommissionAccountId();
+
     }
     else
     {
         ret["commission_account_id"]=Json::Value();
     }
+
     if(getMainAccountId())
     {
+
         ret["main_account_id"]=getValueOfMainAccountId();
+
     }
     else
     {
         ret["main_account_id"]=Json::Value();
     }
+
     if(getAccountType())
     {
+
         ret["account_type"]=getValueOfAccountType();
+
     }
     else
     {
         ret["account_type"]=Json::Value();
     }
+
     if(getAccountProvider())
     {
+
         ret["account_provider"]=getValueOfAccountProvider();
+
     }
     else
     {
         ret["account_provider"]=Json::Value();
     }
+
     if(getBankAccountNumber())
     {
+
         ret["bank_account_number"]=getValueOfBankAccountNumber();
+
     }
     else
     {
         ret["bank_account_number"]=Json::Value();
     }
+
     if(getTotalCommissionEarned())
     {
+
         ret["total_commission_earned"]=getValueOfTotalCommissionEarned();
+
     }
     else
     {
         ret["total_commission_earned"]=Json::Value();
     }
+
     if(getCommissionBalance())
     {
+
         ret["commission_balance"]=getValueOfCommissionBalance();
+
     }
     else
     {
         ret["commission_balance"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool WaecMerchants::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     else
     {
         err="The id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     if(pJson.isMember("merchant_name"))
     {
         if(!validJsonOfField(2, "merchant_name", pJson["merchant_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("phone_number"))
     {
         if(!validJsonOfField(3, "phone_number", pJson["phone_number"], err, true))
             return false;
     }
+
     else
     {
         err="The phone_number column cannot be null";
         return false;
     }
+
     if(pJson.isMember("email"))
     {
         if(!validJsonOfField(4, "email", pJson["email"], err, true))
             return false;
     }
+
     if(pJson.isMember("pin_hash"))
     {
         if(!validJsonOfField(5, "pin_hash", pJson["pin_hash"], err, true))
             return false;
     }
+
     else
     {
         err="The pin_hash column cannot be null";
         return false;
     }
+
     if(pJson.isMember("status"))
     {
         if(!validJsonOfField(6, "status", pJson["status"], err, true))
             return false;
     }
+
     if(pJson.isMember("commission_account_id"))
     {
         if(!validJsonOfField(7, "commission_account_id", pJson["commission_account_id"], err, true))
             return false;
     }
+
     if(pJson.isMember("main_account_id"))
     {
         if(!validJsonOfField(8, "main_account_id", pJson["main_account_id"], err, true))
             return false;
     }
+
     if(pJson.isMember("account_type"))
     {
         if(!validJsonOfField(9, "account_type", pJson["account_type"], err, true))
             return false;
     }
+
     if(pJson.isMember("account_provider"))
     {
         if(!validJsonOfField(10, "account_provider", pJson["account_provider"], err, true))
             return false;
     }
+
     if(pJson.isMember("bank_account_number"))
     {
         if(!validJsonOfField(11, "bank_account_number", pJson["bank_account_number"], err, true))
             return false;
     }
+
     if(pJson.isMember("total_commission_earned"))
     {
         if(!validJsonOfField(12, "total_commission_earned", pJson["total_commission_earned"], err, true))
             return false;
     }
+
     if(pJson.isMember("commission_balance"))
     {
         if(!validJsonOfField(13, "commission_balance", pJson["commission_balance"], err, true))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(14, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(15, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -2398,6 +2815,7 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -2405,12 +2823,15 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[0] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -2418,7 +2839,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -2426,7 +2849,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -2434,12 +2859,15 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[3] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -2447,7 +2875,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -2455,12 +2885,15 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[5] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -2468,7 +2901,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -2476,7 +2911,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -2484,7 +2921,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
@@ -2492,7 +2931,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[10].empty())
       {
           if(pJson.isMember(pMasqueradingVector[10]))
@@ -2500,7 +2941,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[11].empty())
       {
           if(pJson.isMember(pMasqueradingVector[11]))
@@ -2508,7 +2951,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[12].empty())
       {
           if(pJson.isMember(pMasqueradingVector[12]))
@@ -2516,7 +2961,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[13].empty())
       {
           if(pJson.isMember(pMasqueradingVector[13]))
@@ -2524,7 +2971,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[14].empty())
       {
           if(pJson.isMember(pMasqueradingVector[14]))
@@ -2532,7 +2981,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[15].empty())
       {
           if(pJson.isMember(pMasqueradingVector[15]))
@@ -2540,7 +2991,9 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2551,91 +3004,109 @@ bool WaecMerchants::validateMasqueradedJsonForCreation(const Json::Value &pJson,
 }
 bool WaecMerchants::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("merchant_name"))
     {
         if(!validJsonOfField(2, "merchant_name", pJson["merchant_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("phone_number"))
     {
         if(!validJsonOfField(3, "phone_number", pJson["phone_number"], err, false))
             return false;
     }
+
     if(pJson.isMember("email"))
     {
         if(!validJsonOfField(4, "email", pJson["email"], err, false))
             return false;
     }
+
     if(pJson.isMember("pin_hash"))
     {
         if(!validJsonOfField(5, "pin_hash", pJson["pin_hash"], err, false))
             return false;
     }
+
     if(pJson.isMember("status"))
     {
         if(!validJsonOfField(6, "status", pJson["status"], err, false))
             return false;
     }
+
     if(pJson.isMember("commission_account_id"))
     {
         if(!validJsonOfField(7, "commission_account_id", pJson["commission_account_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("main_account_id"))
     {
         if(!validJsonOfField(8, "main_account_id", pJson["main_account_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("account_type"))
     {
         if(!validJsonOfField(9, "account_type", pJson["account_type"], err, false))
             return false;
     }
+
     if(pJson.isMember("account_provider"))
     {
         if(!validJsonOfField(10, "account_provider", pJson["account_provider"], err, false))
             return false;
     }
+
     if(pJson.isMember("bank_account_number"))
     {
         if(!validJsonOfField(11, "bank_account_number", pJson["bank_account_number"], err, false))
             return false;
     }
+
     if(pJson.isMember("total_commission_earned"))
     {
         if(!validJsonOfField(12, "total_commission_earned", pJson["total_commission_earned"], err, false))
             return false;
     }
+
     if(pJson.isMember("commission_balance"))
     {
         if(!validJsonOfField(13, "commission_balance", pJson["commission_balance"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(14, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(15, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool WaecMerchants::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -2648,91 +3119,109 @@ bool WaecMerchants::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
       {
           if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
       {
           if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
       {
           if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
       {
           if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
       {
           if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
       {
           if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2749,260 +3238,326 @@ bool WaecMerchants::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 255)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 255)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 255)";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 20)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 20)";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 255)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 255)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 255)";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 255)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 255)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 255)";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 36)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 36)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 36)";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 36)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 36)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 36)";
                 return false;
             }
+
             break;
+
         case 9:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 10:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 11:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 12:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 13:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 14:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 15:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+

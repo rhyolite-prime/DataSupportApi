@@ -10,7 +10,7 @@
 
 #include "MagmaRadiusService.h"
 #include "MagmaSettings.h"
-#include "MagmaSmsService.h"
+#include "services/magma_sms/MagmaSmsService.h"
 #include "MagmaSubscriberService.h"
 #include "MagmaSupport.h"
 #include "services/magma_pay/MagmaPayService.h"

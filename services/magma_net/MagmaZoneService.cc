@@ -21,6 +21,7 @@ namespace data_support::services {
         try {
             auto db = app().getDbClient();
             const std::string id = newId();
+            const std::string region = dto.region.empty() ? "Greater Accra" : dto.region;
             auto rows = co_await db->execSqlCoro(
                 "INSERT INTO magma_zones (id, business_id, zone_code, name, district, region, "
                 "gps_lat, gps_lng, backhaul_provider, backhaul_circuit_ref, upstream_down_mbps, "
@@ -28,7 +29,7 @@ namespace data_support::services {
                 "status, notes) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,"
                 "NULLIF($15,'')::inet, NULLIF($16,'')::inet, $17, $18) RETURNING *",
                 id, businessId, dto.zoneCode, dto.name, dto.district,
-                dto.region.empty() ? std::string("Greater Accra") : dto.region,
+                region,
                 dto.gpsLat, dto.gpsLng, dto.backhaulProvider, dto.backhaulCircuitRef,
                 dto.upstreamDownMbps, dto.upstreamUpMbps, dto.upstreamMonthlyCost,
                 dto.cgnat, dto.publicIp, dto.tunnelIp, dto.status, dto.notes);

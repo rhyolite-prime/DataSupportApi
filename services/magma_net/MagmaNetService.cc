@@ -49,13 +49,13 @@ namespace data_support::services {
 
             Json::Value result;
             result["zone"] = Json::Value(Json::objectValue);
-            result["zone"]["code"] = zones[0]["zone_code"];
-            result["zone"]["name"] = zones[0]["name"];
-            result["zone"]["district"] = zones[0]["district"];
-            result["zone"]["status"] = zones[0]["status"];
+            result["zone"]["code"] = zones[0]["zone_code"].as<std::string>();
+            result["zone"]["name"] = zones[0]["name"].as<std::string>();
+            result["zone"]["district"] = zones[0]["district"].isNull() ? "" : zones[0]["district"].as<std::string>();
+            result["zone"]["status"] = zones[0]["status"].as<std::string>();
             result["business"] = Json::Value(Json::objectValue);
             result["business"]["id"] = resolvedBusinessId;
-            result["business"]["name"] = zones[0]["business_name"];
+            result["business"]["name"] = zones[0]["business_name"].as<std::string>();
             result["plans"] = plans.success ? plans.result : Json::Value(Json::arrayValue);
             result["paymentMethods"] = Json::Value(Json::arrayValue);
             result["paymentMethods"].append("MOMO_MTN");

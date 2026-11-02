@@ -420,8 +420,8 @@ namespace data_support::services {
             Json::Value result;
             result["voucherId"] = voucherId;
             result["subscriptionId"] = subscriptionId;
-            result["plan"] = voucher["plan_name"];
-            result["zone"] = voucher["zone_code"];
+            result["plan"] = voucher["plan_name"].as<std::string>();
+            result["zone"] = voucher["zone_code"].isNull() ? "" : voucher["zone_code"].as<std::string>();
 
             auto login = co_await billing_.loginDevice(businessId, zoneId, subscriptionId,
                                                        dto.mac, dto.ip);

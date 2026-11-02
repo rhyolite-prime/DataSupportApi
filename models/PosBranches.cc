@@ -1,3 +1,4 @@
+
 /**
  *
  *  PosBranches.cc
@@ -6,33 +7,60 @@
  */
 
 #include "PosBranches.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string PosBranches::Cols::_id = "\"id\"";
+
 const std::string PosBranches::Cols::_business_id = "\"business_id\"";
+
 const std::string PosBranches::Cols::_name = "\"name\"";
+
 const std::string PosBranches::Cols::_location = "\"location\"";
+
 const std::string PosBranches::Cols::_country_name = "\"country_name\"";
+
 const std::string PosBranches::Cols::_country_code = "\"country_code\"";
+
 const std::string PosBranches::Cols::_region_or_state = "\"region_or_state\"";
+
 const std::string PosBranches::Cols::_city = "\"city\"";
+
 const std::string PosBranches::Cols::_address = "\"address\"";
+
 const std::string PosBranches::Cols::_phone_no = "\"phone_no\"";
+
 const std::string PosBranches::Cols::_branch_manager = "\"branch_manager\"";
+
 const std::string PosBranches::Cols::_revenue_account_id = "\"revenue_account_id\"";
+
 const std::string PosBranches::Cols::_revenue_account_no = "\"revenue_account_no\"";
+
 const std::string PosBranches::Cols::_geo_coordinates = "\"geo_coordinates\"";
+
 const std::string PosBranches::Cols::_is_default = "\"is_default\"";
+
 const std::string PosBranches::Cols::_tenant_id = "\"tenant_id\"";
+
 const std::string PosBranches::Cols::_created_at = "\"created_at\"";
+
 const std::string PosBranches::Cols::_updated_at = "\"updated_at\"";
+
+
 const std::string PosBranches::primaryKeyName = "id";
+
+
 const bool PosBranches::hasPrimaryKey = true;
+
 const std::string PosBranches::tableName = "\"pos_branches\"";
 
 const std::vector<typename PosBranches::MetaData> PosBranches::metaData_={
@@ -54,6 +82,7 @@ const std::vector<typename PosBranches::MetaData> PosBranches::metaData_={
 {"tenant_id","int32_t","integer",4,0,0,1},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &PosBranches::getColumnName(size_t index) noexcept(false)
 {
@@ -64,75 +93,125 @@ PosBranches::PosBranches(const Row &r, const ssize_t indexOffset) noexcept
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["name"].isNull())
         {
+
             name_=std::make_shared<std::string>(r["name"].as<std::string>());
+
         }
+
         if(!r["location"].isNull())
         {
+
             location_=std::make_shared<std::string>(r["location"].as<std::string>());
+
         }
+
         if(!r["country_name"].isNull())
         {
+
             countryName_=std::make_shared<std::string>(r["country_name"].as<std::string>());
+
         }
+
         if(!r["country_code"].isNull())
         {
+
             countryCode_=std::make_shared<std::string>(r["country_code"].as<std::string>());
+
         }
+
         if(!r["region_or_state"].isNull())
         {
+
             regionOrState_=std::make_shared<std::string>(r["region_or_state"].as<std::string>());
+
         }
+
         if(!r["city"].isNull())
         {
+
             city_=std::make_shared<std::string>(r["city"].as<std::string>());
+
         }
+
         if(!r["address"].isNull())
         {
+
             address_=std::make_shared<std::string>(r["address"].as<std::string>());
+
         }
+
         if(!r["phone_no"].isNull())
         {
+
             phoneNo_=std::make_shared<std::string>(r["phone_no"].as<std::string>());
+
         }
+
         if(!r["branch_manager"].isNull())
         {
+
             branchManager_=std::make_shared<std::string>(r["branch_manager"].as<std::string>());
+
         }
+
         if(!r["revenue_account_id"].isNull())
         {
+
             revenueAccountId_=std::make_shared<std::string>(r["revenue_account_id"].as<std::string>());
+
         }
+
         if(!r["revenue_account_no"].isNull())
         {
+
             revenueAccountNo_=std::make_shared<std::string>(r["revenue_account_no"].as<std::string>());
+
         }
+
         if(!r["geo_coordinates"].isNull())
         {
+
             geoCoordinates_=std::make_shared<std::string>(r["geo_coordinates"].as<std::string>());
+
         }
+
         if(!r["is_default"].isNull())
         {
+
             isDefault_=std::make_shared<bool>(r["is_default"].as<bool>());
+
         }
+
         if(!r["tenant_id"].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r["tenant_id"].as<int32_t>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -150,11 +229,13 @@ PosBranches::PosBranches(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["updated_at"].isNull())
         {
             auto timeStr = r["updated_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -172,6 +253,7 @@ PosBranches::PosBranches(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -182,92 +264,142 @@ PosBranches::PosBranches(const Row &r, const ssize_t indexOffset) noexcept
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             name_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             location_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             countryName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             countryCode_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
+
             regionOrState_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             city_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
+
             address_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 9;
         if(!r[index].isNull())
         {
+
             phoneNo_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 10;
         if(!r[index].isNull())
         {
+
             branchManager_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 11;
         if(!r[index].isNull())
         {
+
             revenueAccountId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 12;
         if(!r[index].isNull())
         {
+
             revenueAccountNo_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 13;
         if(!r[index].isNull())
         {
+
             geoCoordinates_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 14;
         if(!r[index].isNull())
         {
+
             isDefault_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 15;
         if(!r[index].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 16;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -285,12 +417,14 @@ PosBranches::PosBranches(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 17;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -308,6 +442,7 @@ PosBranches::PosBranches(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -319,6 +454,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -327,6 +463,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -335,6 +472,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -343,6 +481,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             name_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -351,6 +490,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             location_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -359,6 +499,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             countryName_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -367,6 +508,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             countryCode_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -375,6 +517,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             regionOrState_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -383,6 +526,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             city_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -391,6 +535,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             address_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -399,6 +544,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             phoneNo_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -407,6 +553,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             branchManager_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -415,6 +562,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             revenueAccountId_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -423,6 +571,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             revenueAccountNo_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -431,6 +580,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             geoCoordinates_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -439,6 +589,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             isDefault_=std::make_shared<bool>(pJson[pMasqueradingVector[14]].asBool());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -447,6 +598,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[15]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -455,6 +607,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             auto timeStr = pJson[pMasqueradingVector[16]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -473,6 +626,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             }
         }
     }
+
     if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
     {
         dirtyFlag_[17] = true;
@@ -481,6 +635,7 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             auto timeStr = pJson[pMasqueradingVector[17]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -499,10 +654,12 @@ PosBranches::PosBranches(const Json::Value &pJson, const std::vector<std::string
             }
         }
     }
+
 }
 
 PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -511,6 +668,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
@@ -519,6 +677,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("name"))
     {
         dirtyFlag_[2]=true;
@@ -527,6 +686,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             name_=std::make_shared<std::string>(pJson["name"].asString());
         }
     }
+
     if(pJson.isMember("location"))
     {
         dirtyFlag_[3]=true;
@@ -535,6 +695,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             location_=std::make_shared<std::string>(pJson["location"].asString());
         }
     }
+
     if(pJson.isMember("country_name"))
     {
         dirtyFlag_[4]=true;
@@ -543,6 +704,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             countryName_=std::make_shared<std::string>(pJson["country_name"].asString());
         }
     }
+
     if(pJson.isMember("country_code"))
     {
         dirtyFlag_[5]=true;
@@ -551,6 +713,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             countryCode_=std::make_shared<std::string>(pJson["country_code"].asString());
         }
     }
+
     if(pJson.isMember("region_or_state"))
     {
         dirtyFlag_[6]=true;
@@ -559,6 +722,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             regionOrState_=std::make_shared<std::string>(pJson["region_or_state"].asString());
         }
     }
+
     if(pJson.isMember("city"))
     {
         dirtyFlag_[7]=true;
@@ -567,6 +731,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             city_=std::make_shared<std::string>(pJson["city"].asString());
         }
     }
+
     if(pJson.isMember("address"))
     {
         dirtyFlag_[8]=true;
@@ -575,6 +740,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             address_=std::make_shared<std::string>(pJson["address"].asString());
         }
     }
+
     if(pJson.isMember("phone_no"))
     {
         dirtyFlag_[9]=true;
@@ -583,6 +749,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             phoneNo_=std::make_shared<std::string>(pJson["phone_no"].asString());
         }
     }
+
     if(pJson.isMember("branch_manager"))
     {
         dirtyFlag_[10]=true;
@@ -591,6 +758,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             branchManager_=std::make_shared<std::string>(pJson["branch_manager"].asString());
         }
     }
+
     if(pJson.isMember("revenue_account_id"))
     {
         dirtyFlag_[11]=true;
@@ -599,6 +767,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             revenueAccountId_=std::make_shared<std::string>(pJson["revenue_account_id"].asString());
         }
     }
+
     if(pJson.isMember("revenue_account_no"))
     {
         dirtyFlag_[12]=true;
@@ -607,6 +776,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             revenueAccountNo_=std::make_shared<std::string>(pJson["revenue_account_no"].asString());
         }
     }
+
     if(pJson.isMember("geo_coordinates"))
     {
         dirtyFlag_[13]=true;
@@ -615,6 +785,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             geoCoordinates_=std::make_shared<std::string>(pJson["geo_coordinates"].asString());
         }
     }
+
     if(pJson.isMember("is_default"))
     {
         dirtyFlag_[14]=true;
@@ -623,6 +794,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             isDefault_=std::make_shared<bool>(pJson["is_default"].asBool());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[15]=true;
@@ -631,6 +803,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[16]=true;
@@ -639,6 +812,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -657,6 +831,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[17]=true;
@@ -665,6 +840,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -683,6 +859,7 @@ PosBranches::PosBranches(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
@@ -693,6 +870,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         if(!pJson[pMasqueradingVector[0]].isNull())
@@ -700,6 +878,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -708,6 +887,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -716,6 +896,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             name_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -724,6 +905,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             location_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -732,6 +914,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             countryName_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -740,6 +923,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             countryCode_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -748,6 +932,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             regionOrState_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -756,6 +941,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             city_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -764,6 +950,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             address_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -772,6 +959,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             phoneNo_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -780,6 +968,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             branchManager_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -788,6 +977,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             revenueAccountId_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -796,6 +986,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             revenueAccountNo_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -804,6 +995,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             geoCoordinates_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -812,6 +1004,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             isDefault_=std::make_shared<bool>(pJson[pMasqueradingVector[14]].asBool());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -820,6 +1013,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[15]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -828,6 +1022,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[16]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -846,6 +1041,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
     {
         dirtyFlag_[17] = true;
@@ -854,6 +1050,7 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[17]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -872,10 +1069,12 @@ void PosBranches::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
 }
 
 void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         if(!pJson["id"].isNull())
@@ -883,6 +1082,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
@@ -891,6 +1091,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("name"))
     {
         dirtyFlag_[2] = true;
@@ -899,6 +1100,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             name_=std::make_shared<std::string>(pJson["name"].asString());
         }
     }
+
     if(pJson.isMember("location"))
     {
         dirtyFlag_[3] = true;
@@ -907,6 +1109,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             location_=std::make_shared<std::string>(pJson["location"].asString());
         }
     }
+
     if(pJson.isMember("country_name"))
     {
         dirtyFlag_[4] = true;
@@ -915,6 +1118,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             countryName_=std::make_shared<std::string>(pJson["country_name"].asString());
         }
     }
+
     if(pJson.isMember("country_code"))
     {
         dirtyFlag_[5] = true;
@@ -923,6 +1127,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             countryCode_=std::make_shared<std::string>(pJson["country_code"].asString());
         }
     }
+
     if(pJson.isMember("region_or_state"))
     {
         dirtyFlag_[6] = true;
@@ -931,6 +1136,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             regionOrState_=std::make_shared<std::string>(pJson["region_or_state"].asString());
         }
     }
+
     if(pJson.isMember("city"))
     {
         dirtyFlag_[7] = true;
@@ -939,6 +1145,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             city_=std::make_shared<std::string>(pJson["city"].asString());
         }
     }
+
     if(pJson.isMember("address"))
     {
         dirtyFlag_[8] = true;
@@ -947,6 +1154,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             address_=std::make_shared<std::string>(pJson["address"].asString());
         }
     }
+
     if(pJson.isMember("phone_no"))
     {
         dirtyFlag_[9] = true;
@@ -955,6 +1163,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             phoneNo_=std::make_shared<std::string>(pJson["phone_no"].asString());
         }
     }
+
     if(pJson.isMember("branch_manager"))
     {
         dirtyFlag_[10] = true;
@@ -963,6 +1172,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             branchManager_=std::make_shared<std::string>(pJson["branch_manager"].asString());
         }
     }
+
     if(pJson.isMember("revenue_account_id"))
     {
         dirtyFlag_[11] = true;
@@ -971,6 +1181,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             revenueAccountId_=std::make_shared<std::string>(pJson["revenue_account_id"].asString());
         }
     }
+
     if(pJson.isMember("revenue_account_no"))
     {
         dirtyFlag_[12] = true;
@@ -979,6 +1190,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             revenueAccountNo_=std::make_shared<std::string>(pJson["revenue_account_no"].asString());
         }
     }
+
     if(pJson.isMember("geo_coordinates"))
     {
         dirtyFlag_[13] = true;
@@ -987,6 +1199,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             geoCoordinates_=std::make_shared<std::string>(pJson["geo_coordinates"].asString());
         }
     }
+
     if(pJson.isMember("is_default"))
     {
         dirtyFlag_[14] = true;
@@ -995,6 +1208,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             isDefault_=std::make_shared<bool>(pJson["is_default"].asBool());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[15] = true;
@@ -1003,6 +1217,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[16] = true;
@@ -1011,6 +1226,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1029,6 +1245,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[17] = true;
@@ -1037,6 +1254,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1055,6 +1273,7 @@ void PosBranches::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 const std::string &PosBranches::getValueOfId() const noexcept
@@ -1517,6 +1736,7 @@ void PosBranches::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &PosBranches::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -1538,12 +1758,14 @@ const std::vector<std::string> &PosBranches::insertColumns() noexcept
         "tenant_id",
         "created_at",
         "updated_at"
+
     };
     return inCols;
 }
 
 void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1555,6 +1777,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1566,6 +1789,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getName())
@@ -1577,6 +1801,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getLocation())
@@ -1588,6 +1813,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getCountryName())
@@ -1599,6 +1825,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getCountryCode())
@@ -1610,6 +1837,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getRegionOrState())
@@ -1621,6 +1849,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getCity())
@@ -1632,6 +1861,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getAddress())
@@ -1643,6 +1873,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getPhoneNo())
@@ -1654,6 +1885,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getBranchManager())
@@ -1665,6 +1897,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getRevenueAccountId())
@@ -1676,6 +1909,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getRevenueAccountNo())
@@ -1687,6 +1921,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getGeoCoordinates())
@@ -1698,6 +1933,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getIsDefault())
@@ -1709,6 +1945,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getTenantId())
@@ -1720,6 +1957,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getCreatedAt())
@@ -1731,6 +1969,7 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[17])
     {
         if(getUpdatedAt())
@@ -1742,88 +1981,109 @@ void PosBranches::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> PosBranches::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     if(dirtyFlag_[9])
     {
         ret.push_back(getColumnName(9));
     }
+
     if(dirtyFlag_[10])
     {
         ret.push_back(getColumnName(10));
     }
+
     if(dirtyFlag_[11])
     {
         ret.push_back(getColumnName(11));
     }
+
     if(dirtyFlag_[12])
     {
         ret.push_back(getColumnName(12));
     }
+
     if(dirtyFlag_[13])
     {
         ret.push_back(getColumnName(13));
     }
+
     if(dirtyFlag_[14])
     {
         ret.push_back(getColumnName(14));
     }
+
     if(dirtyFlag_[15])
     {
         ret.push_back(getColumnName(15));
     }
+
     if(dirtyFlag_[16])
     {
         ret.push_back(getColumnName(16));
     }
+
     if(dirtyFlag_[17])
     {
         ret.push_back(getColumnName(17));
     }
+
     return ret;
 }
 
 void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1835,6 +2095,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1846,6 +2107,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getName())
@@ -1857,6 +2119,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getLocation())
@@ -1868,6 +2131,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getCountryName())
@@ -1879,6 +2143,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getCountryCode())
@@ -1890,6 +2155,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getRegionOrState())
@@ -1901,6 +2167,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getCity())
@@ -1912,6 +2179,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getAddress())
@@ -1923,6 +2191,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getPhoneNo())
@@ -1934,6 +2203,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getBranchManager())
@@ -1945,6 +2215,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getRevenueAccountId())
@@ -1956,6 +2227,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getRevenueAccountNo())
@@ -1967,6 +2239,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getGeoCoordinates())
@@ -1978,6 +2251,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getIsDefault())
@@ -1989,6 +2263,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getTenantId())
@@ -2000,6 +2275,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getCreatedAt())
@@ -2011,6 +2287,7 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[17])
     {
         if(getUpdatedAt())
@@ -2022,154 +2299,210 @@ void PosBranches::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 Json::Value PosBranches::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getName())
     {
+
         ret["name"]=getValueOfName();
+
     }
     else
     {
         ret["name"]=Json::Value();
     }
+
     if(getLocation())
     {
+
         ret["location"]=getValueOfLocation();
+
     }
     else
     {
         ret["location"]=Json::Value();
     }
+
     if(getCountryName())
     {
+
         ret["country_name"]=getValueOfCountryName();
+
     }
     else
     {
         ret["country_name"]=Json::Value();
     }
+
     if(getCountryCode())
     {
+
         ret["country_code"]=getValueOfCountryCode();
+
     }
     else
     {
         ret["country_code"]=Json::Value();
     }
+
     if(getRegionOrState())
     {
+
         ret["region_or_state"]=getValueOfRegionOrState();
+
     }
     else
     {
         ret["region_or_state"]=Json::Value();
     }
+
     if(getCity())
     {
+
         ret["city"]=getValueOfCity();
+
     }
     else
     {
         ret["city"]=Json::Value();
     }
+
     if(getAddress())
     {
+
         ret["address"]=getValueOfAddress();
+
     }
     else
     {
         ret["address"]=Json::Value();
     }
+
     if(getPhoneNo())
     {
+
         ret["phone_no"]=getValueOfPhoneNo();
+
     }
     else
     {
         ret["phone_no"]=Json::Value();
     }
+
     if(getBranchManager())
     {
+
         ret["branch_manager"]=getValueOfBranchManager();
+
     }
     else
     {
         ret["branch_manager"]=Json::Value();
     }
+
     if(getRevenueAccountId())
     {
+
         ret["revenue_account_id"]=getValueOfRevenueAccountId();
+
     }
     else
     {
         ret["revenue_account_id"]=Json::Value();
     }
+
     if(getRevenueAccountNo())
     {
+
         ret["revenue_account_no"]=getValueOfRevenueAccountNo();
+
     }
     else
     {
         ret["revenue_account_no"]=Json::Value();
     }
+
     if(getGeoCoordinates())
     {
+
         ret["geo_coordinates"]=getValueOfGeoCoordinates();
+
     }
     else
     {
         ret["geo_coordinates"]=Json::Value();
     }
+
     if(getIsDefault())
     {
+
         ret["is_default"]=getValueOfIsDefault();
+
     }
     else
     {
         ret["is_default"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -2184,461 +2517,593 @@ Json::Value PosBranches::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 18)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getName())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfName();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getLocation())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfLocation();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getCountryName())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfCountryName();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getCountryCode())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfCountryCode();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getRegionOrState())
             {
+
                 ret[pMasqueradingVector[6]]=getValueOfRegionOrState();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getCity())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfCity();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getAddress())
             {
+
                 ret[pMasqueradingVector[8]]=getValueOfAddress();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[9].empty())
         {
             if(getPhoneNo())
             {
+
                 ret[pMasqueradingVector[9]]=getValueOfPhoneNo();
+
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[10].empty())
         {
             if(getBranchManager())
             {
+
                 ret[pMasqueradingVector[10]]=getValueOfBranchManager();
+
             }
             else
             {
                 ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[11].empty())
         {
             if(getRevenueAccountId())
             {
+
                 ret[pMasqueradingVector[11]]=getValueOfRevenueAccountId();
+
             }
             else
             {
                 ret[pMasqueradingVector[11]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[12].empty())
         {
             if(getRevenueAccountNo())
             {
+
                 ret[pMasqueradingVector[12]]=getValueOfRevenueAccountNo();
+
             }
             else
             {
                 ret[pMasqueradingVector[12]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[13].empty())
         {
             if(getGeoCoordinates())
             {
+
                 ret[pMasqueradingVector[13]]=getValueOfGeoCoordinates();
+
             }
             else
             {
                 ret[pMasqueradingVector[13]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[14].empty())
         {
             if(getIsDefault())
             {
+
                 ret[pMasqueradingVector[14]]=getValueOfIsDefault();
+
             }
             else
             {
                 ret[pMasqueradingVector[14]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[15].empty())
         {
             if(getTenantId())
             {
+
                 ret[pMasqueradingVector[15]]=getValueOfTenantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[15]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[16].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[16]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[16]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[17].empty())
         {
             if(getUpdatedAt())
             {
+
                 ret[pMasqueradingVector[17]]=getUpdatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[17]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getName())
     {
+
         ret["name"]=getValueOfName();
+
     }
     else
     {
         ret["name"]=Json::Value();
     }
+
     if(getLocation())
     {
+
         ret["location"]=getValueOfLocation();
+
     }
     else
     {
         ret["location"]=Json::Value();
     }
+
     if(getCountryName())
     {
+
         ret["country_name"]=getValueOfCountryName();
+
     }
     else
     {
         ret["country_name"]=Json::Value();
     }
+
     if(getCountryCode())
     {
+
         ret["country_code"]=getValueOfCountryCode();
+
     }
     else
     {
         ret["country_code"]=Json::Value();
     }
+
     if(getRegionOrState())
     {
+
         ret["region_or_state"]=getValueOfRegionOrState();
+
     }
     else
     {
         ret["region_or_state"]=Json::Value();
     }
+
     if(getCity())
     {
+
         ret["city"]=getValueOfCity();
+
     }
     else
     {
         ret["city"]=Json::Value();
     }
+
     if(getAddress())
     {
+
         ret["address"]=getValueOfAddress();
+
     }
     else
     {
         ret["address"]=Json::Value();
     }
+
     if(getPhoneNo())
     {
+
         ret["phone_no"]=getValueOfPhoneNo();
+
     }
     else
     {
         ret["phone_no"]=Json::Value();
     }
+
     if(getBranchManager())
     {
+
         ret["branch_manager"]=getValueOfBranchManager();
+
     }
     else
     {
         ret["branch_manager"]=Json::Value();
     }
+
     if(getRevenueAccountId())
     {
+
         ret["revenue_account_id"]=getValueOfRevenueAccountId();
+
     }
     else
     {
         ret["revenue_account_id"]=Json::Value();
     }
+
     if(getRevenueAccountNo())
     {
+
         ret["revenue_account_no"]=getValueOfRevenueAccountNo();
+
     }
     else
     {
         ret["revenue_account_no"]=Json::Value();
     }
+
     if(getGeoCoordinates())
     {
+
         ret["geo_coordinates"]=getValueOfGeoCoordinates();
+
     }
     else
     {
         ret["geo_coordinates"]=Json::Value();
     }
+
     if(getIsDefault())
     {
+
         ret["is_default"]=getValueOfIsDefault();
+
     }
     else
     {
         ret["is_default"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool PosBranches::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     else
     {
         err="The id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     else
     {
         err="The business_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("name"))
     {
         if(!validJsonOfField(2, "name", pJson["name"], err, true))
             return false;
     }
+
     if(pJson.isMember("location"))
     {
         if(!validJsonOfField(3, "location", pJson["location"], err, true))
             return false;
     }
+
     if(pJson.isMember("country_name"))
     {
         if(!validJsonOfField(4, "country_name", pJson["country_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("country_code"))
     {
         if(!validJsonOfField(5, "country_code", pJson["country_code"], err, true))
             return false;
     }
+
     if(pJson.isMember("region_or_state"))
     {
         if(!validJsonOfField(6, "region_or_state", pJson["region_or_state"], err, true))
             return false;
     }
+
     if(pJson.isMember("city"))
     {
         if(!validJsonOfField(7, "city", pJson["city"], err, true))
             return false;
     }
+
     if(pJson.isMember("address"))
     {
         if(!validJsonOfField(8, "address", pJson["address"], err, true))
             return false;
     }
+
     if(pJson.isMember("phone_no"))
     {
         if(!validJsonOfField(9, "phone_no", pJson["phone_no"], err, true))
             return false;
     }
+
     if(pJson.isMember("branch_manager"))
     {
         if(!validJsonOfField(10, "branch_manager", pJson["branch_manager"], err, true))
             return false;
     }
+
     if(pJson.isMember("revenue_account_id"))
     {
         if(!validJsonOfField(11, "revenue_account_id", pJson["revenue_account_id"], err, true))
             return false;
     }
+
     if(pJson.isMember("revenue_account_no"))
     {
         if(!validJsonOfField(12, "revenue_account_no", pJson["revenue_account_no"], err, true))
             return false;
     }
+
     if(pJson.isMember("geo_coordinates"))
     {
         if(!validJsonOfField(13, "geo_coordinates", pJson["geo_coordinates"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_default"))
     {
         if(!validJsonOfField(14, "is_default", pJson["is_default"], err, true))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(15, "tenant_id", pJson["tenant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The tenant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(16, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(17, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -2651,6 +3116,7 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -2658,12 +3124,15 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[0] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -2671,12 +3140,15 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[1] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -2684,7 +3156,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -2692,7 +3166,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -2700,7 +3176,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -2708,7 +3186,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -2716,7 +3196,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -2724,7 +3206,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -2732,7 +3216,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
@@ -2740,7 +3226,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[10].empty())
       {
           if(pJson.isMember(pMasqueradingVector[10]))
@@ -2748,7 +3236,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[11].empty())
       {
           if(pJson.isMember(pMasqueradingVector[11]))
@@ -2756,7 +3246,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[12].empty())
       {
           if(pJson.isMember(pMasqueradingVector[12]))
@@ -2764,7 +3256,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[13].empty())
       {
           if(pJson.isMember(pMasqueradingVector[13]))
@@ -2772,7 +3266,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[14].empty())
       {
           if(pJson.isMember(pMasqueradingVector[14]))
@@ -2780,7 +3276,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[15].empty())
       {
           if(pJson.isMember(pMasqueradingVector[15]))
@@ -2788,12 +3286,15 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[15] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[16].empty())
       {
           if(pJson.isMember(pMasqueradingVector[16]))
@@ -2801,7 +3302,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[17].empty())
       {
           if(pJson.isMember(pMasqueradingVector[17]))
@@ -2809,7 +3312,9 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(17, pMasqueradingVector[17], pJson[pMasqueradingVector[17]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2820,101 +3325,121 @@ bool PosBranches::validateMasqueradedJsonForCreation(const Json::Value &pJson,
 }
 bool PosBranches::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("name"))
     {
         if(!validJsonOfField(2, "name", pJson["name"], err, false))
             return false;
     }
+
     if(pJson.isMember("location"))
     {
         if(!validJsonOfField(3, "location", pJson["location"], err, false))
             return false;
     }
+
     if(pJson.isMember("country_name"))
     {
         if(!validJsonOfField(4, "country_name", pJson["country_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("country_code"))
     {
         if(!validJsonOfField(5, "country_code", pJson["country_code"], err, false))
             return false;
     }
+
     if(pJson.isMember("region_or_state"))
     {
         if(!validJsonOfField(6, "region_or_state", pJson["region_or_state"], err, false))
             return false;
     }
+
     if(pJson.isMember("city"))
     {
         if(!validJsonOfField(7, "city", pJson["city"], err, false))
             return false;
     }
+
     if(pJson.isMember("address"))
     {
         if(!validJsonOfField(8, "address", pJson["address"], err, false))
             return false;
     }
+
     if(pJson.isMember("phone_no"))
     {
         if(!validJsonOfField(9, "phone_no", pJson["phone_no"], err, false))
             return false;
     }
+
     if(pJson.isMember("branch_manager"))
     {
         if(!validJsonOfField(10, "branch_manager", pJson["branch_manager"], err, false))
             return false;
     }
+
     if(pJson.isMember("revenue_account_id"))
     {
         if(!validJsonOfField(11, "revenue_account_id", pJson["revenue_account_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("revenue_account_no"))
     {
         if(!validJsonOfField(12, "revenue_account_no", pJson["revenue_account_no"], err, false))
             return false;
     }
+
     if(pJson.isMember("geo_coordinates"))
     {
         if(!validJsonOfField(13, "geo_coordinates", pJson["geo_coordinates"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_default"))
     {
         if(!validJsonOfField(14, "is_default", pJson["is_default"], err, false))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(15, "tenant_id", pJson["tenant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(16, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(17, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool PosBranches::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -2927,101 +3452,121 @@ bool PosBranches::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
       {
           if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
       {
           if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
       {
           if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
       {
           if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
       {
           if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
       {
           if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
       {
           if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
       {
           if(!validJsonOfField(17, pMasqueradingVector[17], pJson[pMasqueradingVector[17]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -3038,298 +3583,372 @@ bool PosBranches::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 200)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 200)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 200)";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 200)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 200)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 200)";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 200)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 200)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 200)";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 20)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 20)";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 250)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 250)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 250)";
                 return false;
             }
+
             break;
+
         case 9:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 15)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 15)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 15)";
                 return false;
             }
+
             break;
+
         case 10:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 200)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 200)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 200)";
                 return false;
             }
+
             break;
+
         case 11:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 12:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 13:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 14:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 15:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 16:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 17:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+

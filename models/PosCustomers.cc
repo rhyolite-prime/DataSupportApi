@@ -1,3 +1,4 @@
+
 /**
  *
  *  PosCustomers.cc
@@ -6,36 +7,66 @@
  */
 
 #include "PosCustomers.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string PosCustomers::Cols::_id = "\"id\"";
+
 const std::string PosCustomers::Cols::_business_id = "\"business_id\"";
+
 const std::string PosCustomers::Cols::_username = "\"username\"";
+
 const std::string PosCustomers::Cols::_first_name = "\"first_name\"";
+
 const std::string PosCustomers::Cols::_last_name = "\"last_name\"";
+
 const std::string PosCustomers::Cols::_phone_number = "\"phone_number\"";
+
 const std::string PosCustomers::Cols::_email = "\"email\"";
+
 const std::string PosCustomers::Cols::_rank_id = "\"rank_id\"";
+
 const std::string PosCustomers::Cols::_rank_name = "\"rank_name\"";
+
 const std::string PosCustomers::Cols::_total_amount_spent = "\"total_amount_spent\"";
+
 const std::string PosCustomers::Cols::_number_of_visits = "\"number_of_visits\"";
+
 const std::string PosCustomers::Cols::_loyalty_points = "\"loyalty_points\"";
+
 const std::string PosCustomers::Cols::_default_region = "\"default_region\"";
+
 const std::string PosCustomers::Cols::_credit_limit = "\"credit_limit\"";
+
 const std::string PosCustomers::Cols::_wallet_balance = "\"wallet_balance\"";
+
 const std::string PosCustomers::Cols::_default_credit_term_in_days = "\"default_credit_term_in_days\"";
+
 const std::string PosCustomers::Cols::_is_credit_allowed = "\"is_credit_allowed\"";
+
 const std::string PosCustomers::Cols::_blocked_from_credit = "\"blocked_from_credit\"";
+
 const std::string PosCustomers::Cols::_tenant_id = "\"tenant_id\"";
+
 const std::string PosCustomers::Cols::_created_at = "\"created_at\"";
+
 const std::string PosCustomers::Cols::_updated_at = "\"updated_at\"";
+
+
 const std::string PosCustomers::primaryKeyName = "id";
+
+
 const bool PosCustomers::hasPrimaryKey = true;
+
 const std::string PosCustomers::tableName = "\"pos_customers\"";
 
 const std::vector<typename PosCustomers::MetaData> PosCustomers::metaData_={
@@ -45,7 +76,7 @@ const std::vector<typename PosCustomers::MetaData> PosCustomers::metaData_={
 {"first_name","std::string","character varying",100,0,0,0},
 {"last_name","std::string","character varying",100,0,0,0},
 {"phone_number","std::string","character varying",15,0,0,0},
-{"email","std::string","character varying",50,0,0,0},
+{"email","std::string","character varying",250,0,0,0},
 {"rank_id","std::string","uuid",0,0,0,0},
 {"rank_name","std::string","character varying",100,0,0,0},
 {"total_amount_spent","std::string","numeric",0,0,0,0},
@@ -60,6 +91,7 @@ const std::vector<typename PosCustomers::MetaData> PosCustomers::metaData_={
 {"tenant_id","int32_t","integer",4,0,0,1},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &PosCustomers::getColumnName(size_t index) noexcept(false)
 {
@@ -70,87 +102,146 @@ PosCustomers::PosCustomers(const Row &r, const ssize_t indexOffset) noexcept
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["username"].isNull())
         {
+
             username_=std::make_shared<std::string>(r["username"].as<std::string>());
+
         }
+
         if(!r["first_name"].isNull())
         {
+
             firstName_=std::make_shared<std::string>(r["first_name"].as<std::string>());
+
         }
+
         if(!r["last_name"].isNull())
         {
+
             lastName_=std::make_shared<std::string>(r["last_name"].as<std::string>());
+
         }
+
         if(!r["phone_number"].isNull())
         {
+
             phoneNumber_=std::make_shared<std::string>(r["phone_number"].as<std::string>());
+
         }
+
         if(!r["email"].isNull())
         {
+
             email_=std::make_shared<std::string>(r["email"].as<std::string>());
+
         }
+
         if(!r["rank_id"].isNull())
         {
+
             rankId_=std::make_shared<std::string>(r["rank_id"].as<std::string>());
+
         }
+
         if(!r["rank_name"].isNull())
         {
+
             rankName_=std::make_shared<std::string>(r["rank_name"].as<std::string>());
+
         }
+
         if(!r["total_amount_spent"].isNull())
         {
+
             totalAmountSpent_=std::make_shared<std::string>(r["total_amount_spent"].as<std::string>());
+
         }
+
         if(!r["number_of_visits"].isNull())
         {
+
             numberOfVisits_=std::make_shared<int32_t>(r["number_of_visits"].as<int32_t>());
+
         }
+
         if(!r["loyalty_points"].isNull())
         {
+
             loyaltyPoints_=std::make_shared<int32_t>(r["loyalty_points"].as<int32_t>());
+
         }
+
         if(!r["default_region"].isNull())
         {
+
             defaultRegion_=std::make_shared<std::string>(r["default_region"].as<std::string>());
+
         }
+
         if(!r["credit_limit"].isNull())
         {
+
             creditLimit_=std::make_shared<std::string>(r["credit_limit"].as<std::string>());
+
         }
+
         if(!r["wallet_balance"].isNull())
         {
+
             walletBalance_=std::make_shared<std::string>(r["wallet_balance"].as<std::string>());
+
         }
+
         if(!r["default_credit_term_in_days"].isNull())
         {
+
             defaultCreditTermInDays_=std::make_shared<int32_t>(r["default_credit_term_in_days"].as<int32_t>());
+
         }
+
         if(!r["is_credit_allowed"].isNull())
         {
+
             isCreditAllowed_=std::make_shared<bool>(r["is_credit_allowed"].as<bool>());
+
         }
+
         if(!r["blocked_from_credit"].isNull())
         {
+
             blockedFromCredit_=std::make_shared<bool>(r["blocked_from_credit"].as<bool>());
+
         }
+
         if(!r["tenant_id"].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r["tenant_id"].as<int32_t>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -168,11 +259,13 @@ PosCustomers::PosCustomers(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["updated_at"].isNull())
         {
             auto timeStr = r["updated_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -190,6 +283,7 @@ PosCustomers::PosCustomers(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -200,107 +294,166 @@ PosCustomers::PosCustomers(const Row &r, const ssize_t indexOffset) noexcept
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             username_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             firstName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             lastName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             phoneNumber_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
+
             email_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             rankId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
+
             rankName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 9;
         if(!r[index].isNull())
         {
+
             totalAmountSpent_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 10;
         if(!r[index].isNull())
         {
+
             numberOfVisits_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 11;
         if(!r[index].isNull())
         {
+
             loyaltyPoints_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 12;
         if(!r[index].isNull())
         {
+
             defaultRegion_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 13;
         if(!r[index].isNull())
         {
+
             creditLimit_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 14;
         if(!r[index].isNull())
         {
+
             walletBalance_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 15;
         if(!r[index].isNull())
         {
+
             defaultCreditTermInDays_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 16;
         if(!r[index].isNull())
         {
+
             isCreditAllowed_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 17;
         if(!r[index].isNull())
         {
+
             blockedFromCredit_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 18;
         if(!r[index].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 19;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -318,12 +471,14 @@ PosCustomers::PosCustomers(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 20;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -341,6 +496,7 @@ PosCustomers::PosCustomers(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -352,6 +508,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -360,6 +517,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -368,6 +526,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -376,6 +535,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             username_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -384,6 +544,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             firstName_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -392,6 +553,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             lastName_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -400,6 +562,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             phoneNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -408,6 +571,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             email_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -416,6 +580,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             rankId_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -424,6 +589,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             rankName_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -432,6 +598,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             totalAmountSpent_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -440,6 +607,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             numberOfVisits_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[10]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -448,6 +616,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             loyaltyPoints_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[11]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -456,6 +625,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             defaultRegion_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -464,6 +634,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             creditLimit_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -472,6 +643,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             walletBalance_=std::make_shared<std::string>(pJson[pMasqueradingVector[14]].asString());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -480,6 +652,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             defaultCreditTermInDays_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[15]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -488,6 +661,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             isCreditAllowed_=std::make_shared<bool>(pJson[pMasqueradingVector[16]].asBool());
         }
     }
+
     if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
     {
         dirtyFlag_[17] = true;
@@ -496,6 +670,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             blockedFromCredit_=std::make_shared<bool>(pJson[pMasqueradingVector[17]].asBool());
         }
     }
+
     if(!pMasqueradingVector[18].empty() && pJson.isMember(pMasqueradingVector[18]))
     {
         dirtyFlag_[18] = true;
@@ -504,6 +679,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[18]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[19].empty() && pJson.isMember(pMasqueradingVector[19]))
     {
         dirtyFlag_[19] = true;
@@ -512,6 +688,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             auto timeStr = pJson[pMasqueradingVector[19]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -530,6 +707,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             }
         }
     }
+
     if(!pMasqueradingVector[20].empty() && pJson.isMember(pMasqueradingVector[20]))
     {
         dirtyFlag_[20] = true;
@@ -538,6 +716,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             auto timeStr = pJson[pMasqueradingVector[20]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -556,10 +735,12 @@ PosCustomers::PosCustomers(const Json::Value &pJson, const std::vector<std::stri
             }
         }
     }
+
 }
 
 PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -568,6 +749,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
@@ -576,6 +758,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("username"))
     {
         dirtyFlag_[2]=true;
@@ -584,6 +767,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             username_=std::make_shared<std::string>(pJson["username"].asString());
         }
     }
+
     if(pJson.isMember("first_name"))
     {
         dirtyFlag_[3]=true;
@@ -592,6 +776,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             firstName_=std::make_shared<std::string>(pJson["first_name"].asString());
         }
     }
+
     if(pJson.isMember("last_name"))
     {
         dirtyFlag_[4]=true;
@@ -600,6 +785,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             lastName_=std::make_shared<std::string>(pJson["last_name"].asString());
         }
     }
+
     if(pJson.isMember("phone_number"))
     {
         dirtyFlag_[5]=true;
@@ -608,6 +794,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             phoneNumber_=std::make_shared<std::string>(pJson["phone_number"].asString());
         }
     }
+
     if(pJson.isMember("email"))
     {
         dirtyFlag_[6]=true;
@@ -616,6 +803,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             email_=std::make_shared<std::string>(pJson["email"].asString());
         }
     }
+
     if(pJson.isMember("rank_id"))
     {
         dirtyFlag_[7]=true;
@@ -624,6 +812,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             rankId_=std::make_shared<std::string>(pJson["rank_id"].asString());
         }
     }
+
     if(pJson.isMember("rank_name"))
     {
         dirtyFlag_[8]=true;
@@ -632,6 +821,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             rankName_=std::make_shared<std::string>(pJson["rank_name"].asString());
         }
     }
+
     if(pJson.isMember("total_amount_spent"))
     {
         dirtyFlag_[9]=true;
@@ -640,6 +830,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             totalAmountSpent_=std::make_shared<std::string>(pJson["total_amount_spent"].asString());
         }
     }
+
     if(pJson.isMember("number_of_visits"))
     {
         dirtyFlag_[10]=true;
@@ -648,6 +839,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             numberOfVisits_=std::make_shared<int32_t>((int32_t)pJson["number_of_visits"].asInt64());
         }
     }
+
     if(pJson.isMember("loyalty_points"))
     {
         dirtyFlag_[11]=true;
@@ -656,6 +848,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             loyaltyPoints_=std::make_shared<int32_t>((int32_t)pJson["loyalty_points"].asInt64());
         }
     }
+
     if(pJson.isMember("default_region"))
     {
         dirtyFlag_[12]=true;
@@ -664,6 +857,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             defaultRegion_=std::make_shared<std::string>(pJson["default_region"].asString());
         }
     }
+
     if(pJson.isMember("credit_limit"))
     {
         dirtyFlag_[13]=true;
@@ -672,6 +866,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             creditLimit_=std::make_shared<std::string>(pJson["credit_limit"].asString());
         }
     }
+
     if(pJson.isMember("wallet_balance"))
     {
         dirtyFlag_[14]=true;
@@ -680,6 +875,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             walletBalance_=std::make_shared<std::string>(pJson["wallet_balance"].asString());
         }
     }
+
     if(pJson.isMember("default_credit_term_in_days"))
     {
         dirtyFlag_[15]=true;
@@ -688,6 +884,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             defaultCreditTermInDays_=std::make_shared<int32_t>((int32_t)pJson["default_credit_term_in_days"].asInt64());
         }
     }
+
     if(pJson.isMember("is_credit_allowed"))
     {
         dirtyFlag_[16]=true;
@@ -696,6 +893,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             isCreditAllowed_=std::make_shared<bool>(pJson["is_credit_allowed"].asBool());
         }
     }
+
     if(pJson.isMember("blocked_from_credit"))
     {
         dirtyFlag_[17]=true;
@@ -704,6 +902,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             blockedFromCredit_=std::make_shared<bool>(pJson["blocked_from_credit"].asBool());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[18]=true;
@@ -712,6 +911,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[19]=true;
@@ -720,6 +920,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -738,6 +939,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[20]=true;
@@ -746,6 +948,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -764,6 +967,7 @@ PosCustomers::PosCustomers(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
@@ -774,6 +978,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         if(!pJson[pMasqueradingVector[0]].isNull())
@@ -781,6 +986,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -789,6 +995,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -797,6 +1004,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             username_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -805,6 +1013,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             firstName_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -813,6 +1022,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             lastName_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -821,6 +1031,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             phoneNumber_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -829,6 +1040,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             email_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -837,6 +1049,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             rankId_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -845,6 +1058,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             rankName_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -853,6 +1067,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             totalAmountSpent_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -861,6 +1076,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             numberOfVisits_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[10]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -869,6 +1085,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             loyaltyPoints_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[11]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -877,6 +1094,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             defaultRegion_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -885,6 +1103,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             creditLimit_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -893,6 +1112,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             walletBalance_=std::make_shared<std::string>(pJson[pMasqueradingVector[14]].asString());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -901,6 +1121,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             defaultCreditTermInDays_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[15]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -909,6 +1130,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             isCreditAllowed_=std::make_shared<bool>(pJson[pMasqueradingVector[16]].asBool());
         }
     }
+
     if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
     {
         dirtyFlag_[17] = true;
@@ -917,6 +1139,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             blockedFromCredit_=std::make_shared<bool>(pJson[pMasqueradingVector[17]].asBool());
         }
     }
+
     if(!pMasqueradingVector[18].empty() && pJson.isMember(pMasqueradingVector[18]))
     {
         dirtyFlag_[18] = true;
@@ -925,6 +1148,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[18]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[19].empty() && pJson.isMember(pMasqueradingVector[19]))
     {
         dirtyFlag_[19] = true;
@@ -933,6 +1157,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[19]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -951,6 +1176,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[20].empty() && pJson.isMember(pMasqueradingVector[20]))
     {
         dirtyFlag_[20] = true;
@@ -959,6 +1185,7 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[20]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -977,10 +1204,12 @@ void PosCustomers::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
 }
 
 void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         if(!pJson["id"].isNull())
@@ -988,6 +1217,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
@@ -996,6 +1226,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("username"))
     {
         dirtyFlag_[2] = true;
@@ -1004,6 +1235,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             username_=std::make_shared<std::string>(pJson["username"].asString());
         }
     }
+
     if(pJson.isMember("first_name"))
     {
         dirtyFlag_[3] = true;
@@ -1012,6 +1244,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             firstName_=std::make_shared<std::string>(pJson["first_name"].asString());
         }
     }
+
     if(pJson.isMember("last_name"))
     {
         dirtyFlag_[4] = true;
@@ -1020,6 +1253,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             lastName_=std::make_shared<std::string>(pJson["last_name"].asString());
         }
     }
+
     if(pJson.isMember("phone_number"))
     {
         dirtyFlag_[5] = true;
@@ -1028,6 +1262,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             phoneNumber_=std::make_shared<std::string>(pJson["phone_number"].asString());
         }
     }
+
     if(pJson.isMember("email"))
     {
         dirtyFlag_[6] = true;
@@ -1036,6 +1271,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             email_=std::make_shared<std::string>(pJson["email"].asString());
         }
     }
+
     if(pJson.isMember("rank_id"))
     {
         dirtyFlag_[7] = true;
@@ -1044,6 +1280,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             rankId_=std::make_shared<std::string>(pJson["rank_id"].asString());
         }
     }
+
     if(pJson.isMember("rank_name"))
     {
         dirtyFlag_[8] = true;
@@ -1052,6 +1289,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             rankName_=std::make_shared<std::string>(pJson["rank_name"].asString());
         }
     }
+
     if(pJson.isMember("total_amount_spent"))
     {
         dirtyFlag_[9] = true;
@@ -1060,6 +1298,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             totalAmountSpent_=std::make_shared<std::string>(pJson["total_amount_spent"].asString());
         }
     }
+
     if(pJson.isMember("number_of_visits"))
     {
         dirtyFlag_[10] = true;
@@ -1068,6 +1307,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             numberOfVisits_=std::make_shared<int32_t>((int32_t)pJson["number_of_visits"].asInt64());
         }
     }
+
     if(pJson.isMember("loyalty_points"))
     {
         dirtyFlag_[11] = true;
@@ -1076,6 +1316,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             loyaltyPoints_=std::make_shared<int32_t>((int32_t)pJson["loyalty_points"].asInt64());
         }
     }
+
     if(pJson.isMember("default_region"))
     {
         dirtyFlag_[12] = true;
@@ -1084,6 +1325,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             defaultRegion_=std::make_shared<std::string>(pJson["default_region"].asString());
         }
     }
+
     if(pJson.isMember("credit_limit"))
     {
         dirtyFlag_[13] = true;
@@ -1092,6 +1334,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             creditLimit_=std::make_shared<std::string>(pJson["credit_limit"].asString());
         }
     }
+
     if(pJson.isMember("wallet_balance"))
     {
         dirtyFlag_[14] = true;
@@ -1100,6 +1343,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             walletBalance_=std::make_shared<std::string>(pJson["wallet_balance"].asString());
         }
     }
+
     if(pJson.isMember("default_credit_term_in_days"))
     {
         dirtyFlag_[15] = true;
@@ -1108,6 +1352,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             defaultCreditTermInDays_=std::make_shared<int32_t>((int32_t)pJson["default_credit_term_in_days"].asInt64());
         }
     }
+
     if(pJson.isMember("is_credit_allowed"))
     {
         dirtyFlag_[16] = true;
@@ -1116,6 +1361,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             isCreditAllowed_=std::make_shared<bool>(pJson["is_credit_allowed"].asBool());
         }
     }
+
     if(pJson.isMember("blocked_from_credit"))
     {
         dirtyFlag_[17] = true;
@@ -1124,6 +1370,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             blockedFromCredit_=std::make_shared<bool>(pJson["blocked_from_credit"].asBool());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[18] = true;
@@ -1132,6 +1379,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[19] = true;
@@ -1140,6 +1388,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1158,6 +1407,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[20] = true;
@@ -1166,6 +1416,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1184,6 +1435,7 @@ void PosCustomers::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 const std::string &PosCustomers::getValueOfId() const noexcept
@@ -1707,6 +1959,7 @@ void PosCustomers::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &PosCustomers::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -1731,12 +1984,14 @@ const std::vector<std::string> &PosCustomers::insertColumns() noexcept
         "tenant_id",
         "created_at",
         "updated_at"
+
     };
     return inCols;
 }
 
 void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1748,6 +2003,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1759,6 +2015,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getUsername())
@@ -1770,6 +2027,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getFirstName())
@@ -1781,6 +2039,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getLastName())
@@ -1792,6 +2051,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getPhoneNumber())
@@ -1803,6 +2063,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getEmail())
@@ -1814,6 +2075,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getRankId())
@@ -1825,6 +2087,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getRankName())
@@ -1836,6 +2099,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getTotalAmountSpent())
@@ -1847,6 +2111,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getNumberOfVisits())
@@ -1858,6 +2123,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getLoyaltyPoints())
@@ -1869,6 +2135,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getDefaultRegion())
@@ -1880,6 +2147,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getCreditLimit())
@@ -1891,6 +2159,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getWalletBalance())
@@ -1902,6 +2171,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getDefaultCreditTermInDays())
@@ -1913,6 +2183,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getIsCreditAllowed())
@@ -1924,6 +2195,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[17])
     {
         if(getBlockedFromCredit())
@@ -1935,6 +2207,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[18])
     {
         if(getTenantId())
@@ -1946,6 +2219,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[19])
     {
         if(getCreatedAt())
@@ -1957,6 +2231,7 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[20])
     {
         if(getUpdatedAt())
@@ -1968,100 +2243,124 @@ void PosCustomers::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> PosCustomers::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     if(dirtyFlag_[9])
     {
         ret.push_back(getColumnName(9));
     }
+
     if(dirtyFlag_[10])
     {
         ret.push_back(getColumnName(10));
     }
+
     if(dirtyFlag_[11])
     {
         ret.push_back(getColumnName(11));
     }
+
     if(dirtyFlag_[12])
     {
         ret.push_back(getColumnName(12));
     }
+
     if(dirtyFlag_[13])
     {
         ret.push_back(getColumnName(13));
     }
+
     if(dirtyFlag_[14])
     {
         ret.push_back(getColumnName(14));
     }
+
     if(dirtyFlag_[15])
     {
         ret.push_back(getColumnName(15));
     }
+
     if(dirtyFlag_[16])
     {
         ret.push_back(getColumnName(16));
     }
+
     if(dirtyFlag_[17])
     {
         ret.push_back(getColumnName(17));
     }
+
     if(dirtyFlag_[18])
     {
         ret.push_back(getColumnName(18));
     }
+
     if(dirtyFlag_[19])
     {
         ret.push_back(getColumnName(19));
     }
+
     if(dirtyFlag_[20])
     {
         ret.push_back(getColumnName(20));
     }
+
     return ret;
 }
 
 void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -2073,6 +2372,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -2084,6 +2384,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getUsername())
@@ -2095,6 +2396,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getFirstName())
@@ -2106,6 +2408,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getLastName())
@@ -2117,6 +2420,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getPhoneNumber())
@@ -2128,6 +2432,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getEmail())
@@ -2139,6 +2444,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getRankId())
@@ -2150,6 +2456,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getRankName())
@@ -2161,6 +2468,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getTotalAmountSpent())
@@ -2172,6 +2480,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getNumberOfVisits())
@@ -2183,6 +2492,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getLoyaltyPoints())
@@ -2194,6 +2504,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getDefaultRegion())
@@ -2205,6 +2516,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getCreditLimit())
@@ -2216,6 +2528,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getWalletBalance())
@@ -2227,6 +2540,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getDefaultCreditTermInDays())
@@ -2238,6 +2552,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getIsCreditAllowed())
@@ -2249,6 +2564,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[17])
     {
         if(getBlockedFromCredit())
@@ -2260,6 +2576,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[18])
     {
         if(getTenantId())
@@ -2271,6 +2588,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[19])
     {
         if(getCreatedAt())
@@ -2282,6 +2600,7 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[20])
     {
         if(getUpdatedAt())
@@ -2293,178 +2612,243 @@ void PosCustomers::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 Json::Value PosCustomers::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getUsername())
     {
+
         ret["username"]=getValueOfUsername();
+
     }
     else
     {
         ret["username"]=Json::Value();
     }
+
     if(getFirstName())
     {
+
         ret["first_name"]=getValueOfFirstName();
+
     }
     else
     {
         ret["first_name"]=Json::Value();
     }
+
     if(getLastName())
     {
+
         ret["last_name"]=getValueOfLastName();
+
     }
     else
     {
         ret["last_name"]=Json::Value();
     }
+
     if(getPhoneNumber())
     {
+
         ret["phone_number"]=getValueOfPhoneNumber();
+
     }
     else
     {
         ret["phone_number"]=Json::Value();
     }
+
     if(getEmail())
     {
+
         ret["email"]=getValueOfEmail();
+
     }
     else
     {
         ret["email"]=Json::Value();
     }
+
     if(getRankId())
     {
+
         ret["rank_id"]=getValueOfRankId();
+
     }
     else
     {
         ret["rank_id"]=Json::Value();
     }
+
     if(getRankName())
     {
+
         ret["rank_name"]=getValueOfRankName();
+
     }
     else
     {
         ret["rank_name"]=Json::Value();
     }
+
     if(getTotalAmountSpent())
     {
+
         ret["total_amount_spent"]=getValueOfTotalAmountSpent();
+
     }
     else
     {
         ret["total_amount_spent"]=Json::Value();
     }
+
     if(getNumberOfVisits())
     {
+
         ret["number_of_visits"]=getValueOfNumberOfVisits();
+
     }
     else
     {
         ret["number_of_visits"]=Json::Value();
     }
+
     if(getLoyaltyPoints())
     {
+
         ret["loyalty_points"]=getValueOfLoyaltyPoints();
+
     }
     else
     {
         ret["loyalty_points"]=Json::Value();
     }
+
     if(getDefaultRegion())
     {
+
         ret["default_region"]=getValueOfDefaultRegion();
+
     }
     else
     {
         ret["default_region"]=Json::Value();
     }
+
     if(getCreditLimit())
     {
+
         ret["credit_limit"]=getValueOfCreditLimit();
+
     }
     else
     {
         ret["credit_limit"]=Json::Value();
     }
+
     if(getWalletBalance())
     {
+
         ret["wallet_balance"]=getValueOfWalletBalance();
+
     }
     else
     {
         ret["wallet_balance"]=Json::Value();
     }
+
     if(getDefaultCreditTermInDays())
     {
+
         ret["default_credit_term_in_days"]=getValueOfDefaultCreditTermInDays();
+
     }
     else
     {
         ret["default_credit_term_in_days"]=Json::Value();
     }
+
     if(getIsCreditAllowed())
     {
+
         ret["is_credit_allowed"]=getValueOfIsCreditAllowed();
+
     }
     else
     {
         ret["is_credit_allowed"]=Json::Value();
     }
+
     if(getBlockedFromCredit())
     {
+
         ret["blocked_from_credit"]=getValueOfBlockedFromCredit();
+
     }
     else
     {
         ret["blocked_from_credit"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -2479,533 +2863,686 @@ Json::Value PosCustomers::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 21)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getUsername())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfUsername();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getFirstName())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfFirstName();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getLastName())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfLastName();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getPhoneNumber())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfPhoneNumber();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getEmail())
             {
+
                 ret[pMasqueradingVector[6]]=getValueOfEmail();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getRankId())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfRankId();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getRankName())
             {
+
                 ret[pMasqueradingVector[8]]=getValueOfRankName();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[9].empty())
         {
             if(getTotalAmountSpent())
             {
+
                 ret[pMasqueradingVector[9]]=getValueOfTotalAmountSpent();
+
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[10].empty())
         {
             if(getNumberOfVisits())
             {
+
                 ret[pMasqueradingVector[10]]=getValueOfNumberOfVisits();
+
             }
             else
             {
                 ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[11].empty())
         {
             if(getLoyaltyPoints())
             {
+
                 ret[pMasqueradingVector[11]]=getValueOfLoyaltyPoints();
+
             }
             else
             {
                 ret[pMasqueradingVector[11]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[12].empty())
         {
             if(getDefaultRegion())
             {
+
                 ret[pMasqueradingVector[12]]=getValueOfDefaultRegion();
+
             }
             else
             {
                 ret[pMasqueradingVector[12]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[13].empty())
         {
             if(getCreditLimit())
             {
+
                 ret[pMasqueradingVector[13]]=getValueOfCreditLimit();
+
             }
             else
             {
                 ret[pMasqueradingVector[13]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[14].empty())
         {
             if(getWalletBalance())
             {
+
                 ret[pMasqueradingVector[14]]=getValueOfWalletBalance();
+
             }
             else
             {
                 ret[pMasqueradingVector[14]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[15].empty())
         {
             if(getDefaultCreditTermInDays())
             {
+
                 ret[pMasqueradingVector[15]]=getValueOfDefaultCreditTermInDays();
+
             }
             else
             {
                 ret[pMasqueradingVector[15]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[16].empty())
         {
             if(getIsCreditAllowed())
             {
+
                 ret[pMasqueradingVector[16]]=getValueOfIsCreditAllowed();
+
             }
             else
             {
                 ret[pMasqueradingVector[16]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[17].empty())
         {
             if(getBlockedFromCredit())
             {
+
                 ret[pMasqueradingVector[17]]=getValueOfBlockedFromCredit();
+
             }
             else
             {
                 ret[pMasqueradingVector[17]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[18].empty())
         {
             if(getTenantId())
             {
+
                 ret[pMasqueradingVector[18]]=getValueOfTenantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[18]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[19].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[19]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[19]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[20].empty())
         {
             if(getUpdatedAt())
             {
+
                 ret[pMasqueradingVector[20]]=getUpdatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[20]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getUsername())
     {
+
         ret["username"]=getValueOfUsername();
+
     }
     else
     {
         ret["username"]=Json::Value();
     }
+
     if(getFirstName())
     {
+
         ret["first_name"]=getValueOfFirstName();
+
     }
     else
     {
         ret["first_name"]=Json::Value();
     }
+
     if(getLastName())
     {
+
         ret["last_name"]=getValueOfLastName();
+
     }
     else
     {
         ret["last_name"]=Json::Value();
     }
+
     if(getPhoneNumber())
     {
+
         ret["phone_number"]=getValueOfPhoneNumber();
+
     }
     else
     {
         ret["phone_number"]=Json::Value();
     }
+
     if(getEmail())
     {
+
         ret["email"]=getValueOfEmail();
+
     }
     else
     {
         ret["email"]=Json::Value();
     }
+
     if(getRankId())
     {
+
         ret["rank_id"]=getValueOfRankId();
+
     }
     else
     {
         ret["rank_id"]=Json::Value();
     }
+
     if(getRankName())
     {
+
         ret["rank_name"]=getValueOfRankName();
+
     }
     else
     {
         ret["rank_name"]=Json::Value();
     }
+
     if(getTotalAmountSpent())
     {
+
         ret["total_amount_spent"]=getValueOfTotalAmountSpent();
+
     }
     else
     {
         ret["total_amount_spent"]=Json::Value();
     }
+
     if(getNumberOfVisits())
     {
+
         ret["number_of_visits"]=getValueOfNumberOfVisits();
+
     }
     else
     {
         ret["number_of_visits"]=Json::Value();
     }
+
     if(getLoyaltyPoints())
     {
+
         ret["loyalty_points"]=getValueOfLoyaltyPoints();
+
     }
     else
     {
         ret["loyalty_points"]=Json::Value();
     }
+
     if(getDefaultRegion())
     {
+
         ret["default_region"]=getValueOfDefaultRegion();
+
     }
     else
     {
         ret["default_region"]=Json::Value();
     }
+
     if(getCreditLimit())
     {
+
         ret["credit_limit"]=getValueOfCreditLimit();
+
     }
     else
     {
         ret["credit_limit"]=Json::Value();
     }
+
     if(getWalletBalance())
     {
+
         ret["wallet_balance"]=getValueOfWalletBalance();
+
     }
     else
     {
         ret["wallet_balance"]=Json::Value();
     }
+
     if(getDefaultCreditTermInDays())
     {
+
         ret["default_credit_term_in_days"]=getValueOfDefaultCreditTermInDays();
+
     }
     else
     {
         ret["default_credit_term_in_days"]=Json::Value();
     }
+
     if(getIsCreditAllowed())
     {
+
         ret["is_credit_allowed"]=getValueOfIsCreditAllowed();
+
     }
     else
     {
         ret["is_credit_allowed"]=Json::Value();
     }
+
     if(getBlockedFromCredit())
     {
+
         ret["blocked_from_credit"]=getValueOfBlockedFromCredit();
+
     }
     else
     {
         ret["blocked_from_credit"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool PosCustomers::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     else
     {
         err="The id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     else
     {
         err="The business_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("username"))
     {
         if(!validJsonOfField(2, "username", pJson["username"], err, true))
             return false;
     }
+
     if(pJson.isMember("first_name"))
     {
         if(!validJsonOfField(3, "first_name", pJson["first_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("last_name"))
     {
         if(!validJsonOfField(4, "last_name", pJson["last_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("phone_number"))
     {
         if(!validJsonOfField(5, "phone_number", pJson["phone_number"], err, true))
             return false;
     }
+
     if(pJson.isMember("email"))
     {
         if(!validJsonOfField(6, "email", pJson["email"], err, true))
             return false;
     }
+
     if(pJson.isMember("rank_id"))
     {
         if(!validJsonOfField(7, "rank_id", pJson["rank_id"], err, true))
             return false;
     }
+
     if(pJson.isMember("rank_name"))
     {
         if(!validJsonOfField(8, "rank_name", pJson["rank_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("total_amount_spent"))
     {
         if(!validJsonOfField(9, "total_amount_spent", pJson["total_amount_spent"], err, true))
             return false;
     }
+
     if(pJson.isMember("number_of_visits"))
     {
         if(!validJsonOfField(10, "number_of_visits", pJson["number_of_visits"], err, true))
             return false;
     }
+
     if(pJson.isMember("loyalty_points"))
     {
         if(!validJsonOfField(11, "loyalty_points", pJson["loyalty_points"], err, true))
             return false;
     }
+
     if(pJson.isMember("default_region"))
     {
         if(!validJsonOfField(12, "default_region", pJson["default_region"], err, true))
             return false;
     }
+
     if(pJson.isMember("credit_limit"))
     {
         if(!validJsonOfField(13, "credit_limit", pJson["credit_limit"], err, true))
             return false;
     }
+
     if(pJson.isMember("wallet_balance"))
     {
         if(!validJsonOfField(14, "wallet_balance", pJson["wallet_balance"], err, true))
             return false;
     }
+
     if(pJson.isMember("default_credit_term_in_days"))
     {
         if(!validJsonOfField(15, "default_credit_term_in_days", pJson["default_credit_term_in_days"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_credit_allowed"))
     {
         if(!validJsonOfField(16, "is_credit_allowed", pJson["is_credit_allowed"], err, true))
             return false;
     }
+
     if(pJson.isMember("blocked_from_credit"))
     {
         if(!validJsonOfField(17, "blocked_from_credit", pJson["blocked_from_credit"], err, true))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(18, "tenant_id", pJson["tenant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The tenant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(19, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(20, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -3018,6 +3555,7 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -3025,12 +3563,15 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[0] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -3038,12 +3579,15 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[1] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -3051,7 +3595,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -3059,7 +3605,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -3067,7 +3615,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -3075,7 +3625,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -3083,7 +3635,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -3091,7 +3645,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -3099,7 +3655,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
@@ -3107,7 +3665,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[10].empty())
       {
           if(pJson.isMember(pMasqueradingVector[10]))
@@ -3115,7 +3675,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[11].empty())
       {
           if(pJson.isMember(pMasqueradingVector[11]))
@@ -3123,7 +3685,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[12].empty())
       {
           if(pJson.isMember(pMasqueradingVector[12]))
@@ -3131,7 +3695,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[13].empty())
       {
           if(pJson.isMember(pMasqueradingVector[13]))
@@ -3139,7 +3705,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[14].empty())
       {
           if(pJson.isMember(pMasqueradingVector[14]))
@@ -3147,7 +3715,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[15].empty())
       {
           if(pJson.isMember(pMasqueradingVector[15]))
@@ -3155,7 +3725,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[16].empty())
       {
           if(pJson.isMember(pMasqueradingVector[16]))
@@ -3163,7 +3735,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[17].empty())
       {
           if(pJson.isMember(pMasqueradingVector[17]))
@@ -3171,7 +3745,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(17, pMasqueradingVector[17], pJson[pMasqueradingVector[17]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[18].empty())
       {
           if(pJson.isMember(pMasqueradingVector[18]))
@@ -3179,12 +3755,15 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(18, pMasqueradingVector[18], pJson[pMasqueradingVector[18]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[18] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[19].empty())
       {
           if(pJson.isMember(pMasqueradingVector[19]))
@@ -3192,7 +3771,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(19, pMasqueradingVector[19], pJson[pMasqueradingVector[19]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[20].empty())
       {
           if(pJson.isMember(pMasqueradingVector[20]))
@@ -3200,7 +3781,9 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(20, pMasqueradingVector[20], pJson[pMasqueradingVector[20]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -3211,116 +3794,139 @@ bool PosCustomers::validateMasqueradedJsonForCreation(const Json::Value &pJson,
 }
 bool PosCustomers::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("username"))
     {
         if(!validJsonOfField(2, "username", pJson["username"], err, false))
             return false;
     }
+
     if(pJson.isMember("first_name"))
     {
         if(!validJsonOfField(3, "first_name", pJson["first_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("last_name"))
     {
         if(!validJsonOfField(4, "last_name", pJson["last_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("phone_number"))
     {
         if(!validJsonOfField(5, "phone_number", pJson["phone_number"], err, false))
             return false;
     }
+
     if(pJson.isMember("email"))
     {
         if(!validJsonOfField(6, "email", pJson["email"], err, false))
             return false;
     }
+
     if(pJson.isMember("rank_id"))
     {
         if(!validJsonOfField(7, "rank_id", pJson["rank_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("rank_name"))
     {
         if(!validJsonOfField(8, "rank_name", pJson["rank_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("total_amount_spent"))
     {
         if(!validJsonOfField(9, "total_amount_spent", pJson["total_amount_spent"], err, false))
             return false;
     }
+
     if(pJson.isMember("number_of_visits"))
     {
         if(!validJsonOfField(10, "number_of_visits", pJson["number_of_visits"], err, false))
             return false;
     }
+
     if(pJson.isMember("loyalty_points"))
     {
         if(!validJsonOfField(11, "loyalty_points", pJson["loyalty_points"], err, false))
             return false;
     }
+
     if(pJson.isMember("default_region"))
     {
         if(!validJsonOfField(12, "default_region", pJson["default_region"], err, false))
             return false;
     }
+
     if(pJson.isMember("credit_limit"))
     {
         if(!validJsonOfField(13, "credit_limit", pJson["credit_limit"], err, false))
             return false;
     }
+
     if(pJson.isMember("wallet_balance"))
     {
         if(!validJsonOfField(14, "wallet_balance", pJson["wallet_balance"], err, false))
             return false;
     }
+
     if(pJson.isMember("default_credit_term_in_days"))
     {
         if(!validJsonOfField(15, "default_credit_term_in_days", pJson["default_credit_term_in_days"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_credit_allowed"))
     {
         if(!validJsonOfField(16, "is_credit_allowed", pJson["is_credit_allowed"], err, false))
             return false;
     }
+
     if(pJson.isMember("blocked_from_credit"))
     {
         if(!validJsonOfField(17, "blocked_from_credit", pJson["blocked_from_credit"], err, false))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(18, "tenant_id", pJson["tenant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(19, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(20, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool PosCustomers::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -3333,116 +3939,139 @@ bool PosCustomers::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
       {
           if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
       {
           if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
       {
           if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
       {
           if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
       {
           if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
       {
           if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
       {
           if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
       {
           if(!validJsonOfField(17, pMasqueradingVector[17], pJson[pMasqueradingVector[17]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[18].empty() && pJson.isMember(pMasqueradingVector[18]))
       {
           if(!validJsonOfField(18, pMasqueradingVector[18], pJson[pMasqueradingVector[18]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[19].empty() && pJson.isMember(pMasqueradingVector[19]))
       {
           if(!validJsonOfField(19, pMasqueradingVector[19], pJson[pMasqueradingVector[19]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[20].empty() && pJson.isMember(pMasqueradingVector[20]))
       {
           if(!validJsonOfField(20, pMasqueradingVector[20], pJson[pMasqueradingVector[20]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -3459,299 +4088,385 @@ bool PosCustomers::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 15)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 15)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 15)";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 250)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
-                    " field (the maximum value is 50)";
+                    " field (the maximum value is 250)";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 9:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 10:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 11:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 12:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 60)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 60)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 60)";
                 return false;
             }
+
             break;
+
         case 13:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 14:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 15:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 16:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 17:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 18:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 19:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 20:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+

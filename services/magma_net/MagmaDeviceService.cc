@@ -359,6 +359,8 @@ namespace data_support::services {
                 auto client = clientForRow(row);
                 const std::string deviceId = row["id"].as<std::string>();
                 const std::string previous = row["status"].as<std::string>();
+                const std::string zoneId = row["zone_id"].isNull() ? "" : row["zone_id"].as<std::string>();
+                const std::string devName = row["name"].as<std::string>();
 
                 if (!client) {
                     continue;
@@ -383,13 +385,11 @@ namespace data_support::services {
                     (void)uptime;
                     ++online;
                     if (previous != "ONLINE") {
+                        const std::string alertMsg = "Device " + devName + " is back online";
                         co_await db->execSqlCoro(
                             "INSERT INTO magma_alerts (business_id, zone_id, device_id, alert_type, "
                             "severity, message) VALUES ($1,NULLIF($2,'')::uuid,$3,'DEVICE_ONLINE','INFO',$4)",
-                            businessId,
-                            row["zone_id"].isNull() ? std::string("") : row["zone_id"].as<std::string>(),
-                            deviceId,
-                            "Device " + row["name"].as<std::string>() + " is back online");
+                            businessId, zoneId, deviceId, alertMsg);
                     }
                 } else {
                     co_await db->execSqlCoro(
@@ -397,14 +397,12 @@ namespace data_support::services {
                         deviceId);
                     ++offline;
                     if (previous == "ONLINE" || previous == "UNKNOWN") {
+                        const std::string alertMsg = "Device " + devName + " is unreachable: " + resource.error;
+                        const std::string payload = toJsonString(Json::Value(resource.error));
                         co_await db->execSqlCoro(
                             "INSERT INTO magma_alerts (business_id, zone_id, device_id, alert_type, "
                             "severity, message, payload) VALUES ($1,NULLIF($2,'')::uuid,$3,'DEVICE_OFFLINE','CRITICAL',$4,$5::jsonb)",
-                            businessId,
-                            row["zone_id"].isNull() ? std::string("") : row["zone_id"].as<std::string>(),
-                            deviceId,
-                            "Device " + row["name"].as<std::string>() + " is unreachable: " + resource.error,
-                            toJsonString(Json::Value(resource.error)));
+                            businessId, zoneId, deviceId, alertMsg, payload);
                     }
                 }
             }
@@ -444,10 +442,10 @@ namespace data_support::services {
                 "WHERE id=$1",
                 rows[0]["id"].as<std::string>(), jsonString(body, "routerosVersion"));
 
-            Json::Value config = co_await desiredConfig(rows[0]["id"].as<std::string>());
+            auto config = co_await desiredConfig(rows[0]["id"].as<std::string>());
             Json::Value result = config.result;
-            result["deviceId"] = rows[0]["id"];
-            result["zone"] = rows[0]["zone_code"].isNull() ? "" : rows[0]["zone_code"];
+            result["deviceId"] = rows[0]["id"].as<std::string>();
+            result["zone"] = rows[0]["zone_code"].isNull() ? "" : rows[0]["zone_code"].as<std::string>();
             co_return okResponse("Device enrolled", result);
         } catch (const std::exception &e) {
             LOG_ERROR << "[MagmaNet] device hello error: " << e.what();
@@ -488,8 +486,8 @@ namespace data_support::services {
             const auto &settings = MagmaSettings::instance();
 
             Json::Value config;
-            config["role"] = rows[0]["role"];
-            config["zone"] = rows[0]["zone_code"].isNull() ? "" : rows[0]["zone_code"];
+            config["role"] = rows[0]["role"].as<std::string>();
+            config["zone"] = rows[0]["zone_code"].isNull() ? "" : rows[0]["zone_code"].as<std::string>();
             config["radius"] = Json::Value(Json::objectValue);
             config["radius"]["address"] = settings.radiusHost;
             config["radius"]["authPort"] = settings.radiusAuthPort;

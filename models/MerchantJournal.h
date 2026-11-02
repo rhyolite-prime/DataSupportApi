@@ -1,3 +1,4 @@
+
 /**
  *
  *  MerchantJournal.h
@@ -39,6 +40,8 @@ namespace drogon_model
 namespace DataSupportDb
 {
 
+
+
 class MerchantJournal
 {
   public:
@@ -53,14 +56,19 @@ class MerchantJournal
         static const std::string _balance_after;
         static const std::string _description;
         static const std::string _created_at;
+
     };
 
     static const int primaryKeyNumber;
     static const std::string tableName;
     static const bool hasPrimaryKey;
+
     static const std::string primaryKeyName;
+
     using PrimaryKeyType = void;
     int getPrimaryKey() const { assert(false); return 0; }
+
+
 
     /**
      * @brief constructor
@@ -187,6 +195,7 @@ class MerchantJournal
     void setCreatedAtToNull() noexcept;
 
 
+
     static size_t getColumnNumber() noexcept {  return 9;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
@@ -194,6 +203,7 @@ class MerchantJournal
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+
   private:
     friend drogon::orm::Mapper<MerchantJournal>;
     friend drogon::orm::BaseBuilder<MerchantJournal, true, true>;
@@ -218,6 +228,7 @@ class MerchantJournal
     std::shared_ptr<std::string> balanceAfter_;
     std::shared_ptr<std::string> description_;
     std::shared_ptr<::trantor::Date> createdAt_;
+
     struct MetaData
     {
         const std::string colName_;
@@ -233,13 +244,19 @@ class MerchantJournal
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
+
         static const std::string sql="";
+
+
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
+
         static const std::string sql="";
+
+
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -249,15 +266,18 @@ class MerchantJournal
         needSelection = false;
         sql += "id,";
         ++parametersCount;
+
         if(!dirtyFlag_[0])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[1])
         {
             sql += "merchant_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[2])
         {
             sql += "business_id,";
@@ -265,25 +285,30 @@ class MerchantJournal
         }
         sql += "transaction_type,";
         ++parametersCount;
+
         if(!dirtyFlag_[3])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[4])
         {
             sql += "amount,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[5])
         {
             sql += "balance_before,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[6])
         {
             sql += "balance_after,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[7])
         {
             sql += "description,";
@@ -291,10 +316,12 @@ class MerchantJournal
         }
         sql += "created_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[8])
         {
             needSelection=true;
         }
+
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -303,70 +330,103 @@ class MerchantJournal
         else
             sql += ") values (";
 
+
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
+
         if(dirtyFlag_[0])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[1])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[2])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[3])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[4])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[5])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[6])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[7])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[8])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(parametersCount > 0)
         {
             sql.resize(sql.length() - 1);
         }
+
         if(needSelection)
         {
             sql.append(") returning *");
@@ -375,9 +435,11 @@ class MerchantJournal
         {
             sql.append(1, ')');
         }
+
         LOG_TRACE << sql;
         return sql;
     }
 };
 } // namespace DataSupportDb
+
 } // namespace drogon_model
