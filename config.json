@@ -330,7 +330,7 @@
             "Host": "smtp.zoho.com",
             "Port": 465,
             "UserName": "sales@rhyoliteprime.com",
-            "Password": "n_avq3yE",
+            "Password": "",
             "SenderName": "Rhyolite"
         },
         "QuartzSchedulerApi": {
