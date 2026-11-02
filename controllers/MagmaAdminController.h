@@ -31,6 +31,8 @@ public:
 
     // plans
     ADD_METHOD_TO(MagmaAdminController::listPlans, std::string(PREFIX) + "plans", Get, Options);
+    // Compatibility alias for clients that still call the older name.
+    ADD_METHOD_TO(MagmaAdminController::listPlans, std::string(PREFIX) + "get-internet-plans", Get, Options);
     ADD_METHOD_TO(MagmaAdminController::createPlan, std::string(PREFIX) + "plans", Post, Options);
     ADD_METHOD_TO(MagmaAdminController::updatePlan, std::string(PREFIX) + "plans/{1}", Put, Options);
     ADD_METHOD_TO(MagmaAdminController::deactivatePlan, std::string(PREFIX) + "plans/{1}", Delete, Options);
