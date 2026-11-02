@@ -1,0 +1,23 @@
+# MagmaNet — FreeRADIUS clients.
+#
+# Do NOT hand-maintain gateways here: MagmaDeviceService registers each gateway
+# in radius.nas (read_clients = yes). This snippet only covers the local VPS
+# and the WireGuard server address, which are not in the nas table.
+
+client magma-vps {
+    ipaddr = 127.0.0.1
+    secret = CHANGE_ME_RADIUS_SECRET
+    require_message_authenticator = no
+    nas_type = other
+}
+
+client magma-wg-server {
+    ipaddr = 10.200.0.1
+    secret = CHANGE_ME_RADIUS_SECRET
+    require_message_authenticator = no
+    nas_type = other
+}
+
+# Gateways arrive on 10.200.1.0/24 through the WireGuard interface. Because
+# each gateway has its own shared secret, they must be defined individually in
+# radius.nas (which read_clients loads automatically).

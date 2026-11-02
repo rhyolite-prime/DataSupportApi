@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MagmaNet WiFi</title>
+<style>
+  :root { --brand:#f26b1d; --ink:#14181d; --muted:#6b7280; --line:#e5e7eb; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+         background:#f6f7f9; color:var(--ink); }
+  header { background:var(--brand); color:#fff; padding:20px 18px; }
+  header h1 { margin:0; font-size:20px; letter-spacing:.2px; }
+  header p { margin:4px 0 0; opacity:.9; font-size:13px; }
+  main { max-width:520px; margin:0 auto; padding:16px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px;
+          padding:16px; margin-bottom:14px; }
+  .plan { display:flex; justify-content:space-between; align-items:center;
+          padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer; }
+  .plan:last-child { border-bottom:none; }
+  .plan.selected { background:#fff7f1; margin:0 -8px; padding:12px 8px; border-radius:8px; }
+  .plan strong { display:block; font-size:15px; }
+  .plan small { color:var(--muted); }
+  .price { font-weight:600; color:var(--brand); white-space:nowrap; }
+  label { display:block; font-size:12px; color:var(--muted); margin:10px 0 4px; }
+  input, select { width:100%; padding:11px; border:1px solid var(--line);
+                  border-radius:8px; font-size:15px; background:#fff; }
+  button { width:100%; padding:13px; border:none; border-radius:9px; font-size:15px;
+           font-weight:600; background:var(--brand); color:#fff; margin-top:14px; cursor:pointer; }
+  button:disabled { opacity:.55; cursor:not-allowed; }
+  .ghost { background:#fff; color:var(--ink); border:1px solid var(--line); }
+  .status { font-size:13px; margin-top:10px; min-height:18px; }
+  .status.error { color:#b91c1c; }
+  .status.ok { color:#047857; }
+  .tabs { display:flex; gap:8px; margin-bottom:12px; }
+  .tabs button { margin:0; padding:9px; background:#fff; color:var(--ink);
+                 border:1px solid var(--line); font-weight:500; }
+  .tabs button.active { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .hidden { display:none; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="brand">MagmaNet WiFi</h1>
+  <p id="zone-line">Loading network…</p>
+</header>
+<main>
+  <div class="tabs">
+    <button id="tab-buy" class="active" type="button">Buy a plan</button>
+    <button id="tab-voucher" type="button">Use a voucher</button>
+  </div>
+
+  <section id="buy-panel">
+    <div class="card">
+      <div id="plans"><p class="status">Loading plans…</p></div>
+      <label for="method">Payment method</label>
+      <select id="method">
+        <option value="MOMO_MTN">MTN Mobile Money</option>
+        <option value="MOMO_TELECEL">Telecel Cash</option>
+        <option value="MOMO_AIRTELTIGO">AirtelTigo Money</option>
+        <option value="CARD">Debit / credit card</option>
+      </select>
+      <label for="msisdn">Mobile money number</label>
+      <input id="msisdn" inputmode="tel" placeholder="024 000 0000" autocomplete="tel">
+      <button id="buy">Pay and connect</button>
+      <div id="buy-status" class="status"></div>
+    </div>
+  </section>
+
+  <section id="voucher-panel" class="hidden">
+    <div class="card">
+      <label for="code">Voucher code</label>
+      <input id="code" placeholder="ABCD-EFGH-IJKL" autocapitalize="characters" autocomplete="off">
+      <button id="redeem">Redeem voucher</button>
+      <div id="voucher-status" class="status"></div>
+    </div>
+  </section>
+</main>
+<footer>Need help? Ask at the shop, or use “Report a problem” in the portal.</footer>
+
+<script>
+(function () {
+  const params = new URLSearchParams(location.search);
+  const zone = params.get('zone') || params.get('zoneCode') || '';
+  const mac = params.get('mac') || params.get('client_mac') || '';
+  const ip = params.get('ip') || '';
+  let selectedPlan = null;
+  let plansByCode = {};
+
+  const api = (path, options) => fetch('/api/v1/magma/portal/' + path, Object.assign({
+    headers: { 'Content-Type': 'application/json' }
+  }, options || {})).then(async (response) => {
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok || body.success === false) {
+      throw new Error(body.message || 'Request failed');
+    }
+    return body.result || body;
+  });
+
+  const money = (value) => {
+    const amount = Number(value);
+    return Number.isFinite(amount) ? 'GH₵ ' + amount.toFixed(2) : value;
+  };
+
+  const setStatus = (id, message, kind) => {
+    const node = document.getElementById(id);
+    node.textContent = message || '';
+    node.className = 'status' + (kind ? ' ' + kind : '');
+  };
+
+  async function load() {
+    try {
+      const bootstrap = await api('bootstrap?zone=' + encodeURIComponent(zone));
+      document.getElementById('brand').textContent = bootstrap.business.name + ' WiFi';
+      document.getElementById('zone-line').textContent =
+        bootstrap.zone.name + ' · ' + (bootstrap.zone.district || '') + ' · ' + bootstrap.zone.status;
+      const plans = Array.isArray(bootstrap.plans) ? bootstrap.plans : [];
+      plansByCode = {};
+      const container = document.getElementById('plans');
+      container.innerHTML = '';
+      if (!plans.length) {
+        container.innerHTML = '<p class="status error">No plans are on sale here yet.</p>';
+        return;
+      }
+      plans.forEach((plan, index) => {
+        const code = plan.plan_code || plan.planCode || plan.code;
+        plansByCode[code] = plan;
+        const row = document.createElement('div');
+        row.className = 'plan' + (index === 0 ? ' selected' : '');
+        row.dataset.code = code;
+        row.innerHTML = '<div><strong></strong><small></small></div><div class="price"></div>';
+        row.querySelector('strong').textContent = plan.name || code;
+        row.querySelector('small').textContent =
+          [plan.plan_type, plan.allowance].filter(Boolean).join(' · ');
+        row.querySelector('.price').textContent = money(plan.price);
+        row.addEventListener('click', () => {
+          document.querySelectorAll('.plan').forEach((el) => el.classList.remove('selected'));
+          row.classList.add('selected');
+          selectedPlan = code;
+        });
+        container.appendChild(row);
+        if (index === 0) selectedPlan = code;
+      });
+    } catch (error) {
+      setStatus('buy-status', error.message, 'error');
+      document.getElementById('zone-line').textContent = 'Zone unavailable';
+    }
+  }
+
+  async function buy() {
+    const button = document.getElementById('buy');
+    const method = document.getElementById('method').value;
+    const msisdn = document.getElementById('msisdn').value.trim();
+    if (!selectedPlan) return setStatus('buy-status', 'Choose a plan first.', 'error');
+    if (method !== 'CARD' && !msisdn) return setStatus('buy-status', 'Enter the MoMo number.', 'error');
+
+    button.disabled = true;
+    setStatus('buy-status', 'Starting payment…');
+    try {
+      const checkout = await api('checkout', {
+        method: 'POST',
+        body: JSON.stringify({
+          zoneCode: zone, planCode: selectedPlan, mac: mac, ip: ip,
+          msisdn: method === 'CARD' ? '' : msisdn, paymentMethod: method
+        })
+      });
+      setStatus('buy-status', checkout.message || 'Approve the prompt on your phone…', 'ok');
+
+      const intentId = checkout.intentId || (checkout.intent && checkout.intent.id);
+      if (!intentId) throw new Error('Checkout did not return an reference');
+
+      for (let attempt = 0; attempt < 60; attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        const status = await api('checkout/' + encodeURIComponent(intentId));
+        const state = status.status || (status.intent && status.intent.status);
+        if (state === 'PROVISIONED') {
+          setStatus('buy-status', 'Paid. Connecting you…', 'ok');
+          try {
+            await api('checkout/' + encodeURIComponent(intentId) + '/login', { method: 'POST' });
+            setStatus('buy-status', 'You are online. Enjoy!', 'ok');
+            setTimeout(() => { location.href = 'http://login.magmanet.gh/'; }, 1500);
+          } catch (loginError) {
+            setStatus('buy-status', loginError.message +
+              ' Stay on this page and tap “Pay and connect” again to retry the login.', 'error');
+          }
+          return;
+        }
+        if (state === 'FAILED' || state === 'EXPIRED') {
+          throw new Error('Payment ' + state.toLowerCase() + '. Please try again.');
+        }
+        setStatus('buy-status', 'Waiting for confirmation… (' + (attempt + 1) + ')');
+      }
+      setStatus('buy-status', 'Still pending. If you were charged, show this page to staff.', 'error');
+    } catch (error) {
+      setStatus('buy-status', error.message, 'error');
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  async function redeem() {
+    const code = document.getElementById('code').value.trim();
+    if (!code) return setStatus('voucher-status', 'Enter the voucher code.', 'error');
+    const button = document.getElementById('redeem');
+    button.disabled = true;
+    setStatus('voucher-status', 'Checking voucher…');
+    try {
+      const result = await api('vouchers/redeem', {
+        method: 'POST',
+        body: JSON.stringify({ code: code, zoneCode: zone, mac: mac, ip: ip })
+      });
+      setStatus('voucher-status', result.online ? 'You are online. Enjoy!' : (result.loginMessage ||
+        'Voucher accepted. Reconnect to the WiFi to start.'), 'ok');
+    } catch (error) {
+      setStatus('voucher-status', error.message, 'error');
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  document.getElementById('tab-buy').addEventListener('click', () => {
+    document.getElementById('tab-buy').classList.add('active');
+    document.getElementById('tab-voucher').classList.remove('active');
+    document.getElementById('buy-panel').classList.remove('hidden');
+    document.getElementById('voucher-panel').classList.add('hidden');
+  });
+  document.getElementById('tab-voucher').addEventListener('click', () => {
+    document.getElementById('tab-voucher').classList.add('active');
+    document.getElementById('tab-buy').classList.remove('active');
+    document.getElementById('voucher-panel').classList.remove('hidden');
+    document.getElementById('buy-panel').classList.add('hidden');
+  });
+  document.getElementById('buy').addEventListener('click', buy);
+  document.getElementById('redeem').addEventListener('click', redeem);
+
+  load();
+})();
+</script>
+</body>
+</html>

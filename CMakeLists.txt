@@ -76,6 +76,50 @@ add_executable(${PROJECT_NAME} main.cc
         dto/erp_api/BasePosDto.h
         services/magma_net/MagmaNetService.h
         services/magma_net/MagmaNetService.cc
+        controllers/MagmaControllerSupport.h
+        dto/magma_net/AgentDto.h
+        dto/magma_net/CheckoutDto.h
+        dto/magma_net/DataPlanDto.h
+        dto/magma_net/OpsDto.h
+        dto/magma_net/SubscriberDto.h
+        dto/magma_net/VoucherDto.h
+        dto/magma_net/ZoneDto.h
+        services/magma_net/MagmaAgentService.cc
+        services/magma_net/MagmaAgentService.h
+        services/magma_net/MagmaBillingService.cc
+        services/magma_net/MagmaBillingService.h
+        services/magma_net/MagmaDeviceService.cc
+        services/magma_net/MagmaDeviceService.h
+        services/magma_net/MagmaMonitoringService.cc
+        services/magma_net/MagmaMonitoringService.h
+        services/magma_net/MagmaOpsService.cc
+        services/magma_net/MagmaOpsService.h
+        services/magma_net/MagmaPlanService.cc
+        services/magma_net/MagmaPlanService.h
+        services/magma_net/MagmaRadiusService.cc
+        services/magma_net/MagmaRadiusService.h
+        services/magma_net/MagmaReportService.cc
+        services/magma_net/MagmaReportService.h
+        services/magma_net/MagmaSettings.cc
+        services/magma_net/MagmaSettings.h
+        services/magma_net/MagmaSubscriberService.cc
+        services/magma_net/MagmaSubscriberService.h
+        services/magma_net/MagmaSupport.h
+        services/magma_net/MagmaVoucherService.cc
+        services/magma_net/MagmaVoucherService.h
+        services/magma_net/MagmaZoneService.cc
+        services/magma_net/MagmaZoneService.h
+        services/magma_pay/MagmaPayService.cc
+        services/magma_pay/MagmaPayService.h
+        services/magma_sms/MagmaSmsService.cc
+        services/magma_sms/MagmaSmsService.h
+        utils/DbUtils.h
+        utils/HmacUtils.cc
+        utils/HmacUtils.h
+        utils/RadiusClient.cc
+        utils/RadiusClient.h
+        utils/RouterOsClient.cc
+        utils/RouterOsClient.h
 )
 
 # ##############################################################################

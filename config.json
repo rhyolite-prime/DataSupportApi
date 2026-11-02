@@ -336,6 +336,49 @@
         "QuartzSchedulerApi": {
             "BaseUrl": "https://scheduler.richcreationsdevelopment.com"
         },
+        "magma_net": {
+            // Public URLs used in SMS, redirects and RADIUS walled-garden entries.
+            "portalBaseUrl": "https://portal.magmanet.gh",
+            "portalOrigin": "https://portal.magmanet.gh",
+            // Secrets: leave empty in source control; supply MAGMA_* env vars in production.
+            "secretsKey": "",
+            "hmacKey": "",
+            "voucherPepper": "",
+            "internalSecret": "",
+            // Set false only when live Hubtel/Paystack credentials are configured.
+            "sandboxPayments": true,
+            "currency": "GHS",
+            "checkoutTtlSeconds": 1800,
+            "portalTokenTtlSeconds": 900,
+            "otpTtlSeconds": 300,
+            "maxVoucherBatch": 10000,
+            "allowLocalVoucherCache": false,
+            "radius": {
+                // FreeRADIUS runs on the VPS; hotspots reach it over WireGuard.
+                "host": "10.200.0.1",
+                "authPort": 1812,
+                "acctPort": 1813,
+                "coaPort": 3799,
+                "schema": "radius"
+            },
+            "routeros": {
+                "scheme": "http",
+                "port": 80,
+                "timeoutMs": 5000
+            },
+            "jobs": {
+                "enabled": true,
+                "usageEnforcementSec": 60,
+                "healthSweepSec": 120,
+                "reconcilePaymentsSec": 90,
+                "invoiceHour": 2
+            },
+            "tax": {
+                "vat": 0.15,
+                "nhil": 0.025,
+                "getFund": 0.025
+            }
+        },
         "ErpApi": {
             "BaseUrl": "https://erp-api.rhyoliteprime.com"
         },

@@ -11,7 +11,7 @@ using namespace data_support::plugins;
 
 void DataSupportServicePlugin::initAndStart(const Json::Value &config)
 {
-    /// Initialize and start the plugin
+    LOG_INFO << "DataSupportServicePlugin started (MagmaNet control plane enabled)";
 }
 
 void DataSupportServicePlugin::shutdown() 
