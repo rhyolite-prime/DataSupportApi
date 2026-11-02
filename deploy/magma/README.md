@@ -23,9 +23,26 @@ unreachable, existing hotspot sessions keep working (RouterOS caches the last
 psql "$DATABASE_URL" -f migrations/0001_magma_schema.sql
 psql "$DATABASE_URL" -f migrations/0002_radius_schema.sql
 psql "$DATABASE_URL" -f migrations/0003_magma_seed.sql
-# only once session volume justifies it — rewrite of magma_sessions:
+# optional — only once session volume justifies it (rewrites magma_sessions):
 psql "$DATABASE_URL" -f migrations/0004_partitioning.sql
 ```
+
+`0004` is optional and nothing in the C++ depends on it. `magma_sessions` gets one
+row per RADIUS session (not one per interim update), so a plain table is fine for the
+first few thousand subscribers. Without `0004`, prune from cron instead of dropping
+partitions:
+
+```bash
+psql "$DATABASE_URL" -c "DELETE FROM magma_sessions WHERE started_at < now() - interval '13 months';"
+```
+
+**ORM note:** the MagmaNet tables are accessed with hand-written SQL
+(`execSqlCoro` + `utils/DbUtils.h`), not Drogon models. Running
+`drogon_ctl create model` against this database will generate ~23 `Magma*` model
+files that nothing uses — and a partitioned `magma_sessions` has no single-column
+primary key, so its generated model would be unusable. If they appear, delete
+`models/Magma*.h` and `models/Magma*.cc`; `CMakeLists.txt` only globs that
+directory, so they disappear from the build automatically.
 
 Provision a tenant and its default catalogue:
 
@@ -187,7 +204,8 @@ Paystack before provisioning, then activates exactly once. Sandbox mode
   `SMS_RAW`) retry with exponential backoff; dead events can be retried from
   `/admin/outbox/{id}/retry`.
 * `magma_prune_old_rows()` and `magma_close_stale_sessions()` should run nightly
-  (see `0004_partitioning.sql`).
+  (they are created by `0004_partitioning.sql`; with a plain `magma_sessions`
+  table use the cron `DELETE` from section 1 instead).
 
 ## 10. Compliance checklist
 
