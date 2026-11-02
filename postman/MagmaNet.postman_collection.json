@@ -1,0 +1,5794 @@
+{
+  "info": {
+    "_postman_id": "876a46b1-816d-4e52-badc-72d4932ec9ac",
+    "name": "MagmaNet API",
+    "description": "Community WiFi control plane for DataSupportApi.\n\n**Base URL** `{{baseUrl}}` (default `http://localhost:5702`).\n\n**Authentication**\n* `/admin/*` and `/internal/*` requests need the `ClientId` and `ClientSecret` headers created by the business API key service; they resolve to a `business_id`, which is the tenant scope for every query.\n* `/internal/jobs/*` requests instead send `X-Magma-Internal-Secret` (`MAGMA_INTERNAL_SECRET`).\n* `/portal/*` and `/webhooks/*` are public; webhooks are verified with the provider before anything is provisioned.\n\n**Sandbox** With `MAGMA_SANDBOX_PAYMENTS=true` checkout and payouts succeed without contacting Hubtel/Paystack, so the whole purchase flow can be exercised locally.\n\n**Setup** Run migrations 0001-0003, then `SELECT magma_provision_tenant(...)` to create a tenant with the seed plans and a default zone. Set `businessId`, `zoneId`, `zoneCode` and `planId` in the collection variables (the create requests capture IDs automatically).\n\n**Order of a purchase** checkout -> checkout status -> hotspot login, or vouchers/redeem.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Portal (public)",
+      "description": "Captive portal endpoints. No credentials; the zone is resolved from `?zone=` or the client IP. This is exactly what `portal/index.html` calls.",
+      "item": [
+        {
+          "name": "Bootstrap (zone, tenant, plans, devices)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/bootstrap",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "bootstrap"
+              ],
+              "query": [
+                {
+                  "key": "zone",
+                  "value": "{{zoneCode}}",
+                  "description": "Zone code, e.g. KANESHIE",
+                  "disabled": false
+                },
+                {
+                  "key": "business",
+                  "value": "{{businessId}}",
+                  "description": "Optional business UUID",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Public entry point for the captive portal. Resolves the zone by code (or the requesting client's IP), returns the tenant, active plans, and whether the zone is serving. `business` is only needed when the zone code exists in more than one tenant."
+          }
+        },
+        {
+          "name": "Plans for zone",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "plans"
+              ],
+              "query": [
+                {
+                  "key": "zone",
+                  "value": "{{zoneCode}}",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "business",
+                  "value": "{{businessId}}",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Public plan catalogue for the resolved zone. Prices are tax inclusive in GHS."
+          }
+        },
+        {
+          "name": "Zone status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "zone",
+                  "value": "{{zoneCode}}",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "business",
+                  "value": "{{businessId}}",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Health snapshot used by the portal banner (zone status, device counts, open alerts)."
+          }
+        },
+        {
+          "name": "Create checkout (buy a plan)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "checkout"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zoneCode\": \"KANESHIE\",\n  \"planCode\": \"DAY-1\",\n  \"mac\": \"{{mac}}\",\n  \"ip\": \"10.10.0.42\",\n  \"msisdn\": \"0244123456\",\n  \"paymentMethod\": \"MOMO_MTN\",\n  \"email\": \"customer@example.com\",\n  \"customerName\": \"Ama Mensah\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Starts a purchase. In sandbox mode (`MAGMA_SANDBOX_PAYMENTS=true`, the default) the intent is provisioned immediately and the response contains `intentId` plus a `status` of PROVISIONED. In production this triggers the MoMo prompt or the Paystack redirect and returns AWAITING_PAYMENT.\n\n`mac`/`ip` come from the hotspot (`$(mac)` / `$(ip)` in the login page); they bind the plan to this device."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['intentId'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('intentId', id); console.log('intentId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Checkout status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/checkout/{{intentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "checkout",
+                "{{intentId}}"
+              ]
+            },
+            "description": "Poll while the customer approves the MoMo prompt. `result.status` is one of NEW, AWAITING_PAYMENT, PROVISIONED, FAILED or EXPIRED."
+          }
+        },
+        {
+          "name": "Hotspot login (bind device)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/checkout/{{intentId}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "checkout",
+                "{{intentId}}",
+                "login"
+              ]
+            },
+            "description": "Called by the portal after a PROVISIONED checkout. The server checks the device's MAC/IP against the gateway host table and then logs the client into the hotspot via RouterOS REST. Returns 409 when the device is not yet visible on the gateway."
+          }
+        },
+        {
+          "name": "Redeem voucher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/vouchers/redeem",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "vouchers",
+                "redeem"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"{{voucherCode}}\",\n  \"zoneCode\": \"KANESHIE\",\n  \"mac\": \"{{mac}}\",\n  \"ip\": \"10.10.0.42\",\n  \"msisdn\": \"0244123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Redeems a printed voucher. Codes are normalised (case, dashes and the Crockford look-alikes O/0, I/1, L/1 are folded), so `abc-de1f-gh2j` and `ABCDE1FGH2J` are the same code. The plan is bound to the supplied MAC."
+          }
+        },
+        {
+          "name": "Open support ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "tickets"
+              ],
+              "query": [
+                {
+                  "key": "zone",
+                  "value": "{{zoneCode}}",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"No internet after payment\",\n  \"category\": \"CONNECTIVITY\",\n  \"priority\": \"NORMAL\",\n  \"description\": \"Paid for a day pass but the portal still shows the paywall.\",\n  \"msisdn\": \"0244123456\",\n  \"zoneId\": \"{{zoneId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Customer-facing ticket creation. `authorType` is forced to CUSTOMER by the server."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('ticketId', id); console.log('ticketId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Agent login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/agents/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "agents",
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "zone",
+                  "value": "{{zoneCode}}",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agentIdentifier\": \"0244555666\",\n  \"pin\": \"1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Agent app login with MSISDN/email plus PIN. Returns a short-lived signed token and the agent's wallet balance."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['token'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('agentToken', id); console.log('agentToken =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Agent PIN reset \u2014 request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/agents/pin/reset/request",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "agents",
+                "pin",
+                "reset",
+                "request"
+              ],
+              "query": [
+                {
+                  "key": "zone",
+                  "value": "{{zoneCode}}",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agentIdentifier\": \"0244555666\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Sends a one-time code by SMS to the agent's registered MSISDN."
+          }
+        },
+        {
+          "name": "Agent PIN reset \u2014 confirm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/portal/agents/pin/reset",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "portal",
+                "agents",
+                "pin",
+                "reset"
+              ],
+              "query": [
+                {
+                  "key": "zone",
+                  "value": "{{zoneCode}}",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agentIdentifier\": \"0244555666\",\n  \"otp\": \"123456\",\n  \"newPin\": \"4321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Completes the reset with the OTP from the SMS."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - overview",
+      "description": "Tenant dashboard and network summaries.",
+      "item": [
+        {
+          "name": "Admin overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/overview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "overview"
+              ]
+            },
+            "description": "Dashboard totals: zones, active subscribers, live sessions, revenue today/month, open alerts, outbox backlog."
+          }
+        },
+        {
+          "name": "Capacity report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/capacity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "capacity"
+              ]
+            },
+            "description": "Per-zone concurrency versus the theoretical sector capacity (5 GHz 20 MHz 2x2 ax is budgeted at 35-60 concurrent clients), plus backhaul headroom."
+          }
+        },
+        {
+          "name": "Network overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/network-overview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "network-overview"
+              ]
+            },
+            "description": "Zone + device topology with tunnel IPs, last seen, health and customer counts."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - zones",
+      "description": "Coverage zones, backhaul, costs and per-zone profitability.",
+      "item": [
+        {
+          "name": "List zones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "LIVE",
+                  "description": "Filter by status",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Paged zones. Status is PLANNED, BUILD, LIVE, PAUSED or RETIRED."
+          }
+        },
+        {
+          "name": "Create zone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zoneCode\": \"KANESHIE\",\n  \"name\": \"Kaneshie Market\",\n  \"district\": \"Okaikoi South\",\n  \"region\": \"Greater Accra\",\n  \"backhaulProvider\": \"MTN\",\n  \"backhaulCircuitRef\": \"MTN-FIB-001\",\n  \"upstreamDownMbps\": 100,\n  \"upstreamUpMbps\": 50,\n  \"upstreamMonthlyCost\": 1500,\n  \"upstreamIsCgnat\": true,\n  \"tunnelIp\": \"10.200.1.10\",\n  \"gpsLat\": 5.5736,\n  \"gpsLng\": -0.2345,\n  \"status\": \"LIVE\",\n  \"notes\": \"Gateway on the market manager's wall\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a coverage zone (one gateway/NAS plus N bridged APs). `upstreamIsCgnat` should stay true for consumer MTN/Telecel fibre \u2014 RADIUS then arrives over the WireGuard tunnel rather than inbound on a public IP."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('zoneId', id); console.log('zoneId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get zone",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones/{{zoneId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones",
+                "{{zoneId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update zone",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones/{{zoneId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones",
+                "{{zoneId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kaneshie Market (Main)\",\n  \"status\": \"LIVE\",\n  \"upstreamDownMbps\": 150,\n  \"notes\": \"Backhaul upgraded to 150 Mbps\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Partial update; empty strings leave existing values untouched."
+          }
+        },
+        {
+          "name": "Zone health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones/{{zoneId}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones",
+                "{{zoneId}}",
+                "health"
+              ]
+            },
+            "description": "Device online state, last seen, active sessions and open alerts for the zone."
+          }
+        },
+        {
+          "name": "List zone costs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones/{{zoneId}}/costs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones",
+                "{{zoneId}}",
+                "costs"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-01-01",
+                  "description": "period_start lower bound",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31",
+                  "description": "period_end upper bound",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Backhaul, power, rent and maintenance costs recorded against the zone."
+          }
+        },
+        {
+          "name": "Record zone cost",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones/{{zoneId}}/costs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones",
+                "{{zoneId}}",
+                "costs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"BACKHAUL\",\n  \"amount\": 1500.0,\n  \"periodStart\": \"2026-11-01\",\n  \"periodEnd\": \"2026-11-30\",\n  \"vendor\": \"MTN Business\",\n  \"reference\": \"MTN-INV-99120\",\n  \"notes\": \"100 Mbps business fibre\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Category is BACKHAUL, POWER, RENT, MAINTENANCE, LABOUR or OTHER. Period defaults to the current month when omitted."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('zoneCostId', id); console.log('zoneCostId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Zone P&L",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/zones/{{zoneId}}/pnl",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "zones",
+                "{{zoneId}}",
+                "pnl"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Revenue (tax inclusive split into net/VAT/NHIL/GETFund) minus recorded costs, with gross margin per zone."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - plans",
+      "description": "Plan catalogue, availability and price simulation.",
+      "item": [
+        {
+          "name": "List plans",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "plans"
+              ],
+              "query": [
+                {
+                  "key": "includeInactive",
+                  "value": "false",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Plan catalogue. Pass includeInactive=true to see deactivated plans."
+          }
+        },
+        {
+          "name": "Create plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "plans"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planCode\": \"DAY-1\",\n  \"name\": \"Day Pass\",\n  \"planType\": \"TIME\",\n  \"durationMinutes\": 1440,\n  \"dataCapMb\": 0,\n  \"downKbps\": 5000,\n  \"upKbps\": 2000,\n  \"deviceLimit\": 1,\n  \"price\": 8.0,\n  \"taxInclusive\": true,\n  \"validityDays\": 1,\n  \"isPublic\": true,\n  \"sortOrder\": 10,\n  \"zoneIds\": [\n    \"{{zoneId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "`planType` is TIME (durationMinutes), VOLUME (dataCapMb) or UNLIMITED (fair-use throttle: fairUseCapMb then throttleDownKbps/throttleUpKbps). `price` is tax inclusive. `zoneIds` limits availability; an empty list means all zones."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('planId', id); console.log('planId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update plan",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/plans/{{planId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "plans",
+                "{{planId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planCode\": \"DAY-1\",\n  \"name\": \"Day Pass\",\n  \"planType\": \"TIME\",\n  \"durationMinutes\": 1440,\n  \"downKbps\": 8000,\n  \"upKbps\": 3000,\n  \"deviceLimit\": 1,\n  \"price\": 8.0,\n  \"taxInclusive\": true,\n  \"validityDays\": 1,\n  \"isPublic\": true,\n  \"sortOrder\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Same body as create. Changes affect new purchases only; existing subscriptions keep their `plan_snapshot`."
+          }
+        },
+        {
+          "name": "Deactivate plan",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/plans/{{planId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "plans",
+                "{{planId}}"
+              ]
+            },
+            "description": "Soft delete (is_active=false). Existing subscribers are unaffected."
+          }
+        },
+        {
+          "name": "Plan availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/plans/{{planId}}/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "plans",
+                "{{planId}}",
+                "availability"
+              ]
+            },
+            "description": "Which zones can sell the plan, and why not when they cannot."
+          }
+        },
+        {
+          "name": "Simulate plan change",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/plans/{{planId}}/simulate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "plans",
+                "{{planId}}",
+                "simulate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planCode\": \"DAY-1\",\n  \"name\": \"Day Pass\",\n  \"planType\": \"TIME\",\n  \"durationMinutes\": 1440,\n  \"downKbps\": 8000,\n  \"upKbps\": 3000,\n  \"price\": 10.0,\n  \"validityDays\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Dry run: shows the adoption, revenue and bandwidth impact of the proposed prices and caps without writing anything."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - subscribers",
+      "description": "Subscribers, their devices, usage and lifecycle.",
+      "item": [
+        {
+          "name": "List subscribers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "q",
+                  "value": "0244",
+                  "description": "Search term",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "ACTIVE, SUSPENDED or CHURNED",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "`q` matches MSISDN, name or email."
+          }
+        },
+        {
+          "name": "Create subscriber",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"msisdn\": \"0244123456\",\n  \"fullName\": \"Ama Mensah\",\n  \"email\": \"ama@example.com\",\n  \"subscriberType\": \"WALK_IN\",\n  \"authType\": \"HOTSPOT\",\n  \"homeZoneId\": \"{{zoneId}}\",\n  \"serviceAddress\": \"Kaneshie Market, Stall 42\",\n  \"ghanaCardNumber\": \"GHA-123456789-0\",\n  \"consent\": true,\n  \"gpsLat\": 5.5736,\n  \"gpsLng\": -0.2345\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "`consent` records Data Protection Act consent; `ghanaCardNumber` is encrypted at rest and only ever returned masked."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('subscriberId', id); console.log('subscriberId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get subscriber",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update subscriber",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Ama Mensah-Aidoo\",\n  \"email\": \"ama.aidoo@example.com\",\n  \"serviceAddress\": \"Kaneshie Market, Stall 51\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Partial update. Note: empty fields are ignored, so a field cannot be cleared back to NULL through this endpoint."
+          }
+        },
+        {
+          "name": "Subscriber usage",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}/usage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}",
+                "usage"
+              ]
+            },
+            "description": "Current subscription, remaining minutes/MB, throttled state and device count."
+          }
+        },
+        {
+          "name": "Subscriber sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}",
+                "sessions"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "RADIUS accounting history (one row per session, refreshed every 60 s)."
+          }
+        },
+        {
+          "name": "Subscriber devices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}/devices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}",
+                "devices"
+              ]
+            },
+            "description": "Bound client devices, their MACs and blocked state."
+          }
+        },
+        {
+          "name": "Suspend subscriber",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}/suspend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}",
+                "suspend"
+              ],
+              "query": [
+                {
+                  "key": "reason",
+                  "value": "NON_PAYMENT",
+                  "description": "Recorded in the audit log",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Suspends the subscriber and deletes their RADIUS credentials immediately. Connected sessions end at their Session-Timeout unless a CoA disconnect is also issued."
+          }
+        },
+        {
+          "name": "Resume subscriber",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}",
+                "resume"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Churn subscriber",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscribers/{{subscriberId}}/churn",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscribers",
+                "{{subscriberId}}",
+                "churn"
+              ]
+            },
+            "description": "Terminal state; keeps history for reporting."
+          }
+        },
+        {
+          "name": "Block client device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/block",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "block"
+              ],
+              "query": [
+                {
+                  "key": "mac",
+                  "value": "{{mac}}",
+                  "description": "Alternative to the body field",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mac\": \"{{mac}}\",\n  \"reason\": \"CHARGEBACK\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Blocks a MAC across the tenant (walled-garden only). `mac` may be sent in the body or as a query parameter."
+          }
+        },
+        {
+          "name": "Unblock client device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/unblock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "unblock"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mac\": \"{{mac}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - subscriptions & money",
+      "description": "Subscriptions, transactions, refunds, invoices, till and reconciliation.",
+      "item": [
+        {
+          "name": "Get subscription",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscriptions/{{subscriptionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscriptions",
+                "{{subscriptionId}}"
+              ]
+            },
+            "description": "Subscription detail including the plan snapshot taken at purchase time."
+          }
+        },
+        {
+          "name": "Extend subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscriptions/{{subscriptionId}}/extend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscriptions",
+                "{{subscriptionId}}",
+                "extend"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"{{planId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Adds another plan period (or upgrades to `planId`) and re-projects RADIUS. Use for goodwill credits and cash renewals."
+          }
+        },
+        {
+          "name": "Terminate subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/subscriptions/{{subscriptionId}}/terminate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "subscriptions",
+                "{{subscriptionId}}",
+                "terminate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"CUSTOMER_REQUEST\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Ends the subscription now and issues a CoA disconnect for any live session."
+          }
+        },
+        {
+          "name": "List transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/transactions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "transactions"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "SUCCESS",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Money in/out. Status is PENDING, SUCCESS, FAILED, REFUNDED or ABANDONED."
+          }
+        },
+        {
+          "name": "Verify transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/transactions/{{transactionId}}/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "transactions",
+                "{{transactionId}}",
+                "verify"
+              ]
+            },
+            "description": "Asks the provider for the authoritative status and provisions the plan if it was paid but never activated (callback lost)."
+          }
+        },
+        {
+          "name": "Refund transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/transactions/{{transactionId}}/refund",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "transactions",
+                "{{transactionId}}",
+                "refund"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Duplicate payment\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Records a refund and ends the linked subscription. Sandbox mode short-circuits the provider call."
+          }
+        },
+        {
+          "name": "Revenue summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/revenue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "revenue"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Gross, net, VAT/NHIL/GETFund split and average revenue per user for the period."
+          }
+        },
+        {
+          "name": "Run invoices",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/invoices/run",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "invoices",
+                "run"
+              ]
+            },
+            "description": "Generates monthly invoices for PPPOE/postpaid subscribers (auth_type = PPPOE). Safe to re-run; already-invoiced periods are skipped."
+          }
+        },
+        {
+          "name": "Suspend overdue",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/suspend-overdue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "suspend-overdue"
+              ]
+            },
+            "description": "Suspends postpaid subscribers past their due date and removes their RADIUS entries."
+          }
+        },
+        {
+          "name": "Close daily till",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/till/close",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "till",
+                "close"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2026-11-02\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Cash-up for a date: transactions by method, refunds, net. Omit `date` for today."
+          }
+        },
+        {
+          "name": "Reconcile pending payments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reconcile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reconcile"
+              ]
+            },
+            "description": "Sweeps PENDING transactions older than a few minutes, re-verifies each with the provider and completes or expires it. Safe to run from cron."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - devices",
+      "description": "Gateway/AP enrolment, config push and health.",
+      "item": [
+        {
+          "name": "List devices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices"
+              ],
+              "query": [
+                {
+                  "key": "zoneId",
+                  "value": "{{zoneId}}",
+                  "description": "Optional zone filter",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Gateways and APs with tunnel IP, REST endpoint, health and last seen."
+          }
+        },
+        {
+          "name": "Register device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zoneId\": \"{{zoneId}}\",\n  \"name\": \"Kaneshie GW1\",\n  \"role\": \"GATEWAY\",\n  \"model\": \"RB5009UG+S+\",\n  \"serialNumber\": \"HG908ABCD\",\n  \"macAddress\": \"48:8F:5A:11:22:33\",\n  \"tunnelIp\": \"10.200.1.10\",\n  \"managementIp\": \"192.168.88.1\",\n  \"restScheme\": \"http\",\n  \"restPort\": 80,\n  \"apiUsername\": \"magma-api\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Enrols a gateway or AP. Role is GATEWAY or AP; only gateways are NAS clients. The response returns the generated `apiPassword` and `radiusSecret` ONCE \u2014 paste them into the RouterOS bootstrap script. Ciphertext columns are omitted from the response."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('deviceId', id); console.log('deviceId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get device",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/{{deviceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "{{deviceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Decommission device",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/{{deviceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "{{deviceId}}"
+              ]
+            },
+            "description": "Marks the device RETIRED and removes it as a RADIUS NAS."
+          }
+        },
+        {
+          "name": "Push desired config",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/{{deviceId}}/config",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "{{deviceId}}",
+                "config"
+              ]
+            },
+            "description": "Derives the RouterOS configuration from the device row and zone and pushes it over REST through the tunnel. Returns per-step results; RouterOS errors come back as strings, not exceptions."
+          }
+        },
+        {
+          "name": "Reboot device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/{{deviceId}}/reboot",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "{{deviceId}}",
+                "reboot"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Device diagnostics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/{{deviceId}}/diagnostics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "{{deviceId}}",
+                "diagnostics"
+              ]
+            },
+            "description": "System resource, hotspot hosts/active users, and whether the RADIUS NAS entry is reachable."
+          }
+        },
+        {
+          "name": "Poll all devices",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/devices/poll",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "devices",
+                "poll"
+              ]
+            },
+            "description": "Health sweep: updates status/last seen, raises DEVICE_OFFLINE alerts after repeated misses. The hourly job calls the same code."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operations - vouchers",
+      "description": "Voucher batches, printing, assignment and voiding.",
+      "item": [
+        {
+          "name": "List voucher batches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/vouchers/batches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "vouchers",
+                "batches"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Batches with plan, zone, quantity, sold/redeemed counts and owner agent."
+          }
+        },
+        {
+          "name": "Create voucher batch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/vouchers/batches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "vouchers",
+                "batches"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"{{planId}}\",\n  \"zoneId\": \"{{zoneId}}\",\n  \"quantity\": 50,\n  \"expiresInDays\": 90,\n  \"unitPrice\": 8.0,\n  \"wholesalePrice\": 6.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Generates `quantity` 12-character Crockford codes (HMAC-SHA256 hash for lookup, AES-GCM ciphertext for re-print). Unit price defaults to the plan price; wholesalePrice is what an agent pays."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['batchId'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('batchId', id); console.log('batchId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get voucher batch",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/vouchers/batches/{{batchId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "vouchers",
+                "batches",
+                "{{batchId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Download voucher batch",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/vouchers/batches/{{batchId}}/download",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "vouchers",
+                "batches",
+                "{{batchId}}",
+                "download"
+              ]
+            },
+            "description": "Returns every code in the batch (decrypted) for printing. Treat the response as cash; the call is audited."
+          }
+        },
+        {
+          "name": "Assign batch to agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/vouchers/batches/{{batchId}}/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "vouchers",
+                "batches",
+                "{{batchId}}",
+                "assign"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agentId\": \"{{agentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Transfers ownership of the batch to an agent and books the wholesale value against their wallet."
+          }
+        },
+        {
+          "name": "Void vouchers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/vouchers/batches/{{batchId}}/void",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "vouchers",
+                "batches",
+                "{{batchId}}",
+                "void"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"voucherIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Voids the whole batch, or only the listed `voucherIds`. Redeemed vouchers are never affected."
+          }
+        },
+        {
+          "name": "Voucher inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/vouchers/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "vouchers",
+                "inventory"
+              ],
+              "query": [
+                {
+                  "key": "zoneId",
+                  "value": "{{zoneId}}",
+                  "description": "Optional zone filter",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Stock on hand per plan/zone with unsold, assigned and redeemed counts."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operations - agents",
+      "description": "Agent accounts, wallets, stock and settlements.",
+      "item": [
+        {
+          "name": "List agents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "ACTIVE or SUSPENDED",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kofi Boateng\",\n  \"msisdn\": \"0244555666\",\n  \"email\": \"kofi@example.com\",\n  \"pin\": \"1234\",\n  \"tier\": \"STANDARD\",\n  \"territoryZoneId\": \"{{zoneId}}\",\n  \"commissionRate\": 0.1,\n  \"kycStatus\": \"PENDING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "`pin` is bcrypt-hashed. `territoryZoneId` limits the agent to one zone; `commissionRate` is a fraction (0.10 = 10%)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('agentId', id); console.log('agentId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update agent",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents/{{agentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents",
+                "{{agentId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kofi Boateng\",\n  \"tier\": \"PREMIER\",\n  \"commissionRate\": 0.12,\n  \"kycStatus\": \"VERIFIED\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Agent dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents/{{agentId}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents",
+                "{{agentId}}",
+                "dashboard"
+              ]
+            },
+            "description": "Wallet balance, vouchers sold today/month, commission accrued and settlement status."
+          }
+        },
+        {
+          "name": "Agent transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents/{{agentId}}/transactions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents",
+                "{{agentId}}",
+                "transactions"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agent statement",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents/{{agentId}}/statement",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents",
+                "{{agentId}}",
+                "statement"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Ledger lines (top-ups, stock, commission, settlements) for the period."
+          }
+        },
+        {
+          "name": "Agent stock purchase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents/{{agentId}}/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents",
+                "{{agentId}}",
+                "stock"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planCode\": \"DAY-1\",\n  \"zoneId\": \"{{zoneId}}\",\n  \"quantity\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Debits the agent wallet and assigns a new voucher batch to them."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['batchId'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('batchId', id); console.log('batchId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Agent settlement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/agents/{{agentId}}/settlement",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "agents",
+                "{{agentId}}",
+                "settlement"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250.0,\n  \"msisdn\": \"0244555666\",\n  \"provider\": \"mtn-gh\",\n  \"reference\": \"SETTLE-20261102-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Pays the agent's available balance to their MoMo wallet. In sandbox mode the payout is auto-approved; in production the result is settled by the Hubtel settlement callback."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['transactionId'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('settlementId', id); console.log('settlementId =', id); }"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Operations - alerts & monitoring",
+      "description": "Alerts plus bandwidth, concurrency, SLA, health and outbox metrics.",
+      "item": [
+        {
+          "name": "List alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/alerts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "alerts"
+              ],
+              "query": [
+                {
+                  "key": "openOnly",
+                  "value": "true",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "severity",
+                  "value": "CRITICAL",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Severity is INFO, WARNING, CRITICAL. `openOnly` defaults to true."
+          }
+        },
+        {
+          "name": "Create alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/alerts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "alerts"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zoneId\": \"{{zoneId}}\",\n  \"deviceId\": \"\",\n  \"alertType\": \"BACKHAUL_DEGRADED\",\n  \"severity\": \"WARNING\",\n  \"message\": \"Downstream throughput below 20 Mbps for 15 min\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Manual alert (also raised automatically for device offline, backhaul loss, payment mismatch and outbox backlog)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('alertId', id); console.log('alertId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Alert summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/alerts/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "alerts",
+                "summary"
+              ]
+            },
+            "description": "Counts by severity and type for the last 24 hours/7 days."
+          }
+        },
+        {
+          "name": "Acknowledge alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/alerts/{{alertId}}/ack",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "alerts",
+                "{{alertId}}",
+                "ack"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staffId\": \"{{staffId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Resolve alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/alerts/{{alertId}}/resolve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "alerts",
+                "{{alertId}}",
+                "resolve"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Bandwidth series",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/monitoring/bandwidth",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "monitoring",
+                "bandwidth"
+              ],
+              "query": [
+                {
+                  "key": "zoneId",
+                  "value": "{{zoneId}}",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "hours",
+                  "value": "24",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Down/up Mbps over time from 60-second accounting samples."
+          }
+        },
+        {
+          "name": "Concurrency series",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/monitoring/concurrency",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "monitoring",
+                "concurrency"
+              ],
+              "query": [
+                {
+                  "key": "hours",
+                  "value": "24",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Concurrent sessions over time, for capacity planning against the sector budget."
+          }
+        },
+        {
+          "name": "SLA report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/monitoring/sla",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "monitoring",
+                "sla"
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Availability per zone/device derived from heartbeat gaps."
+          }
+        },
+        {
+          "name": "System health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/monitoring/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "monitoring",
+                "health"
+              ]
+            },
+            "description": "Device counts, open alerts, outbox backlog, database latency and Redis state."
+          }
+        },
+        {
+          "name": "Outbox status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/monitoring/outbox",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "monitoring",
+                "outbox"
+              ]
+            },
+            "description": "Pending, retrying and DEAD outbox events by type."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operations - reports",
+      "description": "Sales, revenue, subscriber, voucher, agent and tax reports.",
+      "item": [
+        {
+          "name": "Sales report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reports",
+                "sales"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "groupBy",
+                  "value": "day",
+                  "description": "day, week, month, zone, plan or method",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Grouped sales by day/week/month/zone/plan/payment method."
+          }
+        },
+        {
+          "name": "Revenue report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reports/revenue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reports",
+                "revenue"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Subscriber report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reports/subscribers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reports",
+                "subscribers"
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "New, active, churned and ARPU over the window."
+          }
+        },
+        {
+          "name": "Voucher sales report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reports/vouchers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reports",
+                "vouchers"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agent performance report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reports/agents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reports",
+                "agents"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tax summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reports/tax",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reports",
+                "tax"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "VAT 15%, NHIL 2.5% and GETFund 2.5% extracted from tax-inclusive prices, for filing."
+          }
+        },
+        {
+          "name": "Export report (CSV)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/reports/export",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "reports",
+                "export"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "transactions",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "from",
+                  "value": "2026-11-01",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-11-30",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "RFC 4180 CSV inside a JSON string (`result.csv`). `type` is transactions, sales, vouchers, subscribers or agents."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operations - support",
+      "description": "Tickets, work orders, staff accounts and the audit log.",
+      "item": [
+        {
+          "name": "List tickets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "tickets"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "OPEN",
+                  "description": "OPEN, PENDING, RESOLVED or CLOSED",
+                  "disabled": true
+                },
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "tickets"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"AP offline at Stall 12\",\n  \"category\": \"CONNECTIVITY\",\n  \"priority\": \"HIGH\",\n  \"description\": \"Customer reports no signal since 14:00.\",\n  \"zoneId\": \"{{zoneId}}\",\n  \"subscriberId\": \"{{subscriberId}}\",\n  \"authorType\": \"STAFF\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "`slaHours` is derived from priority unless supplied."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('ticketId', id); console.log('ticketId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get ticket",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/tickets/{{ticketId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "tickets",
+                "{{ticketId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/tickets/{{ticketId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "tickets",
+                "{{ticketId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\",\n  \"priority\": \"HIGH\",\n  \"assignedTo\": \"{{staffId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Add ticket message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/tickets/{{ticketId}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "tickets",
+                "{{ticketId}}",
+                "messages"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Scheduled a site visit for tomorrow 09:00.\",\n  \"authorType\": \"STAFF\",\n  \"authorId\": \"{{staffId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List work orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/work-orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "OPEN",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create work order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/work-orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "work-orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"zoneId\": \"{{zoneId}}\",\n  \"subscriberId\": \"{{subscriberId}}\",\n  \"orderType\": \"INSTALL\",\n  \"assignedTo\": \"{{staffId}}\",\n  \"scheduledAt\": \"2026-11-03T09:00:00Z\",\n  \"checklist\": \"[\\\"Mount AP\\\",\\\"Run cable\\\",\\\"Configure SSID\\\"]\",\n  \"cost\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "`checklist` and `materials` are JSON strings (e.g. \"[\\\"Mount AP\\\", \\\"Run cable\\\"]\")."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('workOrderId', id); console.log('workOrderId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update work order",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/work-orders/{{workOrderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "work-orders",
+                "{{workOrderId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DONE\",\n  \"assignedTo\": \"{{staffId}}\",\n  \"materials\": \"[\\\"20m Cat6\\\"]\",\n  \"photos\": \"[]\",\n  \"notes\": \"Installed and tested at 62 Mbps.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List staff",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/staff",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "staff"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create staff",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/staff",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "staff"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Yaw Owusu\",\n  \"msisdn\": \"0244777888\",\n  \"email\": \"yaw@example.com\",\n  \"pin\": \"2468\",\n  \"role\": \"FIELD\",\n  \"zoneIds\": \"[\\\"{{zoneId}}\\\"]\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Role is ADMIN, MANAGER, SUPPORT, FIELD or FINANCE. `zoneIds` is a JSON array string."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['id'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('staffId', id); console.log('staffId =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Staff login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/staff/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "staff",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"msisdn\": \"0244777888\",\n  \"pin\": \"2468\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Identifier is the staff MSISDN or email. Returns a signed token."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('successful response', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "const payload = pm.response.json();",
+                  "const data = payload.result || {};",
+                  "const id = data['token'] || data.id;",
+                  "if (id) { pm.collectionVariables.set('staffToken', id); console.log('staffToken =', id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Audit log",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/audit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "audit"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pageSize",
+                  "value": "50",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Append-only record of privileged actions (suspend, refund, void vouchers, config push, credential issue)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operations - outbox",
+      "description": "Manual drain and retry of the outbox queue.",
+      "item": [
+        {
+          "name": "Drain outbox",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/outbox/drain",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "outbox",
+                "drain"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Processes up to `limit` due events now instead of waiting for the ten-minute job. Useful after a tunnel outage."
+          }
+        },
+        {
+          "name": "Retry dead outbox event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "ClientId",
+                "value": "{{clientId}}",
+                "type": "text"
+              },
+              {
+                "key": "ClientSecret",
+                "value": "{{clientSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/admin/outbox/{{outboxId}}/retry",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "admin",
+                "outbox",
+                "{{outboxId}}",
+                "retry"
+              ]
+            },
+            "description": "Resets a DEAD event to PENDING with attempts=0."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Internal jobs",
+      "description": "Scheduled entry points. Authenticated with X-Magma-Internal-Secret rather than ClientId/ClientSecret.",
+      "item": [
+        {
+          "name": "Job: ten-minute",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Magma-Internal-Secret",
+                "value": "{{internalSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/internal/jobs/ten-minute",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "internal",
+                "jobs",
+                "ten-minute"
+              ]
+            },
+            "description": "Syncs RADIUS accounting, enforces time/volume limits, applies fair-use throttling, issues CoA disconnects, drains the outbox. Also accepts GET for schedulers that cannot POST."
+          }
+        },
+        {
+          "name": "Job: hourly",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Magma-Internal-Secret",
+                "value": "{{internalSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/internal/jobs/hourly",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "internal",
+                "jobs",
+                "hourly"
+              ]
+            },
+            "description": "Device health polling, alert evaluation, RADIUS projection repair."
+          }
+        },
+        {
+          "name": "Job: daily",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Magma-Internal-Secret",
+                "value": "{{internalSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/internal/jobs/daily",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "internal",
+                "jobs",
+                "daily"
+              ]
+            },
+            "description": "Monthly invoices, overdue suspensions, daily rollups."
+          }
+        },
+        {
+          "name": "Register Quartz schedules",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Magma-Internal-Secret",
+                "value": "{{internalSecret}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/internal/jobs/register-schedules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "internal",
+                "jobs",
+                "register-schedules"
+              ]
+            },
+            "description": "Registers magma-ten-minute (0 */10 * * * ?), magma-hourly (0 0 * * * ?) and magma-daily (0 30 2 * * ?) with the Quartz service. Idempotent."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "description": "Provider and device callbacks. Not called by hand in production.",
+      "item": [
+        {
+          "name": "Hubtel checkout callback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/webhooks/hubtel/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "webhooks",
+                "hubtel",
+                "checkout"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ClientReference\": \"MG-20261102-0001\",\n  \"TransactionId\": \"HBL-9931\",\n  \"Status\": \"Paid\",\n  \"Amount\": 8.0,\n  \"PaymentMethod\": \"mtn-momo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Configure as the PrimaryCallbackUrl for MoMo collections. The server extracts the client reference, verifies with Hubtel (verification first, never trust the body), tolerates a 0.50 GHS amount difference, and provisions the plan. Amount mismatches raise a CRITICAL PAYMENT_MISMATCH alert."
+          }
+        },
+        {
+          "name": "Paystack checkout callback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/webhooks/paystack/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "webhooks",
+                "paystack",
+                "checkout"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"charge.success\",\n  \"data\": {\n    \"reference\": \"MG-20261102-0002\",\n    \"status\": \"success\",\n    \"amount\": 800,\n    \"currency\": \"GHS\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Card payments. The handler reads `data.reference` (or the query `reference`) and re-verifies with Paystack before provisioning."
+          }
+        },
+        {
+          "name": "Hubtel settlement callback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/webhooks/hubtel/settlement",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "webhooks",
+                "hubtel",
+                "settlement"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ClientReference\": \"SETTLE-20261102-01\",\n  \"Status\": \"Paid\",\n  \"Amount\": 250.0,\n  \"TransactionId\": \"HBL-PAYOUT-4411\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Agent payout result. Settles the settlement transaction and mirrors the ledger entry."
+          }
+        },
+        {
+          "name": "Device hello",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/webhooks/device/hello",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "webhooks",
+                "device",
+                "hello"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serialNumber\": \"HG908ABCD\",\n  \"routerosVersion\": \"7.16.2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "First boot of a gateway/AP with the enrolment serial. Marks it ONLINE and returns the desired configuration (RADIUS host/ports/secret, hotspot profile, WireGuard peer). The device token header is optional at enrolment."
+          }
+        },
+        {
+          "name": "Device heartbeat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Magma-Device-Token",
+                "value": "{{deviceToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/magma/webhooks/device/{{deviceId}}/heartbeat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "magma",
+                "webhooks",
+                "device",
+                "{{deviceId}}",
+                "heartbeat"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cpuLoad\": 12,\n  \"freeMemoryMb\": 780,\n  \"uptimeSeconds\": 864000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Sends resource metrics; omitted fields keep their previous value. The device token is issued at enrolment and checked on every heartbeat."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5702",
+      "type": "string"
+    },
+    {
+      "key": "clientId",
+      "value": "your-client-id",
+      "type": "string"
+    },
+    {
+      "key": "clientSecret",
+      "value": "your-client-secret",
+      "type": "string"
+    },
+    {
+      "key": "internalSecret",
+      "value": "change-me-internal-secret",
+      "type": "string"
+    },
+    {
+      "key": "businessId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "zoneId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "zoneCode",
+      "value": "KANESHIE",
+      "type": "string"
+    },
+    {
+      "key": "planId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "subscriberId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "subscriptionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "transactionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "intentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "batchId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "agentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "agentToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "alertId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ticketId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workOrderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "deviceId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "deviceToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "staffId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "staffToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "outboxId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "voucherCode",
+      "value": "ABCD-EFGH-JKMN",
+      "type": "string"
+    },
+    {
+      "key": "mac",
+      "value": "DC:A6:32:11:22:33",
+      "type": "string"
+    }
+  ]
+}
