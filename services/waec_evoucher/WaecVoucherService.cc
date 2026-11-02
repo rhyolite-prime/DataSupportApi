@@ -356,7 +356,7 @@ namespace data_support::services {
 
             // --- 6. Return success ---
             response.result = savedMerchant.toJson();
-            response.message = "Merchant account created successfully.";
+            response.message = "Welcome! Your WAEC Merchant account is ready. Start buying in bulk and enjoy great pricing.";
             response.success = true;
 
             LOG_INFO << "[createMerchantAccount] Created merchant: " << savedMerchant.getValueOfId()

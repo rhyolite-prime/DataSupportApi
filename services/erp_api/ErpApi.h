@@ -22,6 +22,8 @@ namespace data_support::services {
         drogon::Task<dto::BaseApiResponse> getCoupons();
         drogon::Task<dto::BaseApiResponse> getCategories(const std::string &businessId, int pageNo, int pageSize);
         drogon::Task<dto::BaseApiResponse> getCurrencies();
+        drogon::Task<dto::BaseApiResponse> getDefaultCurrency(const std::string &businessId);
+        drogon::Task<dto::BaseApiResponse> getCountries();
         drogon::Task<dto::BaseApiResponse> getDeliveryChannels();
         drogon::Task<dto::BaseApiResponse> getPickupPoints();
 

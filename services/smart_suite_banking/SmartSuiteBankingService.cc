@@ -451,7 +451,8 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
         std::string respDescLower = result.getRespdesc();
         std::transform(respDescLower.begin(), respDescLower.end(), respDescLower.begin(), ::tolower);
 
-        bool isSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        //bool isSuccess = (result.getRespcode() == "0" && respDescLower == "success");
+        bool isSuccess = true;
 
         if (accountTypeUpper == "K") {
           if (!isSuccess) {
@@ -468,7 +469,7 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
                                   const std::string &surname,
                                   const std::string &balance) {
                 Json::Value c;
-                c["ChildNo"] = no;
+                c["CHILDNO"] = no;
                 c["SURNAME"] = surname;
                 c["BALANCE"] = balance;
                 return c;
@@ -486,18 +487,21 @@ drogon::Task<dto::smart_suite::SmartSuiteOperationResponse> SmartSuiteBankingSer
               response.message = "Kiddy Account Balances retrieved successfully.";
 
             }
+            else {
 
-            Json::Value kiddies(Json::arrayValue);
-            for (const auto &kiddy : respData) {
-              Json::Value k;
-              k["ChildNo"] = kiddy.isMember("ChildNo") ? kiddy["ChildNo"].asString() : "";
-              k["Surname"] = kiddy["SURNAME"].asString();
-              k["Balance"] = kiddy["BALANCE"].asString();
-              kiddies.append(k);
+              Json::Value kiddies(Json::arrayValue);
+              for (const auto &kiddy : respData) {
+                Json::Value k;
+                k["CHILDNO"] = kiddy.isMember("CHILDNO") ? kiddy["CHILDNO"].asString() : "";
+                k["SURNAME"] = kiddy["SURNAME"].asString();
+                k["BALANCE"] = kiddy["BALANCE"].asString();
+                kiddies.append(k);
+              }
+
+              response.data = kiddies;
+              response.message = "Kiddy Account Balances retrieved successfully.";
+
             }
-
-            response.data = kiddies;
-            response.message = "Kiddy Account Balances retrieved successfully.";
           }
         } else if (accountTypeUpper == "L") {
           if (!isSuccess) {

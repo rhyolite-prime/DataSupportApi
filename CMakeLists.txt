@@ -19,7 +19,6 @@ add_executable(${PROJECT_NAME} main.cc
         services/waec_evoucher/WaecVoucherService.h
         services/smart_suite_banking/SmartSuiteBankingService.h
         services/auxillary/AuxiliaryService.h
-        services/flashx/FlashxService.h
         services/waec_evoucher/WaecVoucherService.cc
         services/business_account/BusinessAccountService.h
         services/business_account/BusinessAccountService.cc
@@ -75,18 +74,19 @@ add_executable(${PROJECT_NAME} main.cc
         services/pay_stack_api/PaystackApi.cc
         dto/erp_api/UnifiedFilterDto.h
         dto/erp_api/BasePosDto.h
+        services/magma_net/MagmaNetService.h
+        services/magma_net/MagmaNetService.cc
 )
 
 # ##############################################################################
 # If you include the drogon source code locally in your project, use this method
-# to add drogon 
-# add_subdirectory(drogon) 
+# add_subdirectory(drogon)
 # target_link_libraries(${PROJECT_NAME} PRIVATE drogon)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon bcrypt OpenSSL::Crypto)
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon bcrypt OpenSSL::SSL OpenSSL::Crypto)
 
 # ##############################################################################
 

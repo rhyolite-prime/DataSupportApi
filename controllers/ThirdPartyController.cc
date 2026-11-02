@@ -848,3 +848,15 @@ Task<HttpResponsePtr> ThirdPartyController::requestMerchantStatement(HttpRequest
     co_return resp;
 
 }
+
+
+Task<HttpResponsePtr> ThirdPartyController::getCountries(HttpRequestPtr req) {
+
+    auto plugin = app().getPlugin<data_support::plugins::DataSupportServicePlugin>();
+    auto &erpApi = plugin->getErpApi();
+
+    auto result = co_await erpApi.getCountries();
+
+    auto resp = HttpResponse::newHttpJsonResponse(result.toJson());
+    co_return resp;
+}

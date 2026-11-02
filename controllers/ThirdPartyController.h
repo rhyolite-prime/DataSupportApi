@@ -54,15 +54,18 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "erp-pr/create-merchant", Post, Options);
 
 
-
   //WAEC eVoucher
   ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "waec/create-merchant", Post, Options);
+  ADD_METHOD_TO(ThirdPartyController::createMerchantAccount, std::string(PREFIX) + "waec/recover-voucher", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::individualVoucherSale, std::string(PREFIX) + "waec/voucher-sale", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::handleBulkVoucherSale, std::string(PREFIX) + "waec/bulk-voucher-sale", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::handleAffiliateVoucherSale, std::string(PREFIX) + "waec/affiliate-voucher-sale", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::getMerchantDashboardStats, std::string(PREFIX) + "waec/get-merchant-stats", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::getMerchantTransactions, std::string(PREFIX) + "waec/get-merchant-transactions", Post, Options);
   ADD_METHOD_TO(ThirdPartyController::requestMerchantStatement, std::string(PREFIX) + "waec/request-merchant-statement", Post, Options);
+    //shared
+  ADD_METHOD_TO(ThirdPartyController::getCountries, std::string(PREFIX) + "erp-shared/get-countries", Get, Options);
+
 
   METHOD_LIST_END
 
@@ -96,13 +99,12 @@ class ThirdPartyController : public HttpController<ThirdPartyController>
   Task<HttpResponsePtr> getPosWishlistItemCount(HttpRequestPtr req);
   Task<HttpResponsePtr> getPosWishlistItems(HttpRequestPtr req);
 
-
-
+  //shared
+  Task<HttpResponsePtr> getCountries(HttpRequestPtr req);
 
 
   //utils
   Task<HttpResponsePtr> notifyLowPrepaidBalance(HttpRequestPtr req);
-
 
     //waec vouchers
   Task<HttpResponsePtr> createMerchantAccount(HttpRequestPtr req);

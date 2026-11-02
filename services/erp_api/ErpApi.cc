@@ -203,12 +203,66 @@ ErpApi::getCategories(const std::string &businessId, int pageNo, int pageSize) {
   co_return response;
 }
 
-drogon::Task<dto::BaseApiResponse> ErpApi::getCurrencies() {
+
+ drogon::Task<dto::BaseApiResponse> ErpApi::getCurrencies() {
+
+    // rely on synced data
+    dto::BaseApiResponse res;
+    co_return res;
+  }
+
+
+  drogon::Task<dto::BaseApiResponse> ErpApi::getDefaultCurrency(const std::string &businessId) {
 
   // rely on synced data
   dto::BaseApiResponse res;
   co_return res;
+
 }
+
+ drogon::Task<dto::BaseApiResponse> ErpApi::getCountries() {
+  dto::BaseApiResponse response;
+  response.success = false;
+
+  try {
+    auto client = drogon::HttpClient::newHttpClient("https://erp-api.rhyoliteprime.com");
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setMethod(drogon::Get);
+    req->setPath("/api/services/app/Country/GetAll");
+    req->setParameter("pageNo", "1");
+    req->setParameter("pageSize", "200");
+
+    auto resp = co_await client->sendRequestCoro(req);
+
+    if (resp) {
+      auto respJson = resp->getJsonObject();
+      if (resp->getStatusCode() == drogon::k200OK) {
+        response.success = true;
+        response.message = "Countries retrieved successfully.";
+        
+        if (respJson && respJson->isMember("result")) {
+          if ((*respJson)["result"].isMember("items")) {
+            response.result = (*respJson)["result"]["items"];
+          } else {
+            response.result = (*respJson)["result"];
+          }
+        }
+      } else {
+        response.message = "Request failed with status code " + std::to_string(resp->getStatusCode());
+        if (respJson && respJson->isMember("error") && !(*respJson)["error"].isNull()) {
+          response.message = (*respJson)["error"]["message"].asString();
+        }
+      }
+    } else {
+      response.message = "Network error. Failed to reach the server.";
+    }
+  } catch (const std::exception &e) {
+    LOG_ERROR << "[getCountries] Exception: " << e.what();
+    response.message = "An error occurred while fetching countries.";
+  }
+
+  co_return response;
+ }
 
 // auth
 
