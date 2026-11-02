@@ -218,12 +218,26 @@ namespace data_support::services {
             }
 
             Json::Value plans = rowsToJson(rows);
+            // JSON numeric columns must not be read with asString(), which throws.
+            auto numberText = [](const Json::Value &plan, const char *key) -> std::string {
+                const auto &value = plan[key];
+                if (value.isNull()) {
+                    return "0";
+                }
+                if (value.isString()) {
+                    return value.asString();
+                }
+                if (value.isInt64()) {
+                    return std::to_string(value.asInt64());
+                }
+                return std::to_string(static_cast<long long>(value.asDouble()));
+            };
             for (auto &plan : plans) {
                 const std::string type = plan.get("plan_type", "").asString();
                 if (type == "TIME") {
-                    plan["allowance"] = plan.get("duration_minutes", "").asString() + " minutes";
+                    plan["allowance"] = numberText(plan, "duration_minutes") + " minutes";
                 } else if (type == "VOLUME") {
-                    plan["allowance"] = plan.get("data_cap_mb", "").asString() + " MB";
+                    plan["allowance"] = numberText(plan, "data_cap_mb") + " MB";
                 } else {
                     plan["allowance"] = "Unlimited (fair use)";
                 }

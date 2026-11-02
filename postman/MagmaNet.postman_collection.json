@@ -1126,7 +1126,7 @@
                 }
               ]
             },
-            "description": "Plan catalogue. Pass includeInactive=true to see deactivated plans."
+            "description": "Plan catalogue. Pass includeInactive=true to see deactivated plans.\n\nThe alias `/api/v1/magma/admin/get-internet-plans` maps to this same handler."
           }
         },
         {
