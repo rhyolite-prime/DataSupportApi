@@ -50,6 +50,35 @@ Provision a tenant and its default catalogue:
 SELECT * FROM magma_provision_tenant('<business uuid>', 'KANESHIE', 'Kaneshie Market', 'Okaikoi South');
 ```
 
+### Demo data (staging only)
+
+`seeds/magma_demo_data.sql` fills every MagmaNet table so the admin, portal and
+reporting screens have something to show: 3 zones, 6 devices, 12 subscribers with
+subscriptions and usage, 39 accounting sessions, 30 payments, 4 invoices, 70
+vouchers, 3 agents with wallets, 5 staff, tickets, work orders, alerts, audit rows,
+outbox events and zone costs.
+
+```bash
+psql "$DATABASE_URL" \
+     -v business_id="<business uuid>" \
+     -v secrets_key="$MAGMA_SECRETS_KEY" \
+     -v hmac_key="$MAGMA_HMAC_KEY" \
+     -v pepper="$MAGMA_VOUCHER_PEPPER" \
+     -f seeds/magma_demo_data.sql
+```
+
+Pass the **running** keys, otherwise the seeded voucher codes and device secrets
+cannot be decrypted by the API. The script needs `pgcrypto` (contrib), is
+idempotent, and never deletes anything. It prints the fixed test credentials:
+
+| What | Value |
+| --- | --- |
+| Agent login | `0244555666` / PIN `1234` |
+| Staff login | `0244000001` / PIN `2468` (ADMIN) |
+| Voucher | `TEST-<tag>-001` where `<tag>` is printed by the script (plan DAY-1) |
+| Hotspot login | `mg:<subscription uuid>` / `demo-radius-1` |
+| RADIUS client | gateways `10.200.1.10`, `10.200.1.20`, `10.200.1.30` |
+
 ## 2. Secrets and configuration
 
 `config.json → custom_config.magma_net` holds non-secret defaults. Production
