@@ -68,7 +68,25 @@ psql "$DATABASE_URL" \
 ```
 
 Pass the **running** keys, otherwise the seeded voucher codes and device secrets
-cannot be decrypted by the API. The script needs `pgcrypto` (contrib), is
+cannot be decrypted by the API.
+
+`-v` only defines a psql variable; the script reads it as `:'secrets_key'`. If you
+leave the flags out, the script falls back to these literal defaults — which are
+exactly the values to hand the API, so the two agree:
+
+```bash
+export MAGMA_SECRETS_KEY='magmanet-demo-secrets-key-32-chars!'
+export MAGMA_HMAC_KEY='magmanet-demo-hmac-key'
+export MAGMA_VOUCHER_PEPPER='magmanet-demo-voucher-pepper'
+psql "$DATABASE_URL" -f seeds/magma_demo_data.sql
+```
+
+`"$DATABASE_URL"` is any libpq connection string, e.g.
+`postgresql://postgres:secret@localhost:5432/datasupport`; if you don't have that
+variable, use the equivalent flags:
+`psql -h localhost -U postgres -d datasupport -f seeds/magma_demo_data.sql`.
+Find the tenant id with `SELECT id, business_name FROM business_accounts;` and pass it
+as `-v business_id=...` when the database has more than one tenant. The script needs `pgcrypto` (contrib), is
 idempotent, and never deletes anything. It prints the fixed test credentials:
 
 | What | Value |
