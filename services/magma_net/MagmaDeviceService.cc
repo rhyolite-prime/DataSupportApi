@@ -191,6 +191,12 @@ namespace data_support::services {
             const auto &settings = MagmaSettings::instance();
 
             // 1. RADIUS client entry (idempotent by address).
+            //
+            // src-address pins the tunnel IP so NAS-IP-Address in radacct matches
+            // magma_devices.tunnel_ip. CoA/disconnect is addressed by that value,
+            // so it must not drift to whatever interface the packet left by.
+            const std::string tunnelIp = rows[0]["tunnel_ip"].isNull()
+                                             ? "" : rows[0]["tunnel_ip"].as<std::string>();
             auto radiusList = co_await client->get("/radius");
             bool radiusExists = false;
             if (radiusList.ok && radiusList.json.isArray()) {
@@ -199,7 +205,10 @@ namespace data_support::services {
                         radiusExists = true;
                         Json::Value patch;
                         patch["secret"] = radiusSecret;
-                        patch["service"] = "hotspot,pppoe";
+                        patch["service"] = "hotspot,ppp";
+                        if (!tunnelIp.empty()) {
+                            patch["src-address"] = tunnelIp;
+                        }
                         auto applied = co_await client->patch(
                             "/radius/" + entry[".id"].asString(), patch);
                         steps.append(Json::Value("radius:" + std::string(applied.ok ? "ok" : "failed")));
@@ -210,10 +219,13 @@ namespace data_support::services {
                 Json::Value create;
                 create["address"] = settings.radiusHost;
                 create["secret"] = radiusSecret;
-                create["service"] = "hotspot,pppoe";
+                create["service"] = "hotspot,ppp";
                 create["authentication-port"] = settings.radiusAuthPort;
                 create["accounting-port"] = settings.radiusAcctPort;
                 create["timeout"] = "1s";
+                if (!tunnelIp.empty()) {
+                    create["src-address"] = tunnelIp;
+                }
                 auto applied = co_await client->put("/radius", create);
                 steps.append(Json::Value("radius:" + std::string(applied.ok ? "created" : "failed")));
             }
@@ -232,7 +244,7 @@ namespace data_support::services {
                     Json::Value patch;
                     patch["use-radius"] = "yes";
                     patch["radius-accounting"] = "yes";
-                    patch["interim-update"] = "1m";
+                    patch["radius-interim-update"] = "1m";
                     auto applied = co_await client->patch(
                         "/ip/hotspot/profile/" + profile[".id"].asString(), patch);
                     steps.append(Json::Value("hotspot-profile:" +

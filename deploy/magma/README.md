@@ -138,6 +138,51 @@ freeradius -X    # confirm rlm_sql_postgresql loads and reads radius.nas
 Gateways are inserted into `radius.nas` by `MagmaDeviceService` when a device is
 registered with `role = GATEWAY`; no manual client entry is needed.
 
+### FreeRADIUS on a Raspberry Pi instead of the VPS
+
+For a single-site test the RADIUS server can sit next to the access point. Keep
+the **API and PostgreSQL in the cloud** (payment webhooks and the portal need a
+public HTTPS origin) and run only the daemon on the Pi — do not move the database
+to the SD card.
+
+| Host | WireGuard | LAN |
+| --- | --- | --- |
+| VPS (API + PostgreSQL + wg0) | `10.200.1.1` | public |
+| Raspberry Pi (FreeRADIUS) | `10.200.1.2` | `192.168.88.2` |
+| mANTBox ax 15s (hotspot/NAS) | `10.200.1.10` | `192.168.88.1` |
+
+All peers are `/32` in the same `10.200.1.0/24` subnet (`wg0-server.conf` ships
+`10.200.0.1/24` — change it to `10.200.1.1/24`), with `PersistentKeepalive = 25`
+on both site peers.
+
+**On the Pi**, in `mods-available/sql` set `server = "10.200.1.1"` (the rest of
+the shipped file is unchanged), give FreeRADIUS its own role with
+`SELECT/INSERT/UPDATE/DELETE` on `radius` and `USAGE` on `radius` sequences only —
+it has no business reading `magma_*` — and allow it in `pg_hba.conf` as
+`10.200.1.2/32 scram-sha-256`. Then:
+
+```bash
+radtest mg:<subscription uuid> <radius secret> 127.0.0.1 0 <shared secret>
+```
+
+**On the gateway**, point RADIUS at the Pi over the LAN (low latency) and pin the
+source address so accounting carries the tunnel IP the API uses for CoA:
+
+```
+/radius add address=192.168.88.2 src-address=10.200.1.10 secret="<device secret>" \
+    service=hotspot,login authentication-port=1812 accounting-port=1813
+/radius incoming set accept=yes port=3799
+```
+
+RouterOS only processes CoA/disconnect from an address configured in `/radius`,
+and the API sends them from the VPS, so add one more entry — same secret, source
+address `10.200.1.1`, `service=login` (inert unless `/user aaa` uses RADIUS):
+
+```
+/radius add address=10.200.1.1 secret="<same device secret>" service=login
+```
+
+
 ## 4. Gateways and APs
 
 1. Import `wireguard/gateway-wg.rsc` on the gateway (unique `10.200.1.x`).
