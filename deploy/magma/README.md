@@ -206,6 +206,60 @@ curl -X POST "$API/api/v1/magma/admin/devices/<device id>/config" \
 802.3af/at injector (48 V) destroys the unit. mANT 15s is a passive antenna and
 needs a separate radio (BaseBox/NetBox/NetMetal).
 
+### mANTBox ax 15s as the gateway (no separate router)
+
+The mANTBox ax 15s (L22UGS-5HaxD2HaxD-15S) is a complete RouterOS device — dual-core
+IPQ-5010 at 800 MHz, 256 MB RAM, licence **level 4**, one GbE port with 18–28 V
+passive PoE-in, one 2.5G SFP cage — so it can be the zone gateway itself. Three
+numbers decide the design:
+
+| Limit | Value | Consequence |
+| --- | --- | --- |
+| Licence | **L4 = 200 concurrent hotspot users** | 400 registered users at 25 % concurrency is 100 — fits, but the ceiling is real. An L5 key (software ID from `/system license print`) raises it to 500. |
+| CPU with per-user queues | ~100–250 Mbps of mixed traffic | Keep the fibre plan ≤100 Mbps per gateway, or shape with fewer queues |
+| Radio | ~60–80 associated clients per band | 400 users need 3–5 sectors, not one |
+
+There is **no PoE-out**, so each AP is powered by its own 24 V injector (included) or
+a 24 V passive switch. Never 802.3af/at 48 V.
+
+**Scale-out layout for 400 users — one zone per sector AP:**
+
+```
+            Telecel ONT ── SFP (2.5G)
+   mANTBox #0  WAN router + management only (hotspot disabled)
+        │ ether1 (VLAN trunk)
+    switch ──── mANTBox #1  hotspot + NAT, zone KANESHIE-N   wg 10.200.1.11
+        ├────── mANTBox #2  hotspot + NAT, zone KANESHIE-S   wg 10.200.1.12
+        └────── mANTBox #3  hotspot + NAT, zone KANESHIE-E   wg 10.200.1.13
+                              │  RADIUS
+                        Raspberry Pi (FreeRADIUS)
+```
+
+Each sector AP is registered as its **own device** with `role = GATEWAY`, its own
+`tunnelIp`, its own zone and therefore its own `radius.nas` secret. MagmaNet keys
+CoA on `host(radacct.nasipaddress) = host(magma_devices.tunnel_ip)`, so multiple
+NASes work without code changes; `loginDevice` resolves the gateway per zone.
+
+Customers who move between sectors re-authenticate against the new hotspot
+(different NAT domain). MAC-cookie (`login-by=http-chap,mac-cookie`) makes that
+invisible to them.
+
+**Single Ethernet port, WAN and LAN on one cable.** With the ONT on copper you need
+VLAN separation on `ether1`:
+
+```rsc
+/interface bridge add name=br-wan
+/interface bridge add name=br-lan vlan-filtering=yes
+/interface vlan add name=vlan-wan interface=br-lan vlan-id=100
+/ip dhcp-client add interface=vlan-wan disabled=no
+/interface bridge port add bridge=br-lan interface=ether1 pvid=10
+/interface bridge vlan add bridge=br-lan vlan-ids=100 tagged=ether1
+```
+
+Put the ONT on an access port of VLAN 100 in the switch; everything else stays on
+VLAN 10. If the ONT offers fibre, plug it straight into the SFP cage and keep
+`ether1` as a plain LAN trunk.
+
 ## 5. Scheduled jobs
 
 Register the Quartz callbacks once after deployment:
