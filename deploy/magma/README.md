@@ -1,5 +1,8 @@
 # MagmaNet deployment runbook
 
+> Planning context — phases, test gates, KPIs, maintenance cadence and the
+> go-live checklist — lives in [`MagmaNet_Roadmap.md`](../../MagmaNet_Roadmap.md).
+
 MagmaNet is the community-WiFi control plane implemented inside DataSupportApi:
 captive-portal checkout (MTN/Telecel MoMo, card), vouchers and agents, RADIUS
 projection, MikroTik provisioning, monitoring, invoicing and reporting.
