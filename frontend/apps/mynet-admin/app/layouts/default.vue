@@ -49,7 +49,7 @@ onMounted(() => {
       dashboard-to="/"
       :navigation-groups="adminNavigationGroups"
       :user="session"
-      footer-subtitle="MyNet Admin Portal · Control Plane UI"
+      footer-subtitle="MyNet Admin Portal"
       @close="mobileOpen = false"
       @logout="logout"
     />
@@ -114,7 +114,7 @@ onMounted(() => {
       <ToastHost />
 
       <footer class="no-print px-4 pt-2 pb-6 text-center text-[11px] text-ink-faint sm:px-6 lg:px-9">
-        MyNet Broadband Control Plane · Powered by RhyolitePrime
+        MyNet Control Plane · Powered by Magmanet
       </footer>
     </div>
   </div>

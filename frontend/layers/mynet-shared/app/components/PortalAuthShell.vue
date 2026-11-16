@@ -23,9 +23,7 @@ withDefaults(defineProps<{
 
       <div class="relative flex items-center justify-between">
         <BrandMark dark />
-        <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white/85">
-          Ghana Broadband Cloud
-        </span>
+         
       </div>
 
       <div class="relative space-y-6">

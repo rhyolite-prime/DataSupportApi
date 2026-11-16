@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
   footerSubtitle?: string
 }>(), {
   dashboardTo: '/',
-  footerSubtitle: 'MyNet Broadband · Powered by RhyolitePrime',
+  footerSubtitle: 'MyNet · Powered by Magmanet',
 })
 
 const emit = defineEmits<{ close: []; logout: [] }>()

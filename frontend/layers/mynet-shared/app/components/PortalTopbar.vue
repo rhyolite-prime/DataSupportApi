@@ -142,10 +142,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 
       <!-- Right Action Controls -->
       <div class="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5">
-        <span class="hidden items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 xl:inline-flex">
-          <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Mock API Ready
-        </span>
+         
 
         <!-- Alerts bell -->
         <NuxtLink

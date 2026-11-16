@@ -51,11 +51,11 @@ async function submit() {
 <template>
   <PortalAuthShell
     :headline="'Every zone connected.\nEvery subscriber in control.'"
-    description="Unified ISP & community WiFi operations for MyNet Broadband — manage MikroTik RouterOS sectors, FreeRADIUS sessions, voucher distribution, and MoMo revenue in one workspace."
+    description="Unified ISP & community WiFi operations for MyNet"
     :highlights="[
       { icon: 'server-stack', title: 'WireGuard & RouterOS v7 Control', detail: 'Remote NAS enrolment, walled-garden sync, and UDP/3799 CoA disconnects.' },
       { icon: 'ticket', title: 'HMAC Voucher & Agent Distribution', detail: 'Batch minting, wholesale float wallets, and instant MoMo settlements.' },
-      { icon: 'chart-bar-square', title: 'Ghana Statutory Tax & Zone P&L', detail: 'Automated VAT, NHIL & GETFund splits alongside per-site backhaul P&L.' },
+      { icon: 'chart-bar-square', title: 'Ghana Statutory Tax Compliance', detail: 'Automated VAT, NHIL & GETFund splits alongside per-site backhaul P&L.' },
     ]"
   >
     <div class="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
