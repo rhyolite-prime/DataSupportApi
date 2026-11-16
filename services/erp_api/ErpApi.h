@@ -27,6 +27,8 @@ namespace data_support::services {
         drogon::Task<dto::BaseApiResponse> getDeliveryChannels();
         drogon::Task<dto::BaseApiResponse> getPickupPoints();
 
+        //pos merchant auth
+
         //auth
         drogon::Task<dto::BaseApiResponse> verifyCustomer();
 
