@@ -1,0 +1,22 @@
+{
+  "name": "@mynet/shared-layer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Nuxt 4 layer for MyNet Admin & Agent portals (Tailwind v4 design tokens, UI primitives, charts, mock engine, API composables)",
+  "main": "./nuxt.config.ts",
+  "dependencies": {
+    "@lucide/vue": "^1.57.0",
+    "echarts": "^6.0.0"
+  },
+  "devDependencies": {
+    "@nuxt/kit": "^4.0.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^22.14.0",
+    "nuxt": "^4.0.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.8.3",
+    "vue": "^3.5.13",
+    "vue-tsc": "^3.0.0"
+  }
+}

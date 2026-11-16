@@ -1,0 +1,23 @@
+{
+  "name": "mynet-portals",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MyNet (MagmaNet) Admin & Agent Portals built on Nuxt 4 + Tailwind v4 with shared Nuxt Layers",
+  "type": "module",
+  "workspaces": [
+    "layers/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:admin": "npm run dev --workspace=apps/mynet-admin",
+    "dev:agent": "npm run dev --workspace=apps/mynet-agent",
+    "build:admin": "npm run build --workspace=apps/mynet-admin",
+    "build:agent": "npm run build --workspace=apps/mynet-agent",
+    "build": "npm run build:admin && npm run build:agent",
+    "preview:admin": "npm run preview --workspace=apps/mynet-admin",
+    "preview:agent": "npm run preview --workspace=apps/mynet-agent",
+    "typecheck:admin": "npm run typecheck --workspace=apps/mynet-admin",
+    "typecheck:agent": "npm run typecheck --workspace=apps/mynet-agent",
+    "typecheck": "npm run typecheck:admin && npm run typecheck:agent"
+  }
+}
