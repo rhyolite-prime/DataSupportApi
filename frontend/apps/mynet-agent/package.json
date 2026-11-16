@@ -1,0 +1,30 @@
+{
+  "name": "mynet-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MyNet Reseller & Field Agent Portal (deployable standalone Nuxt 4 project)",
+  "scripts": {
+    "dev": "nuxt dev --host 0.0.0.0 --port 3101",
+    "build": "nuxt build",
+    "preview": "nuxt preview --host 0.0.0.0 --port 3101",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.57.0",
+    "@mynet/shared-layer": "*",
+    "echarts": "^6.0.0",
+    "nuxt": "^4.0.0",
+    "qrcode": "^1.5.4",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@nuxt/kit": "^4.0.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^22.14.0",
+    "@types/qrcode": "^1.5.5",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.8.3",
+    "vue-tsc": "^3.0.0"
+  }
+}

@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/* Scan both the shared Nuxt layer and all standalone portal applications in the workspace */
+@source "../../../";
+@source "../../../../apps";
+
+/* ── Sora (self-hosted, variable weight 100–800) ─────────────────────── */
+@font-face {
+  font-family: "Sora";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("../fonts/sora-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Sora";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("../fonts/sora-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   MyNet Design System Tokens (adapted from BusinessDesk ERP architecture
+   with distinct telecom / ISP sapphire-indigo & electric-cyan/coral palette).
+   ─────────────────────────────────────────────────────────────────────── */
+@theme inline {
+  --color-primary: var(--brand-primary);
+  --color-primary-dark: var(--brand-primary-dark);
+  --color-primary-soft: var(--brand-primary-light);
+  --color-on-primary: var(--brand-on-primary);
+  --color-sidebar: var(--brand-sidebar);
+  --color-accent: var(--brand-accent);
+
+  --color-brand-50: color-mix(in srgb, var(--brand-primary) 5%, white);
+  --color-brand-100: var(--brand-primary-light);
+  --color-brand-200: color-mix(in srgb, var(--brand-primary) 18%, white);
+  --color-brand-300: color-mix(in srgb, var(--brand-primary) 32%, white);
+  --color-brand-400: color-mix(in srgb, var(--brand-primary) 52%, white);
+  --color-brand-500: color-mix(in srgb, var(--brand-primary) 72%, white);
+  --color-brand-600: var(--brand-primary);
+  --color-brand-700: var(--brand-primary);
+  --color-brand-800: var(--brand-primary-dark);
+  --color-brand-900: color-mix(in srgb, var(--brand-primary-dark) 80%, black);
+  --color-brand-950: color-mix(in srgb, var(--brand-primary-dark) 62%, black);
+
+  --color-ink: var(--surface-ink);
+  --color-ink-soft: var(--surface-ink-soft);
+  --color-ink-faint: var(--surface-ink-faint);
+  --color-line: var(--surface-line);
+  --color-canvas: var(--surface-canvas);
+  --color-surface: var(--surface-card);
+
+  --font-sans: "Sora", "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --brand-primary: #1E40AF;
+  --brand-primary-dark: #1E3A8A;
+  --brand-primary-light: #EFF6FF;
+  --brand-on-primary: #FFFFFF;
+  --brand-sidebar: #0B132B;
+  --brand-accent: #06B6D4;
+
+  --surface-ink: #0F172A;
+  --surface-ink-soft: #475569;
+  --surface-ink-faint: #64748B;
+  --surface-line: #E2E8F0;
+  --surface-canvas: #F1F5F9;
+  --surface-card: #FFFFFF;
+}
+
+html.dark {
+  --surface-ink: #F8FAFC;
+  --surface-ink-soft: #CBD5E1;
+  --surface-ink-faint: #94A3B8;
+  --surface-line: #1E293B;
+  --surface-canvas: #090E1A;
+  --surface-card: #111827;
+  --brand-primary-light: color-mix(in srgb, var(--brand-primary) 22%, #111827);
+}
+
+html, body, #__nuxt {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numeric tabular alignment for GHS balances, Mbps rates, MACs & counters */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Thin scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+html.dark * {
+  scrollbar-color: #334155 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 8px;
+}
+html.dark *::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* Fade / slide transitions for modals & drawers */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.pop-enter-active, .pop-leave-active {
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pop-enter-from, .pop-leave-to {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+/* Sidebar item active glow */
+.nav-active {
+  background: color-mix(in srgb, var(--brand-accent) 18%, rgba(255, 255, 255, 0.06));
+  color: #FFFFFF;
+  box-shadow: inset 3px 0 0 var(--brand-accent);
+}
+
+/* Print stylesheet for voucher slips & agent statements */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+}
