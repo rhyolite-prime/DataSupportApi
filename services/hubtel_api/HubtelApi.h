@@ -5,7 +5,6 @@
 #ifndef DATASUPPORTAPI_HUBTELAPI_H
 #define DATASUPPORTAPI_HUBTELAPI_H
 #include <drogon/drogon.h>
-#include "dto/BaseApiResponse.h"
 #include "dto/DirectReceiveMoneyDto.h"
 
 namespace data_support::services {

@@ -1,3 +1,4 @@
+
 /**
  *
  *  WaecVouchers.h
@@ -39,6 +40,8 @@ namespace drogon_model
 namespace DataSupportDb
 {
 
+
+
 class WaecVouchers
 {
   public:
@@ -55,14 +58,19 @@ class WaecVouchers
         static const std::string _is_sold;
         static const std::string _created_at;
         static const std::string _updated_at;
+
     };
 
     static const int primaryKeyNumber;
     static const std::string tableName;
     static const bool hasPrimaryKey;
+
     static const std::string primaryKeyName;
+
     using PrimaryKeyType = std::string;
     const PrimaryKeyType &getPrimaryKey() const;
+
+
 
     /**
      * @brief constructor
@@ -209,6 +217,7 @@ class WaecVouchers
     void setUpdatedAtToNull() noexcept;
 
 
+
     static size_t getColumnNumber() noexcept {  return 11;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
@@ -216,6 +225,7 @@ class WaecVouchers
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+
   private:
     friend drogon::orm::Mapper<WaecVouchers>;
     friend drogon::orm::BaseBuilder<WaecVouchers, true, true>;
@@ -242,6 +252,7 @@ class WaecVouchers
     std::shared_ptr<bool> isSold_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
+
     struct MetaData
     {
         const std::string colName_;
@@ -257,13 +268,19 @@ class WaecVouchers
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
+
         static const std::string sql="select * from " + tableName + " where id = $1";
+
+
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
+
         static const std::string sql="delete from " + tableName + " where id = $1";
+
+
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -273,35 +290,42 @@ class WaecVouchers
         needSelection = false;
         sql += "id,";
         ++parametersCount;
+
         if(!dirtyFlag_[0])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[1])
         {
             sql += "business_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[2])
         {
             sql += "batch_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[3])
         {
             sql += "serial_number,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[4])
         {
             sql += "pin,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[5])
         {
             sql += "retail_price,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[6])
         {
             sql += "wholesale_price,";
@@ -309,27 +333,32 @@ class WaecVouchers
         }
         sql += "voucher_type,";
         ++parametersCount;
+
         if(!dirtyFlag_[7])
         {
             needSelection=true;
         }
         sql += "is_sold,";
         ++parametersCount;
+
         if(!dirtyFlag_[8])
         {
             needSelection=true;
         }
         sql += "created_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[9])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[10])
         {
             sql += "updated_at,";
             ++parametersCount;
         }
+
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -338,84 +367,124 @@ class WaecVouchers
         else
             sql += ") values (";
 
+
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
+
         if(dirtyFlag_[0])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[1])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[2])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[3])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[4])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[5])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[6])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[7])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[8])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[9])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[10])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(parametersCount > 0)
         {
             sql.resize(sql.length() - 1);
         }
+
         if(needSelection)
         {
             sql.append(") returning *");
@@ -424,9 +493,11 @@ class WaecVouchers
         {
             sql.append(1, ')');
         }
+
         LOG_TRACE << sql;
         return sql;
     }
 };
 } // namespace DataSupportDb
+
 } // namespace drogon_model

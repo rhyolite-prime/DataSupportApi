@@ -1,3 +1,4 @@
+
 /**
  *
  *  MerchantCommissionWithdrawals.cc
@@ -6,29 +7,52 @@
  */
 
 #include "MerchantCommissionWithdrawals.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string MerchantCommissionWithdrawals::Cols::_id = "\"id\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_merchant_id = "\"merchant_id\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_business_id = "\"business_id\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_journal_id = "\"journal_id\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_amount = "\"amount\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_destination_account = "\"destination_account\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_account_type = "\"account_type\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_provider = "\"provider\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_status = "\"status\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_failure_reason = "\"failure_reason\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_external_reference = "\"external_reference\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_metadata = "\"metadata\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_created_at = "\"created_at\"";
+
 const std::string MerchantCommissionWithdrawals::Cols::_updated_at = "\"updated_at\"";
+
+
 const std::string MerchantCommissionWithdrawals::primaryKeyName = "id";
+
+
 const bool MerchantCommissionWithdrawals::hasPrimaryKey = true;
+
 const std::string MerchantCommissionWithdrawals::tableName = "\"merchant_commission_withdrawals\"";
 
 const std::vector<typename MerchantCommissionWithdrawals::MetaData> MerchantCommissionWithdrawals::metaData_={
@@ -46,6 +70,7 @@ const std::vector<typename MerchantCommissionWithdrawals::MetaData> MerchantComm
 {"metadata","std::string","jsonb",0,0,0,0},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &MerchantCommissionWithdrawals::getColumnName(size_t index) noexcept(false)
 {
@@ -56,59 +81,97 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Row &r, const
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["merchant_id"].isNull())
         {
+
             merchantId_=std::make_shared<std::string>(r["merchant_id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["journal_id"].isNull())
         {
+
             journalId_=std::make_shared<std::string>(r["journal_id"].as<std::string>());
+
         }
+
         if(!r["amount"].isNull())
         {
+
             amount_=std::make_shared<std::string>(r["amount"].as<std::string>());
+
         }
+
         if(!r["destination_account"].isNull())
         {
+
             destinationAccount_=std::make_shared<std::string>(r["destination_account"].as<std::string>());
+
         }
+
         if(!r["account_type"].isNull())
         {
+
             accountType_=std::make_shared<std::string>(r["account_type"].as<std::string>());
+
         }
+
         if(!r["provider"].isNull())
         {
+
             provider_=std::make_shared<std::string>(r["provider"].as<std::string>());
+
         }
+
         if(!r["status"].isNull())
         {
+
             status_=std::make_shared<int32_t>(r["status"].as<int32_t>());
+
         }
+
         if(!r["failure_reason"].isNull())
         {
+
             failureReason_=std::make_shared<std::string>(r["failure_reason"].as<std::string>());
+
         }
+
         if(!r["external_reference"].isNull())
         {
+
             externalReference_=std::make_shared<std::string>(r["external_reference"].as<std::string>());
+
         }
+
         if(!r["metadata"].isNull())
         {
+
             metadata_=std::make_shared<std::string>(r["metadata"].as<std::string>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -126,11 +189,13 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Row &r, const
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["updated_at"].isNull())
         {
             auto timeStr = r["updated_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -148,6 +213,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Row &r, const
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -158,72 +224,110 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Row &r, const
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             merchantId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             journalId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             amount_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             destinationAccount_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
+
             accountType_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             provider_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
+
             status_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 9;
         if(!r[index].isNull())
         {
+
             failureReason_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 10;
         if(!r[index].isNull())
         {
+
             externalReference_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 11;
         if(!r[index].isNull())
         {
+
             metadata_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 12;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -241,12 +345,14 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Row &r, const
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 13;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -264,6 +370,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Row &r, const
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -275,6 +382,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -283,6 +391,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -291,6 +400,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -299,6 +409,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -307,6 +418,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             journalId_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -315,6 +427,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             amount_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -323,6 +436,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             destinationAccount_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -331,6 +445,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             accountType_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -339,6 +454,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             provider_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -347,6 +463,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[8]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -355,6 +472,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             failureReason_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -363,6 +481,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             externalReference_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -371,6 +490,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             metadata_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -379,6 +499,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             auto timeStr = pJson[pMasqueradingVector[12]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -397,6 +518,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             }
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -405,6 +527,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             auto timeStr = pJson[pMasqueradingVector[13]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -423,10 +546,12 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             }
         }
     }
+
 }
 
 MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -435,6 +560,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_id"))
     {
         dirtyFlag_[1]=true;
@@ -443,6 +569,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[2]=true;
@@ -451,6 +578,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("journal_id"))
     {
         dirtyFlag_[3]=true;
@@ -459,6 +587,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             journalId_=std::make_shared<std::string>(pJson["journal_id"].asString());
         }
     }
+
     if(pJson.isMember("amount"))
     {
         dirtyFlag_[4]=true;
@@ -467,6 +596,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             amount_=std::make_shared<std::string>(pJson["amount"].asString());
         }
     }
+
     if(pJson.isMember("destination_account"))
     {
         dirtyFlag_[5]=true;
@@ -475,6 +605,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             destinationAccount_=std::make_shared<std::string>(pJson["destination_account"].asString());
         }
     }
+
     if(pJson.isMember("account_type"))
     {
         dirtyFlag_[6]=true;
@@ -483,6 +614,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             accountType_=std::make_shared<std::string>(pJson["account_type"].asString());
         }
     }
+
     if(pJson.isMember("provider"))
     {
         dirtyFlag_[7]=true;
@@ -491,6 +623,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             provider_=std::make_shared<std::string>(pJson["provider"].asString());
         }
     }
+
     if(pJson.isMember("status"))
     {
         dirtyFlag_[8]=true;
@@ -499,6 +632,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
+
     if(pJson.isMember("failure_reason"))
     {
         dirtyFlag_[9]=true;
@@ -507,6 +641,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             failureReason_=std::make_shared<std::string>(pJson["failure_reason"].asString());
         }
     }
+
     if(pJson.isMember("external_reference"))
     {
         dirtyFlag_[10]=true;
@@ -515,6 +650,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             externalReference_=std::make_shared<std::string>(pJson["external_reference"].asString());
         }
     }
+
     if(pJson.isMember("metadata"))
     {
         dirtyFlag_[11]=true;
@@ -523,6 +659,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             metadata_=std::make_shared<std::string>(pJson["metadata"].asString());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[12]=true;
@@ -531,6 +668,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -549,6 +687,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[13]=true;
@@ -557,6 +696,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -575,6 +715,7 @@ MerchantCommissionWithdrawals::MerchantCommissionWithdrawals(const Json::Value &
             }
         }
     }
+
 }
 
 void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &pJson,
@@ -585,6 +726,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         if(!pJson[pMasqueradingVector[0]].isNull())
@@ -592,6 +734,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -600,6 +743,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -608,6 +752,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -616,6 +761,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             journalId_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -624,6 +770,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             amount_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -632,6 +779,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             destinationAccount_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -640,6 +788,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             accountType_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -648,6 +797,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             provider_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -656,6 +806,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[8]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -664,6 +815,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             failureReason_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -672,6 +824,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             externalReference_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -680,6 +833,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             metadata_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -688,6 +842,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             auto timeStr = pJson[pMasqueradingVector[12]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -706,6 +861,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             }
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -714,6 +870,7 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             auto timeStr = pJson[pMasqueradingVector[13]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -732,10 +889,12 @@ void MerchantCommissionWithdrawals::updateByMasqueradedJson(const Json::Value &p
             }
         }
     }
+
 }
 
 void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         if(!pJson["id"].isNull())
@@ -743,6 +902,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_id"))
     {
         dirtyFlag_[1] = true;
@@ -751,6 +911,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[2] = true;
@@ -759,6 +920,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("journal_id"))
     {
         dirtyFlag_[3] = true;
@@ -767,6 +929,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             journalId_=std::make_shared<std::string>(pJson["journal_id"].asString());
         }
     }
+
     if(pJson.isMember("amount"))
     {
         dirtyFlag_[4] = true;
@@ -775,6 +938,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             amount_=std::make_shared<std::string>(pJson["amount"].asString());
         }
     }
+
     if(pJson.isMember("destination_account"))
     {
         dirtyFlag_[5] = true;
@@ -783,6 +947,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             destinationAccount_=std::make_shared<std::string>(pJson["destination_account"].asString());
         }
     }
+
     if(pJson.isMember("account_type"))
     {
         dirtyFlag_[6] = true;
@@ -791,6 +956,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             accountType_=std::make_shared<std::string>(pJson["account_type"].asString());
         }
     }
+
     if(pJson.isMember("provider"))
     {
         dirtyFlag_[7] = true;
@@ -799,6 +965,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             provider_=std::make_shared<std::string>(pJson["provider"].asString());
         }
     }
+
     if(pJson.isMember("status"))
     {
         dirtyFlag_[8] = true;
@@ -807,6 +974,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
+
     if(pJson.isMember("failure_reason"))
     {
         dirtyFlag_[9] = true;
@@ -815,6 +983,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             failureReason_=std::make_shared<std::string>(pJson["failure_reason"].asString());
         }
     }
+
     if(pJson.isMember("external_reference"))
     {
         dirtyFlag_[10] = true;
@@ -823,6 +992,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             externalReference_=std::make_shared<std::string>(pJson["external_reference"].asString());
         }
     }
+
     if(pJson.isMember("metadata"))
     {
         dirtyFlag_[11] = true;
@@ -831,6 +1001,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             metadata_=std::make_shared<std::string>(pJson["metadata"].asString());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[12] = true;
@@ -839,6 +1010,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -857,6 +1029,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[13] = true;
@@ -865,6 +1038,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -883,6 +1057,7 @@ void MerchantCommissionWithdrawals::updateByJson(const Json::Value &pJson) noexc
             }
         }
     }
+
 }
 
 const std::string &MerchantCommissionWithdrawals::getValueOfId() const noexcept
@@ -1227,6 +1402,7 @@ void MerchantCommissionWithdrawals::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &MerchantCommissionWithdrawals::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -1244,12 +1420,14 @@ const std::vector<std::string> &MerchantCommissionWithdrawals::insertColumns() n
         "metadata",
         "created_at",
         "updated_at"
+
     };
     return inCols;
 }
 
 void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1261,6 +1439,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getMerchantId())
@@ -1272,6 +1451,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getBusinessId())
@@ -1283,6 +1463,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getJournalId())
@@ -1294,6 +1475,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getAmount())
@@ -1305,6 +1487,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getDestinationAccount())
@@ -1316,6 +1499,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getAccountType())
@@ -1327,6 +1511,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getProvider())
@@ -1338,6 +1523,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getStatus())
@@ -1349,6 +1535,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getFailureReason())
@@ -1360,6 +1547,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getExternalReference())
@@ -1371,6 +1559,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getMetadata())
@@ -1382,6 +1571,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getCreatedAt())
@@ -1393,6 +1583,7 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getUpdatedAt())
@@ -1404,72 +1595,89 @@ void MerchantCommissionWithdrawals::outputArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> MerchantCommissionWithdrawals::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     if(dirtyFlag_[9])
     {
         ret.push_back(getColumnName(9));
     }
+
     if(dirtyFlag_[10])
     {
         ret.push_back(getColumnName(10));
     }
+
     if(dirtyFlag_[11])
     {
         ret.push_back(getColumnName(11));
     }
+
     if(dirtyFlag_[12])
     {
         ret.push_back(getColumnName(12));
     }
+
     if(dirtyFlag_[13])
     {
         ret.push_back(getColumnName(13));
     }
+
     return ret;
 }
 
 void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1481,6 +1689,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getMerchantId())
@@ -1492,6 +1701,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getBusinessId())
@@ -1503,6 +1713,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getJournalId())
@@ -1514,6 +1725,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getAmount())
@@ -1525,6 +1737,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getDestinationAccount())
@@ -1536,6 +1749,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getAccountType())
@@ -1547,6 +1761,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getProvider())
@@ -1558,6 +1773,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getStatus())
@@ -1569,6 +1785,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getFailureReason())
@@ -1580,6 +1797,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getExternalReference())
@@ -1591,6 +1809,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getMetadata())
@@ -1602,6 +1821,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getCreatedAt())
@@ -1613,6 +1833,7 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getUpdatedAt())
@@ -1624,122 +1845,166 @@ void MerchantCommissionWithdrawals::updateArgs(drogon::orm::internal::SqlBinder 
             binder << nullptr;
         }
     }
+
 }
 Json::Value MerchantCommissionWithdrawals::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getMerchantId())
     {
+
         ret["merchant_id"]=getValueOfMerchantId();
+
     }
     else
     {
         ret["merchant_id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getJournalId())
     {
+
         ret["journal_id"]=getValueOfJournalId();
+
     }
     else
     {
         ret["journal_id"]=Json::Value();
     }
+
     if(getAmount())
     {
+
         ret["amount"]=getValueOfAmount();
+
     }
     else
     {
         ret["amount"]=Json::Value();
     }
+
     if(getDestinationAccount())
     {
+
         ret["destination_account"]=getValueOfDestinationAccount();
+
     }
     else
     {
         ret["destination_account"]=Json::Value();
     }
+
     if(getAccountType())
     {
+
         ret["account_type"]=getValueOfAccountType();
+
     }
     else
     {
         ret["account_type"]=Json::Value();
     }
+
     if(getProvider())
     {
+
         ret["provider"]=getValueOfProvider();
+
     }
     else
     {
         ret["provider"]=Json::Value();
     }
+
     if(getStatus())
     {
+
         ret["status"]=getValueOfStatus();
+
     }
     else
     {
         ret["status"]=Json::Value();
     }
+
     if(getFailureReason())
     {
+
         ret["failure_reason"]=getValueOfFailureReason();
+
     }
     else
     {
         ret["failure_reason"]=Json::Value();
     }
+
     if(getExternalReference())
     {
+
         ret["external_reference"]=getValueOfExternalReference();
+
     }
     else
     {
         ret["external_reference"]=Json::Value();
     }
+
     if(getMetadata())
     {
+
         ret["metadata"]=getValueOfMetadata();
+
     }
     else
     {
         ret["metadata"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -1754,375 +2019,481 @@ Json::Value MerchantCommissionWithdrawals::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 14)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getMerchantId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfMerchantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getJournalId())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfJournalId();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getAmount())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfAmount();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getDestinationAccount())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfDestinationAccount();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getAccountType())
             {
+
                 ret[pMasqueradingVector[6]]=getValueOfAccountType();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getProvider())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfProvider();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getStatus())
             {
+
                 ret[pMasqueradingVector[8]]=getValueOfStatus();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[9].empty())
         {
             if(getFailureReason())
             {
+
                 ret[pMasqueradingVector[9]]=getValueOfFailureReason();
+
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[10].empty())
         {
             if(getExternalReference())
             {
+
                 ret[pMasqueradingVector[10]]=getValueOfExternalReference();
+
             }
             else
             {
                 ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[11].empty())
         {
             if(getMetadata())
             {
+
                 ret[pMasqueradingVector[11]]=getValueOfMetadata();
+
             }
             else
             {
                 ret[pMasqueradingVector[11]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[12].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[12]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[12]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[13].empty())
         {
             if(getUpdatedAt())
             {
+
                 ret[pMasqueradingVector[13]]=getUpdatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[13]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getMerchantId())
     {
+
         ret["merchant_id"]=getValueOfMerchantId();
+
     }
     else
     {
         ret["merchant_id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getJournalId())
     {
+
         ret["journal_id"]=getValueOfJournalId();
+
     }
     else
     {
         ret["journal_id"]=Json::Value();
     }
+
     if(getAmount())
     {
+
         ret["amount"]=getValueOfAmount();
+
     }
     else
     {
         ret["amount"]=Json::Value();
     }
+
     if(getDestinationAccount())
     {
+
         ret["destination_account"]=getValueOfDestinationAccount();
+
     }
     else
     {
         ret["destination_account"]=Json::Value();
     }
+
     if(getAccountType())
     {
+
         ret["account_type"]=getValueOfAccountType();
+
     }
     else
     {
         ret["account_type"]=Json::Value();
     }
+
     if(getProvider())
     {
+
         ret["provider"]=getValueOfProvider();
+
     }
     else
     {
         ret["provider"]=Json::Value();
     }
+
     if(getStatus())
     {
+
         ret["status"]=getValueOfStatus();
+
     }
     else
     {
         ret["status"]=Json::Value();
     }
+
     if(getFailureReason())
     {
+
         ret["failure_reason"]=getValueOfFailureReason();
+
     }
     else
     {
         ret["failure_reason"]=Json::Value();
     }
+
     if(getExternalReference())
     {
+
         ret["external_reference"]=getValueOfExternalReference();
+
     }
     else
     {
         ret["external_reference"]=Json::Value();
     }
+
     if(getMetadata())
     {
+
         ret["metadata"]=getValueOfMetadata();
+
     }
     else
     {
         ret["metadata"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool MerchantCommissionWithdrawals::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     if(pJson.isMember("merchant_id"))
     {
         if(!validJsonOfField(1, "merchant_id", pJson["merchant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The merchant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(2, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     else
     {
         err="The business_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("journal_id"))
     {
         if(!validJsonOfField(3, "journal_id", pJson["journal_id"], err, true))
             return false;
     }
+
     else
     {
         err="The journal_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("amount"))
     {
         if(!validJsonOfField(4, "amount", pJson["amount"], err, true))
             return false;
     }
+
     else
     {
         err="The amount column cannot be null";
         return false;
     }
+
     if(pJson.isMember("destination_account"))
     {
         if(!validJsonOfField(5, "destination_account", pJson["destination_account"], err, true))
             return false;
     }
+
     else
     {
         err="The destination_account column cannot be null";
         return false;
     }
+
     if(pJson.isMember("account_type"))
     {
         if(!validJsonOfField(6, "account_type", pJson["account_type"], err, true))
             return false;
     }
+
     if(pJson.isMember("provider"))
     {
         if(!validJsonOfField(7, "provider", pJson["provider"], err, true))
             return false;
     }
+
     if(pJson.isMember("status"))
     {
         if(!validJsonOfField(8, "status", pJson["status"], err, true))
             return false;
     }
+
     if(pJson.isMember("failure_reason"))
     {
         if(!validJsonOfField(9, "failure_reason", pJson["failure_reason"], err, true))
             return false;
     }
+
     if(pJson.isMember("external_reference"))
     {
         if(!validJsonOfField(10, "external_reference", pJson["external_reference"], err, true))
             return false;
     }
+
     if(pJson.isMember("metadata"))
     {
         if(!validJsonOfField(11, "metadata", pJson["metadata"], err, true))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(12, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(13, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -2135,6 +2506,7 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -2142,7 +2514,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -2150,12 +2524,15 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[1] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -2163,12 +2540,15 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[2] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -2176,12 +2556,15 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[3] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -2189,12 +2572,15 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[4] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -2202,12 +2588,15 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[5] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -2215,7 +2604,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -2223,7 +2614,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -2231,7 +2624,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
@@ -2239,7 +2634,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[10].empty())
       {
           if(pJson.isMember(pMasqueradingVector[10]))
@@ -2247,7 +2644,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[11].empty())
       {
           if(pJson.isMember(pMasqueradingVector[11]))
@@ -2255,7 +2654,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[12].empty())
       {
           if(pJson.isMember(pMasqueradingVector[12]))
@@ -2263,7 +2664,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[13].empty())
       {
           if(pJson.isMember(pMasqueradingVector[13]))
@@ -2271,7 +2674,9 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
               if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2282,81 +2687,97 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForCreation(const Jso
 }
 bool MerchantCommissionWithdrawals::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
     if(pJson.isMember("merchant_id"))
     {
         if(!validJsonOfField(1, "merchant_id", pJson["merchant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(2, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("journal_id"))
     {
         if(!validJsonOfField(3, "journal_id", pJson["journal_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("amount"))
     {
         if(!validJsonOfField(4, "amount", pJson["amount"], err, false))
             return false;
     }
+
     if(pJson.isMember("destination_account"))
     {
         if(!validJsonOfField(5, "destination_account", pJson["destination_account"], err, false))
             return false;
     }
+
     if(pJson.isMember("account_type"))
     {
         if(!validJsonOfField(6, "account_type", pJson["account_type"], err, false))
             return false;
     }
+
     if(pJson.isMember("provider"))
     {
         if(!validJsonOfField(7, "provider", pJson["provider"], err, false))
             return false;
     }
+
     if(pJson.isMember("status"))
     {
         if(!validJsonOfField(8, "status", pJson["status"], err, false))
             return false;
     }
+
     if(pJson.isMember("failure_reason"))
     {
         if(!validJsonOfField(9, "failure_reason", pJson["failure_reason"], err, false))
             return false;
     }
+
     if(pJson.isMember("external_reference"))
     {
         if(!validJsonOfField(10, "external_reference", pJson["external_reference"], err, false))
             return false;
     }
+
     if(pJson.isMember("metadata"))
     {
         if(!validJsonOfField(11, "metadata", pJson["metadata"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(12, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(13, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool MerchantCommissionWithdrawals::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -2369,81 +2790,97 @@ bool MerchantCommissionWithdrawals::validateMasqueradedJsonForUpdate(const Json:
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
       {
           if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
       {
           if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
       {
           if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
       {
           if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2460,209 +2897,267 @@ bool MerchantCommissionWithdrawals::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 255)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 255)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 255)";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 20)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 20)";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 9:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 10:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 255)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 255)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 255)";
                 return false;
             }
+
             break;
+
         case 11:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 12:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 13:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+

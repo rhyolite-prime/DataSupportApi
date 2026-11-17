@@ -1,3 +1,4 @@
+
 /**
  *
  *  PosInventoryItems.h
@@ -38,6 +39,8 @@ namespace drogon_model
 {
 namespace DataSupportDb
 {
+
+
 
 class PosInventoryItems
 {
@@ -98,14 +101,19 @@ class PosInventoryItems
         static const std::string _tenant_id;
         static const std::string _created_at;
         static const std::string _updated_at;
+
     };
 
     static const int primaryKeyNumber;
     static const std::string tableName;
     static const bool hasPrimaryKey;
+
     static const std::string primaryKeyName;
+
     using PrimaryKeyType = std::string;
     const PrimaryKeyType &getPrimaryKey() const;
+
+
 
     /**
      * @brief constructor
@@ -659,6 +667,7 @@ class PosInventoryItems
     void setUpdatedAtToNull() noexcept;
 
 
+
     static size_t getColumnNumber() noexcept {  return 54;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
@@ -666,6 +675,7 @@ class PosInventoryItems
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+
   private:
     friend drogon::orm::Mapper<PosInventoryItems>;
     friend drogon::orm::BaseBuilder<PosInventoryItems, true, true>;
@@ -735,6 +745,7 @@ class PosInventoryItems
     std::shared_ptr<int32_t> tenantId_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
+
     struct MetaData
     {
         const std::string colName_;
@@ -750,13 +761,19 @@ class PosInventoryItems
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
+
         static const std::string sql="select * from " + tableName + " where id = $1";
+
+
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
+
         static const std::string sql="delete from " + tableName + " where id = $1";
+
+
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -764,56 +781,67 @@ class PosInventoryItems
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
+
         if(dirtyFlag_[0])
         {
             sql += "id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[1])
         {
             sql += "business_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[2])
         {
             sql += "name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[3])
         {
             sql += "slug,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[4])
         {
             sql += "short_description,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[5])
         {
             sql += "full_description,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[6])
         {
             sql += "admin_comment,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[7])
         {
             sql += "merchant_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[8])
         {
             sql += "merchant_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[9])
         {
             sql += "sku,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[10])
         {
             sql += "images,";
@@ -821,76 +849,90 @@ class PosInventoryItems
         }
         sql += "stock_quantity,";
         ++parametersCount;
+
         if(!dirtyFlag_[11])
         {
             needSelection=true;
         }
         sql += "old_selling_price,";
         ++parametersCount;
+
         if(!dirtyFlag_[12])
         {
             needSelection=true;
         }
         sql += "selling_price,";
         ++parametersCount;
+
         if(!dirtyFlag_[13])
         {
             needSelection=true;
         }
         sql += "cost_price,";
         ++parametersCount;
+
         if(!dirtyFlag_[14])
         {
             needSelection=true;
         }
         sql += "weight,";
         ++parametersCount;
+
         if(!dirtyFlag_[15])
         {
             needSelection=true;
         }
         sql += "is_free_shipping,";
         ++parametersCount;
+
         if(!dirtyFlag_[16])
         {
             needSelection=true;
         }
         sql += "ship_separately,";
         ++parametersCount;
+
         if(!dirtyFlag_[17])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[18])
         {
             sql += "uom_code_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[19])
         {
             sql += "uom_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[20])
         {
             sql += "category_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[21])
         {
             sql += "category_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[22])
         {
             sql += "category_slug,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[23])
         {
             sql += "tags,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[24])
         {
             sql += "variants,";
@@ -898,26 +940,31 @@ class PosInventoryItems
         }
         sql += "minimum_cart_quantity,";
         ++parametersCount;
+
         if(!dirtyFlag_[25])
         {
             needSelection=true;
         }
         sql += "maximum_cart_quantity,";
         ++parametersCount;
+
         if(!dirtyFlag_[26])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[27])
         {
             sql += "branch_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[28])
         {
             sql += "branch_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[29])
         {
             sql += "shelf_location,";
@@ -925,21 +972,25 @@ class PosInventoryItems
         }
         sql += "is_published,";
         ++parametersCount;
+
         if(!dirtyFlag_[30])
         {
             needSelection=true;
         }
         sql += "allow_customer_reviews,";
         ++parametersCount;
+
         if(!dirtyFlag_[31])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[32])
         {
             sql += "available_start_date,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[33])
         {
             sql += "available_end_date,";
@@ -947,99 +998,117 @@ class PosInventoryItems
         }
         sql += "mark_as_new,";
         ++parametersCount;
+
         if(!dirtyFlag_[34])
         {
             needSelection=true;
         }
         sql += "disable_buy_button,";
         ++parametersCount;
+
         if(!dirtyFlag_[35])
         {
             needSelection=true;
         }
         sql += "disable_wishlist_button,";
         ++parametersCount;
+
         if(!dirtyFlag_[36])
         {
             needSelection=true;
         }
         sql += "available_for_pre_order,";
         ++parametersCount;
+
         if(!dirtyFlag_[37])
         {
             needSelection=true;
         }
         sql += "is_tax_exempt,";
         ++parametersCount;
+
         if(!dirtyFlag_[38])
         {
             needSelection=true;
         }
         sql += "is_not_returnable,";
         ++parametersCount;
+
         if(!dirtyFlag_[39])
         {
             needSelection=true;
         }
         sql += "is_rental,";
         ++parametersCount;
+
         if(!dirtyFlag_[40])
         {
             needSelection=true;
         }
         sql += "is_service,";
         ++parametersCount;
+
         if(!dirtyFlag_[41])
         {
             needSelection=true;
         }
         sql += "rating,";
         ++parametersCount;
+
         if(!dirtyFlag_[42])
         {
             needSelection=true;
         }
         sql += "reviews_count,";
         ++parametersCount;
+
         if(!dirtyFlag_[43])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[44])
         {
             sql += "product_attributes,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[45])
         {
             sql += "specifications,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[46])
         {
             sql += "bulk_pricing,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[47])
         {
             sql += "meta_title,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[48])
         {
             sql += "meta_keywords,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[49])
         {
             sql += "meta_description,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[50])
         {
             sql += "lead_time,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[51])
         {
             sql += "tenant_id,";
@@ -1047,15 +1116,18 @@ class PosInventoryItems
         }
         sql += "created_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[52])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[53])
         {
             sql += "updated_at,";
             ++parametersCount;
         }
+
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -1064,371 +1136,558 @@ class PosInventoryItems
         else
             sql += ") values (";
 
+
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
+
         if(dirtyFlag_[0])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[1])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[2])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[3])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[4])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[5])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[6])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[7])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[8])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[9])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[10])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[11])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[12])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[13])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[14])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[15])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[16])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[17])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[18])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[19])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[20])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[21])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[22])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[23])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[24])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[25])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[26])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[27])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[28])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[29])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[30])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[31])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[32])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[33])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[34])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[35])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[36])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[37])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[38])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[39])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[40])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[41])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[42])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[43])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[44])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[45])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[46])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[47])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[48])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[49])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[50])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[51])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[52])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[53])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(parametersCount > 0)
         {
             sql.resize(sql.length() - 1);
         }
+
         if(needSelection)
         {
             sql.append(") returning *");
@@ -1437,9 +1696,11 @@ class PosInventoryItems
         {
             sql.append(1, ')');
         }
+
         LOG_TRACE << sql;
         return sql;
     }
 };
 } // namespace DataSupportDb
+
 } // namespace drogon_model

@@ -1,3 +1,4 @@
+
 /**
  *
  *  MerchantJournal.cc
@@ -6,24 +7,42 @@
  */
 
 #include "MerchantJournal.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string MerchantJournal::Cols::_id = "\"id\"";
+
 const std::string MerchantJournal::Cols::_merchant_id = "\"merchant_id\"";
+
 const std::string MerchantJournal::Cols::_business_id = "\"business_id\"";
+
 const std::string MerchantJournal::Cols::_transaction_type = "\"transaction_type\"";
+
 const std::string MerchantJournal::Cols::_amount = "\"amount\"";
+
 const std::string MerchantJournal::Cols::_balance_before = "\"balance_before\"";
+
 const std::string MerchantJournal::Cols::_balance_after = "\"balance_after\"";
+
 const std::string MerchantJournal::Cols::_description = "\"description\"";
+
 const std::string MerchantJournal::Cols::_created_at = "\"created_at\"";
+
+
 const std::string MerchantJournal::primaryKeyName = "";
+
+
 const bool MerchantJournal::hasPrimaryKey = false;
+
 const std::string MerchantJournal::tableName = "\"merchant_journal\"";
 
 const std::vector<typename MerchantJournal::MetaData> MerchantJournal::metaData_={
@@ -36,6 +55,7 @@ const std::vector<typename MerchantJournal::MetaData> MerchantJournal::metaData_
 {"balance_after","std::string","numeric",0,0,0,1},
 {"description","std::string","text",0,0,0,0},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &MerchantJournal::getColumnName(size_t index) noexcept(false)
 {
@@ -46,43 +66,69 @@ MerchantJournal::MerchantJournal(const Row &r, const ssize_t indexOffset) noexce
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["merchant_id"].isNull())
         {
+
             merchantId_=std::make_shared<std::string>(r["merchant_id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["transaction_type"].isNull())
         {
+
             transactionType_=std::make_shared<int32_t>(r["transaction_type"].as<int32_t>());
+
         }
+
         if(!r["amount"].isNull())
         {
+
             amount_=std::make_shared<std::string>(r["amount"].as<std::string>());
+
         }
+
         if(!r["balance_before"].isNull())
         {
+
             balanceBefore_=std::make_shared<std::string>(r["balance_before"].as<std::string>());
+
         }
+
         if(!r["balance_after"].isNull())
         {
+
             balanceAfter_=std::make_shared<std::string>(r["balance_after"].as<std::string>());
+
         }
+
         if(!r["description"].isNull())
         {
+
             description_=std::make_shared<std::string>(r["description"].as<std::string>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -100,6 +146,7 @@ MerchantJournal::MerchantJournal(const Row &r, const ssize_t indexOffset) noexce
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -110,52 +157,78 @@ MerchantJournal::MerchantJournal(const Row &r, const ssize_t indexOffset) noexce
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             merchantId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             transactionType_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             amount_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             balanceBefore_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
+
             balanceAfter_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             description_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -173,6 +246,7 @@ MerchantJournal::MerchantJournal(const Row &r, const ssize_t indexOffset) noexce
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -184,6 +258,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -192,6 +267,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -200,6 +276,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -208,6 +285,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -216,6 +294,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             transactionType_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[3]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -224,6 +303,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             amount_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -232,6 +312,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             balanceBefore_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -240,6 +321,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             balanceAfter_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -248,6 +330,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             description_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -256,6 +339,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             auto timeStr = pJson[pMasqueradingVector[8]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -274,10 +358,12 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson, const std::vector<std
             }
         }
     }
+
 }
 
 MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -286,6 +372,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_id"))
     {
         dirtyFlag_[1]=true;
@@ -294,6 +381,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[2]=true;
@@ -302,6 +390,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("transaction_type"))
     {
         dirtyFlag_[3]=true;
@@ -310,6 +399,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             transactionType_=std::make_shared<int32_t>((int32_t)pJson["transaction_type"].asInt64());
         }
     }
+
     if(pJson.isMember("amount"))
     {
         dirtyFlag_[4]=true;
@@ -318,6 +408,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             amount_=std::make_shared<std::string>(pJson["amount"].asString());
         }
     }
+
     if(pJson.isMember("balance_before"))
     {
         dirtyFlag_[5]=true;
@@ -326,6 +417,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             balanceBefore_=std::make_shared<std::string>(pJson["balance_before"].asString());
         }
     }
+
     if(pJson.isMember("balance_after"))
     {
         dirtyFlag_[6]=true;
@@ -334,6 +426,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             balanceAfter_=std::make_shared<std::string>(pJson["balance_after"].asString());
         }
     }
+
     if(pJson.isMember("description"))
     {
         dirtyFlag_[7]=true;
@@ -342,6 +435,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             description_=std::make_shared<std::string>(pJson["description"].asString());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[8]=true;
@@ -350,6 +444,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -368,6 +463,7 @@ MerchantJournal::MerchantJournal(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
@@ -378,6 +474,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -386,6 +483,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -394,6 +492,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -402,6 +501,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -410,6 +510,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             transactionType_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[3]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -418,6 +519,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             amount_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -426,6 +528,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             balanceBefore_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -434,6 +537,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             balanceAfter_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -442,6 +546,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             description_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -450,6 +555,7 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[8]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -468,10 +574,12 @@ void MerchantJournal::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
 }
 
 void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0] = true;
@@ -480,6 +588,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_id"))
     {
         dirtyFlag_[1] = true;
@@ -488,6 +597,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[2] = true;
@@ -496,6 +606,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("transaction_type"))
     {
         dirtyFlag_[3] = true;
@@ -504,6 +615,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             transactionType_=std::make_shared<int32_t>((int32_t)pJson["transaction_type"].asInt64());
         }
     }
+
     if(pJson.isMember("amount"))
     {
         dirtyFlag_[4] = true;
@@ -512,6 +624,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             amount_=std::make_shared<std::string>(pJson["amount"].asString());
         }
     }
+
     if(pJson.isMember("balance_before"))
     {
         dirtyFlag_[5] = true;
@@ -520,6 +633,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             balanceBefore_=std::make_shared<std::string>(pJson["balance_before"].asString());
         }
     }
+
     if(pJson.isMember("balance_after"))
     {
         dirtyFlag_[6] = true;
@@ -528,6 +642,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             balanceAfter_=std::make_shared<std::string>(pJson["balance_after"].asString());
         }
     }
+
     if(pJson.isMember("description"))
     {
         dirtyFlag_[7] = true;
@@ -536,6 +651,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             description_=std::make_shared<std::string>(pJson["description"].asString());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[8] = true;
@@ -544,6 +660,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -562,6 +679,7 @@ void MerchantJournal::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 const std::string &MerchantJournal::getValueOfId() const noexcept
@@ -771,6 +889,7 @@ void MerchantJournal::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &MerchantJournal::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -783,12 +902,14 @@ const std::vector<std::string> &MerchantJournal::insertColumns() noexcept
         "balance_after",
         "description",
         "created_at"
+
     };
     return inCols;
 }
 
 void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -800,6 +921,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getMerchantId())
@@ -811,6 +933,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getBusinessId())
@@ -822,6 +945,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getTransactionType())
@@ -833,6 +957,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getAmount())
@@ -844,6 +969,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getBalanceBefore())
@@ -855,6 +981,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getBalanceAfter())
@@ -866,6 +993,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getDescription())
@@ -877,6 +1005,7 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getCreatedAt())
@@ -888,52 +1017,64 @@ void MerchantJournal::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> MerchantJournal::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     return ret;
 }
 
 void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -945,6 +1086,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getMerchantId())
@@ -956,6 +1098,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getBusinessId())
@@ -967,6 +1110,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getTransactionType())
@@ -978,6 +1122,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getAmount())
@@ -989,6 +1134,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getBalanceBefore())
@@ -1000,6 +1146,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getBalanceAfter())
@@ -1011,6 +1158,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getDescription())
@@ -1022,6 +1170,7 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getCreatedAt())
@@ -1033,82 +1182,111 @@ void MerchantJournal::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 Json::Value MerchantJournal::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getMerchantId())
     {
+
         ret["merchant_id"]=getValueOfMerchantId();
+
     }
     else
     {
         ret["merchant_id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getTransactionType())
     {
+
         ret["transaction_type"]=getValueOfTransactionType();
+
     }
     else
     {
         ret["transaction_type"]=Json::Value();
     }
+
     if(getAmount())
     {
+
         ret["amount"]=getValueOfAmount();
+
     }
     else
     {
         ret["amount"]=Json::Value();
     }
+
     if(getBalanceBefore())
     {
+
         ret["balance_before"]=getValueOfBalanceBefore();
+
     }
     else
     {
         ret["balance_before"]=Json::Value();
     }
+
     if(getBalanceAfter())
     {
+
         ret["balance_after"]=getValueOfBalanceAfter();
+
     }
     else
     {
         ret["balance_after"]=Json::Value();
     }
+
     if(getDescription())
     {
+
         ret["description"]=getValueOfDescription();
+
     }
     else
     {
         ret["description"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -1123,255 +1301,326 @@ Json::Value MerchantJournal::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 9)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getMerchantId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfMerchantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getTransactionType())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfTransactionType();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getAmount())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfAmount();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getBalanceBefore())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfBalanceBefore();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getBalanceAfter())
             {
+
                 ret[pMasqueradingVector[6]]=getValueOfBalanceAfter();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getDescription())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfDescription();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[8]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getMerchantId())
     {
+
         ret["merchant_id"]=getValueOfMerchantId();
+
     }
     else
     {
         ret["merchant_id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getTransactionType())
     {
+
         ret["transaction_type"]=getValueOfTransactionType();
+
     }
     else
     {
         ret["transaction_type"]=Json::Value();
     }
+
     if(getAmount())
     {
+
         ret["amount"]=getValueOfAmount();
+
     }
     else
     {
         ret["amount"]=Json::Value();
     }
+
     if(getBalanceBefore())
     {
+
         ret["balance_before"]=getValueOfBalanceBefore();
+
     }
     else
     {
         ret["balance_before"]=Json::Value();
     }
+
     if(getBalanceAfter())
     {
+
         ret["balance_after"]=getValueOfBalanceAfter();
+
     }
     else
     {
         ret["balance_after"]=Json::Value();
     }
+
     if(getDescription())
     {
+
         ret["description"]=getValueOfDescription();
+
     }
     else
     {
         ret["description"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool MerchantJournal::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     if(pJson.isMember("merchant_id"))
     {
         if(!validJsonOfField(1, "merchant_id", pJson["merchant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The merchant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(2, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     else
     {
         err="The business_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("transaction_type"))
     {
         if(!validJsonOfField(3, "transaction_type", pJson["transaction_type"], err, true))
             return false;
     }
+
     if(pJson.isMember("amount"))
     {
         if(!validJsonOfField(4, "amount", pJson["amount"], err, true))
             return false;
     }
+
     else
     {
         err="The amount column cannot be null";
         return false;
     }
+
     if(pJson.isMember("balance_before"))
     {
         if(!validJsonOfField(5, "balance_before", pJson["balance_before"], err, true))
             return false;
     }
+
     else
     {
         err="The balance_before column cannot be null";
         return false;
     }
+
     if(pJson.isMember("balance_after"))
     {
         if(!validJsonOfField(6, "balance_after", pJson["balance_after"], err, true))
             return false;
     }
+
     else
     {
         err="The balance_after column cannot be null";
         return false;
     }
+
     if(pJson.isMember("description"))
     {
         if(!validJsonOfField(7, "description", pJson["description"], err, true))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(8, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -1384,6 +1633,7 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -1391,7 +1641,9 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -1399,12 +1651,15 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[1] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -1412,12 +1667,15 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[2] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -1425,7 +1683,9 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -1433,12 +1693,15 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[4] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -1446,12 +1709,15 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[5] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -1459,12 +1725,15 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[6] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -1472,7 +1741,9 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -1480,7 +1751,9 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -1491,51 +1764,61 @@ bool MerchantJournal::validateMasqueradedJsonForCreation(const Json::Value &pJso
 }
 bool MerchantJournal::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     if(pJson.isMember("merchant_id"))
     {
         if(!validJsonOfField(1, "merchant_id", pJson["merchant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(2, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("transaction_type"))
     {
         if(!validJsonOfField(3, "transaction_type", pJson["transaction_type"], err, false))
             return false;
     }
+
     if(pJson.isMember("amount"))
     {
         if(!validJsonOfField(4, "amount", pJson["amount"], err, false))
             return false;
     }
+
     if(pJson.isMember("balance_before"))
     {
         if(!validJsonOfField(5, "balance_before", pJson["balance_before"], err, false))
             return false;
     }
+
     if(pJson.isMember("balance_after"))
     {
         if(!validJsonOfField(6, "balance_after", pJson["balance_after"], err, false))
             return false;
     }
+
     if(pJson.isMember("description"))
     {
         if(!validJsonOfField(7, "description", pJson["description"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(8, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool MerchantJournal::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -1548,51 +1831,61 @@ bool MerchantJournal::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -1609,114 +1902,152 @@ bool MerchantJournal::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+

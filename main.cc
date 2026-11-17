@@ -18,6 +18,8 @@ int main() {
             "https://wssd-api.graphicnewsplus.com",
             "https://rhyoliteprime.com",
             "https://www.rhyoliteprime.com",
+            "https://portal.magmanet.gh",
+            "https://admin.magmanet.gh",
         };
 
         auto origin = req->getHeader("Origin");
@@ -29,8 +31,10 @@ int main() {
         // Add CORS headers to every response
 
         resp->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        resp->addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Referer, User-Agent, "
-                        "Accept, X-Requested-With, Origin");
+        resp->addHeader("Access-Control-Allow-Headers",
+                        "Content-Type, Authorization, Referer, User-Agent, Accept, "
+                        "X-Requested-With, Origin, ClientId, ClientSecret, "
+                        "X-Magma-Device-Token, X-Magma-Internal-Secret");
       });
 
     //Run HTTP framework,the method will block in the internal event loop

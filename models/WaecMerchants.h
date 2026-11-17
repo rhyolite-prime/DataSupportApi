@@ -1,3 +1,4 @@
+
 /**
  *
  *  WaecMerchants.h
@@ -39,6 +40,8 @@ namespace drogon_model
 namespace DataSupportDb
 {
 
+
+
 class WaecMerchants
 {
   public:
@@ -60,14 +63,19 @@ class WaecMerchants
         static const std::string _commission_balance;
         static const std::string _created_at;
         static const std::string _updated_at;
+
     };
 
     static const int primaryKeyNumber;
     static const std::string tableName;
     static const bool hasPrimaryKey;
+
     static const std::string primaryKeyName;
+
     using PrimaryKeyType = std::string;
     const PrimaryKeyType &getPrimaryKey() const;
+
+
 
     /**
      * @brief constructor
@@ -266,6 +274,7 @@ class WaecMerchants
     void setUpdatedAtToNull() noexcept;
 
 
+
     static size_t getColumnNumber() noexcept {  return 16;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
@@ -273,6 +282,7 @@ class WaecMerchants
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+
   private:
     friend drogon::orm::Mapper<WaecMerchants>;
     friend drogon::orm::BaseBuilder<WaecMerchants, true, true>;
@@ -304,6 +314,7 @@ class WaecMerchants
     std::shared_ptr<std::string> commissionBalance_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
+
     struct MetaData
     {
         const std::string colName_;
@@ -319,13 +330,19 @@ class WaecMerchants
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
+
         static const std::string sql="select * from " + tableName + " where id = $1";
+
+
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
+
         static const std::string sql="delete from " + tableName + " where id = $1";
+
+
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -333,31 +350,37 @@ class WaecMerchants
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
+
         if(dirtyFlag_[0])
         {
             sql += "id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[1])
         {
             sql += "business_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[2])
         {
             sql += "merchant_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[3])
         {
             sql += "phone_number,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[4])
         {
             sql += "email,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[5])
         {
             sql += "pin_hash,";
@@ -365,30 +388,36 @@ class WaecMerchants
         }
         sql += "status,";
         ++parametersCount;
+
         if(!dirtyFlag_[6])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[7])
         {
             sql += "commission_account_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[8])
         {
             sql += "main_account_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[9])
         {
             sql += "account_type,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[10])
         {
             sql += "account_provider,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[11])
         {
             sql += "bank_account_number,";
@@ -396,28 +425,33 @@ class WaecMerchants
         }
         sql += "total_commission_earned,";
         ++parametersCount;
+
         if(!dirtyFlag_[12])
         {
             needSelection=true;
         }
         sql += "commission_balance,";
         ++parametersCount;
+
         if(!dirtyFlag_[13])
         {
             needSelection=true;
         }
         sql += "created_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[14])
         {
             needSelection=true;
         }
         sql += "updated_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[15])
         {
             needSelection=true;
         }
+
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -426,113 +460,169 @@ class WaecMerchants
         else
             sql += ") values (";
 
+
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
+
         if(dirtyFlag_[0])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[1])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[2])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[3])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[4])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[5])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[6])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[7])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[8])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[9])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[10])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[11])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[12])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[13])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[14])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[15])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(parametersCount > 0)
         {
             sql.resize(sql.length() - 1);
         }
+
         if(needSelection)
         {
             sql.append(") returning *");
@@ -541,9 +631,11 @@ class WaecMerchants
         {
             sql.append(1, ')');
         }
+
         LOG_TRACE << sql;
         return sql;
     }
 };
 } // namespace DataSupportDb
+
 } // namespace drogon_model

@@ -13,6 +13,7 @@
 #include "services/email/EmailApi.h"
 #include "services/erp_api/ErpApi.h"
 #include "services/hubtel_api/HubtelApi.h"
+#include "services/magma_net/MagmaNetService.h"
 #include "services/pay_stack_api/PaystackApi.h"
 #include "services/quartz/QuartzApi.h"
 #include "services/redis/RedisCacheManager.h"
@@ -45,6 +46,7 @@ namespace data_support::plugins {
         services::BusinessApiKeyService &getBusinessApiKeyService() { return businessApiKeyService_; }
         services::SmartSuiteBankingService &getSmartSuiteBankingService() { return smartSuiteBankingService_; }
         services::WaecVoucherService &getWaecVoucherService() { return waecVoucherService_; }
+        services::MagmaNetService &getMagmaNetService() { return magmaNetService_; }
 
     private:
         services::QuartzApi quartzApi_;
@@ -57,6 +59,7 @@ namespace data_support::plugins {
         services::BusinessApiKeyService businessApiKeyService_;
         services::SmartSuiteBankingService smartSuiteBankingService_;
         services::WaecVoucherService waecVoucherService_;
+        services::MagmaNetService magmaNetService_;
     };
 
 }

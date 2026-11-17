@@ -88,7 +88,7 @@ drogon::Task<dto::TransactionResponse> HubtelApi::initializeDirectReceiveMoney(c
       // Fire-and-forget: detached async task that owns all its data
       drogon::async_run([posSalesAccountId, body, authHeader]() -> drogon::Task<> {
           // This runs independently — no connection to the original coroutine
-          co_await drogon::sleepCoro(drogon::app().getLoop(), 5.0);
+          co_await drogon::sleepCoro(drogon::app().getLoop(), 4.0);
 
           auto client = drogon::HttpClient::newHttpClient("https://rmp.hubtel.com");
           auto req = drogon::HttpRequest::newHttpRequest();

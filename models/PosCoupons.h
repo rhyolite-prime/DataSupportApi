@@ -1,3 +1,4 @@
+
 /**
  *
  *  PosCoupons.h
@@ -39,6 +40,8 @@ namespace drogon_model
 namespace DataSupportDb
 {
 
+
+
 class PosCoupons
 {
   public:
@@ -61,14 +64,19 @@ class PosCoupons
         static const std::string _tenant_id;
         static const std::string _created_at;
         static const std::string _updated_at;
+
     };
 
     static const int primaryKeyNumber;
     static const std::string tableName;
     static const bool hasPrimaryKey;
+
     static const std::string primaryKeyName;
+
     using PrimaryKeyType = std::string;
     const PrimaryKeyType &getPrimaryKey() const;
+
+
 
     /**
      * @brief constructor
@@ -270,6 +278,7 @@ class PosCoupons
     void setUpdatedAtToNull() noexcept;
 
 
+
     static size_t getColumnNumber() noexcept {  return 17;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
@@ -277,6 +286,7 @@ class PosCoupons
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+
   private:
     friend drogon::orm::Mapper<PosCoupons>;
     friend drogon::orm::BaseBuilder<PosCoupons, true, true>;
@@ -309,6 +319,7 @@ class PosCoupons
     std::shared_ptr<int32_t> tenantId_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
+
     struct MetaData
     {
         const std::string colName_;
@@ -324,13 +335,19 @@ class PosCoupons
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
+
         static const std::string sql="select * from " + tableName + " where id = $1";
+
+
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
+
         static const std::string sql="delete from " + tableName + " where id = $1";
+
+
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -338,11 +355,13 @@ class PosCoupons
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
+
         if(dirtyFlag_[0])
         {
             sql += "id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[1])
         {
             sql += "business_id,";
@@ -350,27 +369,32 @@ class PosCoupons
         }
         sql += "coupon_value,";
         ++parametersCount;
+
         if(!dirtyFlag_[2])
         {
             needSelection=true;
         }
         sql += "minimum_order_limit,";
         ++parametersCount;
+
         if(!dirtyFlag_[3])
         {
             needSelection=true;
         }
         sql += "maximum_order_limit,";
         ++parametersCount;
+
         if(!dirtyFlag_[4])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[5])
         {
             sql += "coupon_identifier,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[6])
         {
             sql += "valid_till,";
@@ -378,43 +402,51 @@ class PosCoupons
         }
         sql += "usage_quota,";
         ++parametersCount;
+
         if(!dirtyFlag_[7])
         {
             needSelection=true;
         }
         sql += "usage_count,";
         ++parametersCount;
+
         if(!dirtyFlag_[8])
         {
             needSelection=true;
         }
         sql += "status,";
         ++parametersCount;
+
         if(!dirtyFlag_[9])
         {
             needSelection=true;
         }
         sql += "use_percentage,";
         ++parametersCount;
+
         if(!dirtyFlag_[10])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[11])
         {
             sql += "branch_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[12])
         {
             sql += "branch_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[13])
         {
             sql += "assignments,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[14])
         {
             sql += "tenant_id,";
@@ -422,15 +454,18 @@ class PosCoupons
         }
         sql += "created_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[15])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[16])
         {
             sql += "updated_at,";
             ++parametersCount;
         }
+
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -439,130 +474,192 @@ class PosCoupons
         else
             sql += ") values (";
 
+
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
+
         if(dirtyFlag_[0])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[1])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[2])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[3])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[4])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[5])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[6])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[7])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[8])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[9])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[10])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[11])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[12])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[13])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[14])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[15])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[16])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(parametersCount > 0)
         {
             sql.resize(sql.length() - 1);
         }
+
         if(needSelection)
         {
             sql.append(") returning *");
@@ -571,9 +668,11 @@ class PosCoupons
         {
             sql.append(1, ')');
         }
+
         LOG_TRACE << sql;
         return sql;
     }
 };
 } // namespace DataSupportDb
+
 } // namespace drogon_model

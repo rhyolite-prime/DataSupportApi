@@ -1,3 +1,4 @@
+
 /**
  *
  *  PosInventoryItems.cc
@@ -6,69 +7,132 @@
  */
 
 #include "PosInventoryItems.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string PosInventoryItems::Cols::_id = "\"id\"";
+
 const std::string PosInventoryItems::Cols::_business_id = "\"business_id\"";
+
 const std::string PosInventoryItems::Cols::_name = "\"name\"";
+
 const std::string PosInventoryItems::Cols::_slug = "\"slug\"";
+
 const std::string PosInventoryItems::Cols::_short_description = "\"short_description\"";
+
 const std::string PosInventoryItems::Cols::_full_description = "\"full_description\"";
+
 const std::string PosInventoryItems::Cols::_admin_comment = "\"admin_comment\"";
+
 const std::string PosInventoryItems::Cols::_merchant_id = "\"merchant_id\"";
+
 const std::string PosInventoryItems::Cols::_merchant_name = "\"merchant_name\"";
+
 const std::string PosInventoryItems::Cols::_sku = "\"sku\"";
+
 const std::string PosInventoryItems::Cols::_images = "\"images\"";
+
 const std::string PosInventoryItems::Cols::_stock_quantity = "\"stock_quantity\"";
+
 const std::string PosInventoryItems::Cols::_old_selling_price = "\"old_selling_price\"";
+
 const std::string PosInventoryItems::Cols::_selling_price = "\"selling_price\"";
+
 const std::string PosInventoryItems::Cols::_cost_price = "\"cost_price\"";
+
 const std::string PosInventoryItems::Cols::_weight = "\"weight\"";
+
 const std::string PosInventoryItems::Cols::_is_free_shipping = "\"is_free_shipping\"";
+
 const std::string PosInventoryItems::Cols::_ship_separately = "\"ship_separately\"";
+
 const std::string PosInventoryItems::Cols::_uom_code_id = "\"uom_code_id\"";
+
 const std::string PosInventoryItems::Cols::_uom_name = "\"uom_name\"";
+
 const std::string PosInventoryItems::Cols::_category_id = "\"category_id\"";
+
 const std::string PosInventoryItems::Cols::_category_name = "\"category_name\"";
+
 const std::string PosInventoryItems::Cols::_category_slug = "\"category_slug\"";
+
 const std::string PosInventoryItems::Cols::_tags = "\"tags\"";
+
 const std::string PosInventoryItems::Cols::_variants = "\"variants\"";
+
 const std::string PosInventoryItems::Cols::_minimum_cart_quantity = "\"minimum_cart_quantity\"";
+
 const std::string PosInventoryItems::Cols::_maximum_cart_quantity = "\"maximum_cart_quantity\"";
+
 const std::string PosInventoryItems::Cols::_branch_id = "\"branch_id\"";
+
 const std::string PosInventoryItems::Cols::_branch_name = "\"branch_name\"";
+
 const std::string PosInventoryItems::Cols::_shelf_location = "\"shelf_location\"";
+
 const std::string PosInventoryItems::Cols::_is_published = "\"is_published\"";
+
 const std::string PosInventoryItems::Cols::_allow_customer_reviews = "\"allow_customer_reviews\"";
+
 const std::string PosInventoryItems::Cols::_available_start_date = "\"available_start_date\"";
+
 const std::string PosInventoryItems::Cols::_available_end_date = "\"available_end_date\"";
+
 const std::string PosInventoryItems::Cols::_mark_as_new = "\"mark_as_new\"";
+
 const std::string PosInventoryItems::Cols::_disable_buy_button = "\"disable_buy_button\"";
+
 const std::string PosInventoryItems::Cols::_disable_wishlist_button = "\"disable_wishlist_button\"";
+
 const std::string PosInventoryItems::Cols::_available_for_pre_order = "\"available_for_pre_order\"";
+
 const std::string PosInventoryItems::Cols::_is_tax_exempt = "\"is_tax_exempt\"";
+
 const std::string PosInventoryItems::Cols::_is_not_returnable = "\"is_not_returnable\"";
+
 const std::string PosInventoryItems::Cols::_is_rental = "\"is_rental\"";
+
 const std::string PosInventoryItems::Cols::_is_service = "\"is_service\"";
+
 const std::string PosInventoryItems::Cols::_rating = "\"rating\"";
+
 const std::string PosInventoryItems::Cols::_reviews_count = "\"reviews_count\"";
+
 const std::string PosInventoryItems::Cols::_product_attributes = "\"product_attributes\"";
+
 const std::string PosInventoryItems::Cols::_specifications = "\"specifications\"";
+
 const std::string PosInventoryItems::Cols::_bulk_pricing = "\"bulk_pricing\"";
+
 const std::string PosInventoryItems::Cols::_meta_title = "\"meta_title\"";
+
 const std::string PosInventoryItems::Cols::_meta_keywords = "\"meta_keywords\"";
+
 const std::string PosInventoryItems::Cols::_meta_description = "\"meta_description\"";
+
 const std::string PosInventoryItems::Cols::_lead_time = "\"lead_time\"";
+
 const std::string PosInventoryItems::Cols::_tenant_id = "\"tenant_id\"";
+
 const std::string PosInventoryItems::Cols::_created_at = "\"created_at\"";
+
 const std::string PosInventoryItems::Cols::_updated_at = "\"updated_at\"";
+
+
 const std::string PosInventoryItems::primaryKeyName = "id";
+
+
 const bool PosInventoryItems::hasPrimaryKey = true;
+
 const std::string PosInventoryItems::tableName = "\"pos_inventory_items\"";
 
 const std::vector<typename PosInventoryItems::MetaData> PosInventoryItems::metaData_={
@@ -126,6 +190,7 @@ const std::vector<typename PosInventoryItems::MetaData> PosInventoryItems::metaD
 {"tenant_id","int32_t","integer",4,0,0,1},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &PosInventoryItems::getColumnName(size_t index) noexcept(false)
 {
@@ -136,139 +201,237 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["name"].isNull())
         {
+
             name_=std::make_shared<std::string>(r["name"].as<std::string>());
+
         }
+
         if(!r["slug"].isNull())
         {
+
             slug_=std::make_shared<std::string>(r["slug"].as<std::string>());
+
         }
+
         if(!r["short_description"].isNull())
         {
+
             shortDescription_=std::make_shared<std::string>(r["short_description"].as<std::string>());
+
         }
+
         if(!r["full_description"].isNull())
         {
+
             fullDescription_=std::make_shared<std::string>(r["full_description"].as<std::string>());
+
         }
+
         if(!r["admin_comment"].isNull())
         {
+
             adminComment_=std::make_shared<std::string>(r["admin_comment"].as<std::string>());
+
         }
+
         if(!r["merchant_id"].isNull())
         {
+
             merchantId_=std::make_shared<std::string>(r["merchant_id"].as<std::string>());
+
         }
+
         if(!r["merchant_name"].isNull())
         {
+
             merchantName_=std::make_shared<std::string>(r["merchant_name"].as<std::string>());
+
         }
+
         if(!r["sku"].isNull())
         {
+
             sku_=std::make_shared<std::string>(r["sku"].as<std::string>());
+
         }
+
         if(!r["images"].isNull())
         {
+
             images_=std::make_shared<std::string>(r["images"].as<std::string>());
+
         }
+
         if(!r["stock_quantity"].isNull())
         {
+
             stockQuantity_=std::make_shared<int32_t>(r["stock_quantity"].as<int32_t>());
+
         }
+
         if(!r["old_selling_price"].isNull())
         {
+
             oldSellingPrice_=std::make_shared<std::string>(r["old_selling_price"].as<std::string>());
+
         }
+
         if(!r["selling_price"].isNull())
         {
+
             sellingPrice_=std::make_shared<std::string>(r["selling_price"].as<std::string>());
+
         }
+
         if(!r["cost_price"].isNull())
         {
+
             costPrice_=std::make_shared<std::string>(r["cost_price"].as<std::string>());
+
         }
+
         if(!r["weight"].isNull())
         {
+
             weight_=std::make_shared<std::string>(r["weight"].as<std::string>());
+
         }
+
         if(!r["is_free_shipping"].isNull())
         {
+
             isFreeShipping_=std::make_shared<bool>(r["is_free_shipping"].as<bool>());
+
         }
+
         if(!r["ship_separately"].isNull())
         {
+
             shipSeparately_=std::make_shared<bool>(r["ship_separately"].as<bool>());
+
         }
+
         if(!r["uom_code_id"].isNull())
         {
+
             uomCodeId_=std::make_shared<std::string>(r["uom_code_id"].as<std::string>());
+
         }
+
         if(!r["uom_name"].isNull())
         {
+
             uomName_=std::make_shared<std::string>(r["uom_name"].as<std::string>());
+
         }
+
         if(!r["category_id"].isNull())
         {
+
             categoryId_=std::make_shared<std::string>(r["category_id"].as<std::string>());
+
         }
+
         if(!r["category_name"].isNull())
         {
+
             categoryName_=std::make_shared<std::string>(r["category_name"].as<std::string>());
+
         }
+
         if(!r["category_slug"].isNull())
         {
+
             categorySlug_=std::make_shared<std::string>(r["category_slug"].as<std::string>());
+
         }
+
         if(!r["tags"].isNull())
         {
+
             tags_=std::make_shared<std::string>(r["tags"].as<std::string>());
+
         }
+
         if(!r["variants"].isNull())
         {
+
             variants_=std::make_shared<std::string>(r["variants"].as<std::string>());
+
         }
+
         if(!r["minimum_cart_quantity"].isNull())
         {
+
             minimumCartQuantity_=std::make_shared<int32_t>(r["minimum_cart_quantity"].as<int32_t>());
+
         }
+
         if(!r["maximum_cart_quantity"].isNull())
         {
+
             maximumCartQuantity_=std::make_shared<int32_t>(r["maximum_cart_quantity"].as<int32_t>());
+
         }
+
         if(!r["branch_id"].isNull())
         {
+
             branchId_=std::make_shared<std::string>(r["branch_id"].as<std::string>());
+
         }
+
         if(!r["branch_name"].isNull())
         {
+
             branchName_=std::make_shared<std::string>(r["branch_name"].as<std::string>());
+
         }
+
         if(!r["shelf_location"].isNull())
         {
+
             shelfLocation_=std::make_shared<std::string>(r["shelf_location"].as<std::string>());
+
         }
+
         if(!r["is_published"].isNull())
         {
+
             isPublished_=std::make_shared<bool>(r["is_published"].as<bool>());
+
         }
+
         if(!r["allow_customer_reviews"].isNull())
         {
+
             allowCustomerReviews_=std::make_shared<bool>(r["allow_customer_reviews"].as<bool>());
+
         }
+
         if(!r["available_start_date"].isNull())
         {
             auto timeStr = r["available_start_date"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -286,11 +449,13 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 availableStartDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["available_end_date"].isNull())
         {
             auto timeStr = r["available_end_date"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -308,83 +473,139 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 availableEndDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["mark_as_new"].isNull())
         {
+
             markAsNew_=std::make_shared<bool>(r["mark_as_new"].as<bool>());
+
         }
+
         if(!r["disable_buy_button"].isNull())
         {
+
             disableBuyButton_=std::make_shared<bool>(r["disable_buy_button"].as<bool>());
+
         }
+
         if(!r["disable_wishlist_button"].isNull())
         {
+
             disableWishlistButton_=std::make_shared<bool>(r["disable_wishlist_button"].as<bool>());
+
         }
+
         if(!r["available_for_pre_order"].isNull())
         {
+
             availableForPreOrder_=std::make_shared<bool>(r["available_for_pre_order"].as<bool>());
+
         }
+
         if(!r["is_tax_exempt"].isNull())
         {
+
             isTaxExempt_=std::make_shared<bool>(r["is_tax_exempt"].as<bool>());
+
         }
+
         if(!r["is_not_returnable"].isNull())
         {
+
             isNotReturnable_=std::make_shared<bool>(r["is_not_returnable"].as<bool>());
+
         }
+
         if(!r["is_rental"].isNull())
         {
+
             isRental_=std::make_shared<bool>(r["is_rental"].as<bool>());
+
         }
+
         if(!r["is_service"].isNull())
         {
+
             isService_=std::make_shared<bool>(r["is_service"].as<bool>());
+
         }
+
         if(!r["rating"].isNull())
         {
+
             rating_=std::make_shared<int32_t>(r["rating"].as<int32_t>());
+
         }
+
         if(!r["reviews_count"].isNull())
         {
+
             reviewsCount_=std::make_shared<int32_t>(r["reviews_count"].as<int32_t>());
+
         }
+
         if(!r["product_attributes"].isNull())
         {
+
             productAttributes_=std::make_shared<std::string>(r["product_attributes"].as<std::string>());
+
         }
+
         if(!r["specifications"].isNull())
         {
+
             specifications_=std::make_shared<std::string>(r["specifications"].as<std::string>());
+
         }
+
         if(!r["bulk_pricing"].isNull())
         {
+
             bulkPricing_=std::make_shared<std::string>(r["bulk_pricing"].as<std::string>());
+
         }
+
         if(!r["meta_title"].isNull())
         {
+
             metaTitle_=std::make_shared<std::string>(r["meta_title"].as<std::string>());
+
         }
+
         if(!r["meta_keywords"].isNull())
         {
+
             metaKeywords_=std::make_shared<std::string>(r["meta_keywords"].as<std::string>());
+
         }
+
         if(!r["meta_description"].isNull())
         {
+
             metaDescription_=std::make_shared<std::string>(r["meta_description"].as<std::string>());
+
         }
+
         if(!r["lead_time"].isNull())
         {
+
             leadTime_=std::make_shared<std::string>(r["lead_time"].as<std::string>());
+
         }
+
         if(!r["tenant_id"].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r["tenant_id"].as<int32_t>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -402,11 +623,13 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["updated_at"].isNull())
         {
             auto timeStr = r["updated_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -424,6 +647,7 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -434,172 +658,270 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             name_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             slug_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             shortDescription_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             fullDescription_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
+
             adminComment_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             merchantId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
+
             merchantName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 9;
         if(!r[index].isNull())
         {
+
             sku_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 10;
         if(!r[index].isNull())
         {
+
             images_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 11;
         if(!r[index].isNull())
         {
+
             stockQuantity_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 12;
         if(!r[index].isNull())
         {
+
             oldSellingPrice_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 13;
         if(!r[index].isNull())
         {
+
             sellingPrice_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 14;
         if(!r[index].isNull())
         {
+
             costPrice_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 15;
         if(!r[index].isNull())
         {
+
             weight_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 16;
         if(!r[index].isNull())
         {
+
             isFreeShipping_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 17;
         if(!r[index].isNull())
         {
+
             shipSeparately_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 18;
         if(!r[index].isNull())
         {
+
             uomCodeId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 19;
         if(!r[index].isNull())
         {
+
             uomName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 20;
         if(!r[index].isNull())
         {
+
             categoryId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 21;
         if(!r[index].isNull())
         {
+
             categoryName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 22;
         if(!r[index].isNull())
         {
+
             categorySlug_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 23;
         if(!r[index].isNull())
         {
+
             tags_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 24;
         if(!r[index].isNull())
         {
+
             variants_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 25;
         if(!r[index].isNull())
         {
+
             minimumCartQuantity_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 26;
         if(!r[index].isNull())
         {
+
             maximumCartQuantity_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 27;
         if(!r[index].isNull())
         {
+
             branchId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 28;
         if(!r[index].isNull())
         {
+
             branchName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 29;
         if(!r[index].isNull())
         {
+
             shelfLocation_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 30;
         if(!r[index].isNull())
         {
+
             isPublished_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 31;
         if(!r[index].isNull())
         {
+
             allowCustomerReviews_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 32;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -617,12 +939,14 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 availableStartDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 33;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -640,102 +964,158 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 availableEndDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 34;
         if(!r[index].isNull())
         {
+
             markAsNew_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 35;
         if(!r[index].isNull())
         {
+
             disableBuyButton_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 36;
         if(!r[index].isNull())
         {
+
             disableWishlistButton_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 37;
         if(!r[index].isNull())
         {
+
             availableForPreOrder_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 38;
         if(!r[index].isNull())
         {
+
             isTaxExempt_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 39;
         if(!r[index].isNull())
         {
+
             isNotReturnable_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 40;
         if(!r[index].isNull())
         {
+
             isRental_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 41;
         if(!r[index].isNull())
         {
+
             isService_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 42;
         if(!r[index].isNull())
         {
+
             rating_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 43;
         if(!r[index].isNull())
         {
+
             reviewsCount_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 44;
         if(!r[index].isNull())
         {
+
             productAttributes_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 45;
         if(!r[index].isNull())
         {
+
             specifications_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 46;
         if(!r[index].isNull())
         {
+
             bulkPricing_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 47;
         if(!r[index].isNull())
         {
+
             metaTitle_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 48;
         if(!r[index].isNull())
         {
+
             metaKeywords_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 49;
         if(!r[index].isNull())
         {
+
             metaDescription_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 50;
         if(!r[index].isNull())
         {
+
             leadTime_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 51;
         if(!r[index].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 52;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -753,12 +1133,14 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 53;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -776,6 +1158,7 @@ PosInventoryItems::PosInventoryItems(const Row &r, const ssize_t indexOffset) no
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -787,6 +1170,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -795,6 +1179,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -803,6 +1188,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -811,6 +1197,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             name_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -819,6 +1206,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             slug_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -827,6 +1215,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             shortDescription_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -835,6 +1224,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             fullDescription_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -843,6 +1233,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             adminComment_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -851,6 +1242,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -859,6 +1251,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             merchantName_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -867,6 +1260,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             sku_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -875,6 +1269,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             images_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -883,6 +1278,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             stockQuantity_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[11]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -891,6 +1287,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             oldSellingPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -899,6 +1296,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             sellingPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -907,6 +1305,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             costPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[14]].asString());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -915,6 +1314,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             weight_=std::make_shared<std::string>(pJson[pMasqueradingVector[15]].asString());
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -923,6 +1323,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             isFreeShipping_=std::make_shared<bool>(pJson[pMasqueradingVector[16]].asBool());
         }
     }
+
     if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
     {
         dirtyFlag_[17] = true;
@@ -931,6 +1332,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             shipSeparately_=std::make_shared<bool>(pJson[pMasqueradingVector[17]].asBool());
         }
     }
+
     if(!pMasqueradingVector[18].empty() && pJson.isMember(pMasqueradingVector[18]))
     {
         dirtyFlag_[18] = true;
@@ -939,6 +1341,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             uomCodeId_=std::make_shared<std::string>(pJson[pMasqueradingVector[18]].asString());
         }
     }
+
     if(!pMasqueradingVector[19].empty() && pJson.isMember(pMasqueradingVector[19]))
     {
         dirtyFlag_[19] = true;
@@ -947,6 +1350,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             uomName_=std::make_shared<std::string>(pJson[pMasqueradingVector[19]].asString());
         }
     }
+
     if(!pMasqueradingVector[20].empty() && pJson.isMember(pMasqueradingVector[20]))
     {
         dirtyFlag_[20] = true;
@@ -955,6 +1359,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             categoryId_=std::make_shared<std::string>(pJson[pMasqueradingVector[20]].asString());
         }
     }
+
     if(!pMasqueradingVector[21].empty() && pJson.isMember(pMasqueradingVector[21]))
     {
         dirtyFlag_[21] = true;
@@ -963,6 +1368,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             categoryName_=std::make_shared<std::string>(pJson[pMasqueradingVector[21]].asString());
         }
     }
+
     if(!pMasqueradingVector[22].empty() && pJson.isMember(pMasqueradingVector[22]))
     {
         dirtyFlag_[22] = true;
@@ -971,6 +1377,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             categorySlug_=std::make_shared<std::string>(pJson[pMasqueradingVector[22]].asString());
         }
     }
+
     if(!pMasqueradingVector[23].empty() && pJson.isMember(pMasqueradingVector[23]))
     {
         dirtyFlag_[23] = true;
@@ -979,6 +1386,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             tags_=std::make_shared<std::string>(pJson[pMasqueradingVector[23]].asString());
         }
     }
+
     if(!pMasqueradingVector[24].empty() && pJson.isMember(pMasqueradingVector[24]))
     {
         dirtyFlag_[24] = true;
@@ -987,6 +1395,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             variants_=std::make_shared<std::string>(pJson[pMasqueradingVector[24]].asString());
         }
     }
+
     if(!pMasqueradingVector[25].empty() && pJson.isMember(pMasqueradingVector[25]))
     {
         dirtyFlag_[25] = true;
@@ -995,6 +1404,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             minimumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[25]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[26].empty() && pJson.isMember(pMasqueradingVector[26]))
     {
         dirtyFlag_[26] = true;
@@ -1003,6 +1413,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             maximumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[26]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[27].empty() && pJson.isMember(pMasqueradingVector[27]))
     {
         dirtyFlag_[27] = true;
@@ -1011,6 +1422,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             branchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[27]].asString());
         }
     }
+
     if(!pMasqueradingVector[28].empty() && pJson.isMember(pMasqueradingVector[28]))
     {
         dirtyFlag_[28] = true;
@@ -1019,6 +1431,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             branchName_=std::make_shared<std::string>(pJson[pMasqueradingVector[28]].asString());
         }
     }
+
     if(!pMasqueradingVector[29].empty() && pJson.isMember(pMasqueradingVector[29]))
     {
         dirtyFlag_[29] = true;
@@ -1027,6 +1440,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             shelfLocation_=std::make_shared<std::string>(pJson[pMasqueradingVector[29]].asString());
         }
     }
+
     if(!pMasqueradingVector[30].empty() && pJson.isMember(pMasqueradingVector[30]))
     {
         dirtyFlag_[30] = true;
@@ -1035,6 +1449,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             isPublished_=std::make_shared<bool>(pJson[pMasqueradingVector[30]].asBool());
         }
     }
+
     if(!pMasqueradingVector[31].empty() && pJson.isMember(pMasqueradingVector[31]))
     {
         dirtyFlag_[31] = true;
@@ -1043,6 +1458,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             allowCustomerReviews_=std::make_shared<bool>(pJson[pMasqueradingVector[31]].asBool());
         }
     }
+
     if(!pMasqueradingVector[32].empty() && pJson.isMember(pMasqueradingVector[32]))
     {
         dirtyFlag_[32] = true;
@@ -1051,6 +1467,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             auto timeStr = pJson[pMasqueradingVector[32]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1069,6 +1486,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             }
         }
     }
+
     if(!pMasqueradingVector[33].empty() && pJson.isMember(pMasqueradingVector[33]))
     {
         dirtyFlag_[33] = true;
@@ -1077,6 +1495,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             auto timeStr = pJson[pMasqueradingVector[33]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1095,6 +1514,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             }
         }
     }
+
     if(!pMasqueradingVector[34].empty() && pJson.isMember(pMasqueradingVector[34]))
     {
         dirtyFlag_[34] = true;
@@ -1103,6 +1523,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             markAsNew_=std::make_shared<bool>(pJson[pMasqueradingVector[34]].asBool());
         }
     }
+
     if(!pMasqueradingVector[35].empty() && pJson.isMember(pMasqueradingVector[35]))
     {
         dirtyFlag_[35] = true;
@@ -1111,6 +1532,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             disableBuyButton_=std::make_shared<bool>(pJson[pMasqueradingVector[35]].asBool());
         }
     }
+
     if(!pMasqueradingVector[36].empty() && pJson.isMember(pMasqueradingVector[36]))
     {
         dirtyFlag_[36] = true;
@@ -1119,6 +1541,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             disableWishlistButton_=std::make_shared<bool>(pJson[pMasqueradingVector[36]].asBool());
         }
     }
+
     if(!pMasqueradingVector[37].empty() && pJson.isMember(pMasqueradingVector[37]))
     {
         dirtyFlag_[37] = true;
@@ -1127,6 +1550,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             availableForPreOrder_=std::make_shared<bool>(pJson[pMasqueradingVector[37]].asBool());
         }
     }
+
     if(!pMasqueradingVector[38].empty() && pJson.isMember(pMasqueradingVector[38]))
     {
         dirtyFlag_[38] = true;
@@ -1135,6 +1559,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             isTaxExempt_=std::make_shared<bool>(pJson[pMasqueradingVector[38]].asBool());
         }
     }
+
     if(!pMasqueradingVector[39].empty() && pJson.isMember(pMasqueradingVector[39]))
     {
         dirtyFlag_[39] = true;
@@ -1143,6 +1568,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             isNotReturnable_=std::make_shared<bool>(pJson[pMasqueradingVector[39]].asBool());
         }
     }
+
     if(!pMasqueradingVector[40].empty() && pJson.isMember(pMasqueradingVector[40]))
     {
         dirtyFlag_[40] = true;
@@ -1151,6 +1577,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             isRental_=std::make_shared<bool>(pJson[pMasqueradingVector[40]].asBool());
         }
     }
+
     if(!pMasqueradingVector[41].empty() && pJson.isMember(pMasqueradingVector[41]))
     {
         dirtyFlag_[41] = true;
@@ -1159,6 +1586,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             isService_=std::make_shared<bool>(pJson[pMasqueradingVector[41]].asBool());
         }
     }
+
     if(!pMasqueradingVector[42].empty() && pJson.isMember(pMasqueradingVector[42]))
     {
         dirtyFlag_[42] = true;
@@ -1167,6 +1595,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             rating_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[42]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[43].empty() && pJson.isMember(pMasqueradingVector[43]))
     {
         dirtyFlag_[43] = true;
@@ -1175,6 +1604,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             reviewsCount_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[43]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[44].empty() && pJson.isMember(pMasqueradingVector[44]))
     {
         dirtyFlag_[44] = true;
@@ -1183,6 +1613,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             productAttributes_=std::make_shared<std::string>(pJson[pMasqueradingVector[44]].asString());
         }
     }
+
     if(!pMasqueradingVector[45].empty() && pJson.isMember(pMasqueradingVector[45]))
     {
         dirtyFlag_[45] = true;
@@ -1191,6 +1622,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             specifications_=std::make_shared<std::string>(pJson[pMasqueradingVector[45]].asString());
         }
     }
+
     if(!pMasqueradingVector[46].empty() && pJson.isMember(pMasqueradingVector[46]))
     {
         dirtyFlag_[46] = true;
@@ -1199,6 +1631,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             bulkPricing_=std::make_shared<std::string>(pJson[pMasqueradingVector[46]].asString());
         }
     }
+
     if(!pMasqueradingVector[47].empty() && pJson.isMember(pMasqueradingVector[47]))
     {
         dirtyFlag_[47] = true;
@@ -1207,6 +1640,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             metaTitle_=std::make_shared<std::string>(pJson[pMasqueradingVector[47]].asString());
         }
     }
+
     if(!pMasqueradingVector[48].empty() && pJson.isMember(pMasqueradingVector[48]))
     {
         dirtyFlag_[48] = true;
@@ -1215,6 +1649,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             metaKeywords_=std::make_shared<std::string>(pJson[pMasqueradingVector[48]].asString());
         }
     }
+
     if(!pMasqueradingVector[49].empty() && pJson.isMember(pMasqueradingVector[49]))
     {
         dirtyFlag_[49] = true;
@@ -1223,6 +1658,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             metaDescription_=std::make_shared<std::string>(pJson[pMasqueradingVector[49]].asString());
         }
     }
+
     if(!pMasqueradingVector[50].empty() && pJson.isMember(pMasqueradingVector[50]))
     {
         dirtyFlag_[50] = true;
@@ -1231,6 +1667,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             leadTime_=std::make_shared<std::string>(pJson[pMasqueradingVector[50]].asString());
         }
     }
+
     if(!pMasqueradingVector[51].empty() && pJson.isMember(pMasqueradingVector[51]))
     {
         dirtyFlag_[51] = true;
@@ -1239,6 +1676,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[51]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[52].empty() && pJson.isMember(pMasqueradingVector[52]))
     {
         dirtyFlag_[52] = true;
@@ -1247,6 +1685,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             auto timeStr = pJson[pMasqueradingVector[52]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1265,6 +1704,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             }
         }
     }
+
     if(!pMasqueradingVector[53].empty() && pJson.isMember(pMasqueradingVector[53]))
     {
         dirtyFlag_[53] = true;
@@ -1273,6 +1713,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             auto timeStr = pJson[pMasqueradingVector[53]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1291,10 +1732,12 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson, const std::vector
             }
         }
     }
+
 }
 
 PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -1303,6 +1746,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
@@ -1311,6 +1755,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("name"))
     {
         dirtyFlag_[2]=true;
@@ -1319,6 +1764,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             name_=std::make_shared<std::string>(pJson["name"].asString());
         }
     }
+
     if(pJson.isMember("slug"))
     {
         dirtyFlag_[3]=true;
@@ -1327,6 +1773,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             slug_=std::make_shared<std::string>(pJson["slug"].asString());
         }
     }
+
     if(pJson.isMember("short_description"))
     {
         dirtyFlag_[4]=true;
@@ -1335,6 +1782,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             shortDescription_=std::make_shared<std::string>(pJson["short_description"].asString());
         }
     }
+
     if(pJson.isMember("full_description"))
     {
         dirtyFlag_[5]=true;
@@ -1343,6 +1791,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             fullDescription_=std::make_shared<std::string>(pJson["full_description"].asString());
         }
     }
+
     if(pJson.isMember("admin_comment"))
     {
         dirtyFlag_[6]=true;
@@ -1351,6 +1800,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             adminComment_=std::make_shared<std::string>(pJson["admin_comment"].asString());
         }
     }
+
     if(pJson.isMember("merchant_id"))
     {
         dirtyFlag_[7]=true;
@@ -1359,6 +1809,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_name"))
     {
         dirtyFlag_[8]=true;
@@ -1367,6 +1818,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             merchantName_=std::make_shared<std::string>(pJson["merchant_name"].asString());
         }
     }
+
     if(pJson.isMember("sku"))
     {
         dirtyFlag_[9]=true;
@@ -1375,6 +1827,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             sku_=std::make_shared<std::string>(pJson["sku"].asString());
         }
     }
+
     if(pJson.isMember("images"))
     {
         dirtyFlag_[10]=true;
@@ -1383,6 +1836,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             images_=std::make_shared<std::string>(pJson["images"].asString());
         }
     }
+
     if(pJson.isMember("stock_quantity"))
     {
         dirtyFlag_[11]=true;
@@ -1391,6 +1845,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             stockQuantity_=std::make_shared<int32_t>((int32_t)pJson["stock_quantity"].asInt64());
         }
     }
+
     if(pJson.isMember("old_selling_price"))
     {
         dirtyFlag_[12]=true;
@@ -1399,6 +1854,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             oldSellingPrice_=std::make_shared<std::string>(pJson["old_selling_price"].asString());
         }
     }
+
     if(pJson.isMember("selling_price"))
     {
         dirtyFlag_[13]=true;
@@ -1407,6 +1863,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             sellingPrice_=std::make_shared<std::string>(pJson["selling_price"].asString());
         }
     }
+
     if(pJson.isMember("cost_price"))
     {
         dirtyFlag_[14]=true;
@@ -1415,6 +1872,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             costPrice_=std::make_shared<std::string>(pJson["cost_price"].asString());
         }
     }
+
     if(pJson.isMember("weight"))
     {
         dirtyFlag_[15]=true;
@@ -1423,6 +1881,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             weight_=std::make_shared<std::string>(pJson["weight"].asString());
         }
     }
+
     if(pJson.isMember("is_free_shipping"))
     {
         dirtyFlag_[16]=true;
@@ -1431,6 +1890,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             isFreeShipping_=std::make_shared<bool>(pJson["is_free_shipping"].asBool());
         }
     }
+
     if(pJson.isMember("ship_separately"))
     {
         dirtyFlag_[17]=true;
@@ -1439,6 +1899,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             shipSeparately_=std::make_shared<bool>(pJson["ship_separately"].asBool());
         }
     }
+
     if(pJson.isMember("uom_code_id"))
     {
         dirtyFlag_[18]=true;
@@ -1447,6 +1908,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             uomCodeId_=std::make_shared<std::string>(pJson["uom_code_id"].asString());
         }
     }
+
     if(pJson.isMember("uom_name"))
     {
         dirtyFlag_[19]=true;
@@ -1455,6 +1917,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             uomName_=std::make_shared<std::string>(pJson["uom_name"].asString());
         }
     }
+
     if(pJson.isMember("category_id"))
     {
         dirtyFlag_[20]=true;
@@ -1463,6 +1926,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             categoryId_=std::make_shared<std::string>(pJson["category_id"].asString());
         }
     }
+
     if(pJson.isMember("category_name"))
     {
         dirtyFlag_[21]=true;
@@ -1471,6 +1935,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             categoryName_=std::make_shared<std::string>(pJson["category_name"].asString());
         }
     }
+
     if(pJson.isMember("category_slug"))
     {
         dirtyFlag_[22]=true;
@@ -1479,6 +1944,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             categorySlug_=std::make_shared<std::string>(pJson["category_slug"].asString());
         }
     }
+
     if(pJson.isMember("tags"))
     {
         dirtyFlag_[23]=true;
@@ -1487,6 +1953,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             tags_=std::make_shared<std::string>(pJson["tags"].asString());
         }
     }
+
     if(pJson.isMember("variants"))
     {
         dirtyFlag_[24]=true;
@@ -1495,6 +1962,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             variants_=std::make_shared<std::string>(pJson["variants"].asString());
         }
     }
+
     if(pJson.isMember("minimum_cart_quantity"))
     {
         dirtyFlag_[25]=true;
@@ -1503,6 +1971,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             minimumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson["minimum_cart_quantity"].asInt64());
         }
     }
+
     if(pJson.isMember("maximum_cart_quantity"))
     {
         dirtyFlag_[26]=true;
@@ -1511,6 +1980,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             maximumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson["maximum_cart_quantity"].asInt64());
         }
     }
+
     if(pJson.isMember("branch_id"))
     {
         dirtyFlag_[27]=true;
@@ -1519,6 +1989,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             branchId_=std::make_shared<std::string>(pJson["branch_id"].asString());
         }
     }
+
     if(pJson.isMember("branch_name"))
     {
         dirtyFlag_[28]=true;
@@ -1527,6 +1998,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             branchName_=std::make_shared<std::string>(pJson["branch_name"].asString());
         }
     }
+
     if(pJson.isMember("shelf_location"))
     {
         dirtyFlag_[29]=true;
@@ -1535,6 +2007,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             shelfLocation_=std::make_shared<std::string>(pJson["shelf_location"].asString());
         }
     }
+
     if(pJson.isMember("is_published"))
     {
         dirtyFlag_[30]=true;
@@ -1543,6 +2016,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             isPublished_=std::make_shared<bool>(pJson["is_published"].asBool());
         }
     }
+
     if(pJson.isMember("allow_customer_reviews"))
     {
         dirtyFlag_[31]=true;
@@ -1551,6 +2025,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             allowCustomerReviews_=std::make_shared<bool>(pJson["allow_customer_reviews"].asBool());
         }
     }
+
     if(pJson.isMember("available_start_date"))
     {
         dirtyFlag_[32]=true;
@@ -1559,6 +2034,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["available_start_date"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1577,6 +2053,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("available_end_date"))
     {
         dirtyFlag_[33]=true;
@@ -1585,6 +2062,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["available_end_date"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1603,6 +2081,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("mark_as_new"))
     {
         dirtyFlag_[34]=true;
@@ -1611,6 +2090,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             markAsNew_=std::make_shared<bool>(pJson["mark_as_new"].asBool());
         }
     }
+
     if(pJson.isMember("disable_buy_button"))
     {
         dirtyFlag_[35]=true;
@@ -1619,6 +2099,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             disableBuyButton_=std::make_shared<bool>(pJson["disable_buy_button"].asBool());
         }
     }
+
     if(pJson.isMember("disable_wishlist_button"))
     {
         dirtyFlag_[36]=true;
@@ -1627,6 +2108,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             disableWishlistButton_=std::make_shared<bool>(pJson["disable_wishlist_button"].asBool());
         }
     }
+
     if(pJson.isMember("available_for_pre_order"))
     {
         dirtyFlag_[37]=true;
@@ -1635,6 +2117,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             availableForPreOrder_=std::make_shared<bool>(pJson["available_for_pre_order"].asBool());
         }
     }
+
     if(pJson.isMember("is_tax_exempt"))
     {
         dirtyFlag_[38]=true;
@@ -1643,6 +2126,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             isTaxExempt_=std::make_shared<bool>(pJson["is_tax_exempt"].asBool());
         }
     }
+
     if(pJson.isMember("is_not_returnable"))
     {
         dirtyFlag_[39]=true;
@@ -1651,6 +2135,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             isNotReturnable_=std::make_shared<bool>(pJson["is_not_returnable"].asBool());
         }
     }
+
     if(pJson.isMember("is_rental"))
     {
         dirtyFlag_[40]=true;
@@ -1659,6 +2144,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             isRental_=std::make_shared<bool>(pJson["is_rental"].asBool());
         }
     }
+
     if(pJson.isMember("is_service"))
     {
         dirtyFlag_[41]=true;
@@ -1667,6 +2153,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             isService_=std::make_shared<bool>(pJson["is_service"].asBool());
         }
     }
+
     if(pJson.isMember("rating"))
     {
         dirtyFlag_[42]=true;
@@ -1675,6 +2162,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             rating_=std::make_shared<int32_t>((int32_t)pJson["rating"].asInt64());
         }
     }
+
     if(pJson.isMember("reviews_count"))
     {
         dirtyFlag_[43]=true;
@@ -1683,6 +2171,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             reviewsCount_=std::make_shared<int32_t>((int32_t)pJson["reviews_count"].asInt64());
         }
     }
+
     if(pJson.isMember("product_attributes"))
     {
         dirtyFlag_[44]=true;
@@ -1691,6 +2180,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             productAttributes_=std::make_shared<std::string>(pJson["product_attributes"].asString());
         }
     }
+
     if(pJson.isMember("specifications"))
     {
         dirtyFlag_[45]=true;
@@ -1699,6 +2189,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             specifications_=std::make_shared<std::string>(pJson["specifications"].asString());
         }
     }
+
     if(pJson.isMember("bulk_pricing"))
     {
         dirtyFlag_[46]=true;
@@ -1707,6 +2198,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             bulkPricing_=std::make_shared<std::string>(pJson["bulk_pricing"].asString());
         }
     }
+
     if(pJson.isMember("meta_title"))
     {
         dirtyFlag_[47]=true;
@@ -1715,6 +2207,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             metaTitle_=std::make_shared<std::string>(pJson["meta_title"].asString());
         }
     }
+
     if(pJson.isMember("meta_keywords"))
     {
         dirtyFlag_[48]=true;
@@ -1723,6 +2216,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             metaKeywords_=std::make_shared<std::string>(pJson["meta_keywords"].asString());
         }
     }
+
     if(pJson.isMember("meta_description"))
     {
         dirtyFlag_[49]=true;
@@ -1731,6 +2225,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             metaDescription_=std::make_shared<std::string>(pJson["meta_description"].asString());
         }
     }
+
     if(pJson.isMember("lead_time"))
     {
         dirtyFlag_[50]=true;
@@ -1739,6 +2234,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             leadTime_=std::make_shared<std::string>(pJson["lead_time"].asString());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[51]=true;
@@ -1747,6 +2243,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[52]=true;
@@ -1755,6 +2252,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1773,6 +2271,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[53]=true;
@@ -1781,6 +2280,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1799,6 +2299,7 @@ PosInventoryItems::PosInventoryItems(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
@@ -1809,6 +2310,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         if(!pJson[pMasqueradingVector[0]].isNull())
@@ -1816,6 +2318,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -1824,6 +2327,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -1832,6 +2336,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             name_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -1840,6 +2345,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             slug_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -1848,6 +2354,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             shortDescription_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -1856,6 +2363,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             fullDescription_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -1864,6 +2372,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             adminComment_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -1872,6 +2381,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             merchantId_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -1880,6 +2390,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             merchantName_=std::make_shared<std::string>(pJson[pMasqueradingVector[8]].asString());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -1888,6 +2399,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             sku_=std::make_shared<std::string>(pJson[pMasqueradingVector[9]].asString());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -1896,6 +2408,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             images_=std::make_shared<std::string>(pJson[pMasqueradingVector[10]].asString());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -1904,6 +2417,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             stockQuantity_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[11]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -1912,6 +2426,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             oldSellingPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -1920,6 +2435,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             sellingPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -1928,6 +2444,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             costPrice_=std::make_shared<std::string>(pJson[pMasqueradingVector[14]].asString());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -1936,6 +2453,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             weight_=std::make_shared<std::string>(pJson[pMasqueradingVector[15]].asString());
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -1944,6 +2462,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             isFreeShipping_=std::make_shared<bool>(pJson[pMasqueradingVector[16]].asBool());
         }
     }
+
     if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
     {
         dirtyFlag_[17] = true;
@@ -1952,6 +2471,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             shipSeparately_=std::make_shared<bool>(pJson[pMasqueradingVector[17]].asBool());
         }
     }
+
     if(!pMasqueradingVector[18].empty() && pJson.isMember(pMasqueradingVector[18]))
     {
         dirtyFlag_[18] = true;
@@ -1960,6 +2480,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             uomCodeId_=std::make_shared<std::string>(pJson[pMasqueradingVector[18]].asString());
         }
     }
+
     if(!pMasqueradingVector[19].empty() && pJson.isMember(pMasqueradingVector[19]))
     {
         dirtyFlag_[19] = true;
@@ -1968,6 +2489,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             uomName_=std::make_shared<std::string>(pJson[pMasqueradingVector[19]].asString());
         }
     }
+
     if(!pMasqueradingVector[20].empty() && pJson.isMember(pMasqueradingVector[20]))
     {
         dirtyFlag_[20] = true;
@@ -1976,6 +2498,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             categoryId_=std::make_shared<std::string>(pJson[pMasqueradingVector[20]].asString());
         }
     }
+
     if(!pMasqueradingVector[21].empty() && pJson.isMember(pMasqueradingVector[21]))
     {
         dirtyFlag_[21] = true;
@@ -1984,6 +2507,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             categoryName_=std::make_shared<std::string>(pJson[pMasqueradingVector[21]].asString());
         }
     }
+
     if(!pMasqueradingVector[22].empty() && pJson.isMember(pMasqueradingVector[22]))
     {
         dirtyFlag_[22] = true;
@@ -1992,6 +2516,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             categorySlug_=std::make_shared<std::string>(pJson[pMasqueradingVector[22]].asString());
         }
     }
+
     if(!pMasqueradingVector[23].empty() && pJson.isMember(pMasqueradingVector[23]))
     {
         dirtyFlag_[23] = true;
@@ -2000,6 +2525,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             tags_=std::make_shared<std::string>(pJson[pMasqueradingVector[23]].asString());
         }
     }
+
     if(!pMasqueradingVector[24].empty() && pJson.isMember(pMasqueradingVector[24]))
     {
         dirtyFlag_[24] = true;
@@ -2008,6 +2534,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             variants_=std::make_shared<std::string>(pJson[pMasqueradingVector[24]].asString());
         }
     }
+
     if(!pMasqueradingVector[25].empty() && pJson.isMember(pMasqueradingVector[25]))
     {
         dirtyFlag_[25] = true;
@@ -2016,6 +2543,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             minimumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[25]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[26].empty() && pJson.isMember(pMasqueradingVector[26]))
     {
         dirtyFlag_[26] = true;
@@ -2024,6 +2552,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             maximumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[26]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[27].empty() && pJson.isMember(pMasqueradingVector[27]))
     {
         dirtyFlag_[27] = true;
@@ -2032,6 +2561,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             branchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[27]].asString());
         }
     }
+
     if(!pMasqueradingVector[28].empty() && pJson.isMember(pMasqueradingVector[28]))
     {
         dirtyFlag_[28] = true;
@@ -2040,6 +2570,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             branchName_=std::make_shared<std::string>(pJson[pMasqueradingVector[28]].asString());
         }
     }
+
     if(!pMasqueradingVector[29].empty() && pJson.isMember(pMasqueradingVector[29]))
     {
         dirtyFlag_[29] = true;
@@ -2048,6 +2579,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             shelfLocation_=std::make_shared<std::string>(pJson[pMasqueradingVector[29]].asString());
         }
     }
+
     if(!pMasqueradingVector[30].empty() && pJson.isMember(pMasqueradingVector[30]))
     {
         dirtyFlag_[30] = true;
@@ -2056,6 +2588,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             isPublished_=std::make_shared<bool>(pJson[pMasqueradingVector[30]].asBool());
         }
     }
+
     if(!pMasqueradingVector[31].empty() && pJson.isMember(pMasqueradingVector[31]))
     {
         dirtyFlag_[31] = true;
@@ -2064,6 +2597,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             allowCustomerReviews_=std::make_shared<bool>(pJson[pMasqueradingVector[31]].asBool());
         }
     }
+
     if(!pMasqueradingVector[32].empty() && pJson.isMember(pMasqueradingVector[32]))
     {
         dirtyFlag_[32] = true;
@@ -2072,6 +2606,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[32]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2090,6 +2625,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[33].empty() && pJson.isMember(pMasqueradingVector[33]))
     {
         dirtyFlag_[33] = true;
@@ -2098,6 +2634,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[33]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2116,6 +2653,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[34].empty() && pJson.isMember(pMasqueradingVector[34]))
     {
         dirtyFlag_[34] = true;
@@ -2124,6 +2662,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             markAsNew_=std::make_shared<bool>(pJson[pMasqueradingVector[34]].asBool());
         }
     }
+
     if(!pMasqueradingVector[35].empty() && pJson.isMember(pMasqueradingVector[35]))
     {
         dirtyFlag_[35] = true;
@@ -2132,6 +2671,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             disableBuyButton_=std::make_shared<bool>(pJson[pMasqueradingVector[35]].asBool());
         }
     }
+
     if(!pMasqueradingVector[36].empty() && pJson.isMember(pMasqueradingVector[36]))
     {
         dirtyFlag_[36] = true;
@@ -2140,6 +2680,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             disableWishlistButton_=std::make_shared<bool>(pJson[pMasqueradingVector[36]].asBool());
         }
     }
+
     if(!pMasqueradingVector[37].empty() && pJson.isMember(pMasqueradingVector[37]))
     {
         dirtyFlag_[37] = true;
@@ -2148,6 +2689,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             availableForPreOrder_=std::make_shared<bool>(pJson[pMasqueradingVector[37]].asBool());
         }
     }
+
     if(!pMasqueradingVector[38].empty() && pJson.isMember(pMasqueradingVector[38]))
     {
         dirtyFlag_[38] = true;
@@ -2156,6 +2698,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             isTaxExempt_=std::make_shared<bool>(pJson[pMasqueradingVector[38]].asBool());
         }
     }
+
     if(!pMasqueradingVector[39].empty() && pJson.isMember(pMasqueradingVector[39]))
     {
         dirtyFlag_[39] = true;
@@ -2164,6 +2707,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             isNotReturnable_=std::make_shared<bool>(pJson[pMasqueradingVector[39]].asBool());
         }
     }
+
     if(!pMasqueradingVector[40].empty() && pJson.isMember(pMasqueradingVector[40]))
     {
         dirtyFlag_[40] = true;
@@ -2172,6 +2716,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             isRental_=std::make_shared<bool>(pJson[pMasqueradingVector[40]].asBool());
         }
     }
+
     if(!pMasqueradingVector[41].empty() && pJson.isMember(pMasqueradingVector[41]))
     {
         dirtyFlag_[41] = true;
@@ -2180,6 +2725,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             isService_=std::make_shared<bool>(pJson[pMasqueradingVector[41]].asBool());
         }
     }
+
     if(!pMasqueradingVector[42].empty() && pJson.isMember(pMasqueradingVector[42]))
     {
         dirtyFlag_[42] = true;
@@ -2188,6 +2734,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             rating_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[42]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[43].empty() && pJson.isMember(pMasqueradingVector[43]))
     {
         dirtyFlag_[43] = true;
@@ -2196,6 +2743,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             reviewsCount_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[43]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[44].empty() && pJson.isMember(pMasqueradingVector[44]))
     {
         dirtyFlag_[44] = true;
@@ -2204,6 +2752,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             productAttributes_=std::make_shared<std::string>(pJson[pMasqueradingVector[44]].asString());
         }
     }
+
     if(!pMasqueradingVector[45].empty() && pJson.isMember(pMasqueradingVector[45]))
     {
         dirtyFlag_[45] = true;
@@ -2212,6 +2761,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             specifications_=std::make_shared<std::string>(pJson[pMasqueradingVector[45]].asString());
         }
     }
+
     if(!pMasqueradingVector[46].empty() && pJson.isMember(pMasqueradingVector[46]))
     {
         dirtyFlag_[46] = true;
@@ -2220,6 +2770,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             bulkPricing_=std::make_shared<std::string>(pJson[pMasqueradingVector[46]].asString());
         }
     }
+
     if(!pMasqueradingVector[47].empty() && pJson.isMember(pMasqueradingVector[47]))
     {
         dirtyFlag_[47] = true;
@@ -2228,6 +2779,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             metaTitle_=std::make_shared<std::string>(pJson[pMasqueradingVector[47]].asString());
         }
     }
+
     if(!pMasqueradingVector[48].empty() && pJson.isMember(pMasqueradingVector[48]))
     {
         dirtyFlag_[48] = true;
@@ -2236,6 +2788,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             metaKeywords_=std::make_shared<std::string>(pJson[pMasqueradingVector[48]].asString());
         }
     }
+
     if(!pMasqueradingVector[49].empty() && pJson.isMember(pMasqueradingVector[49]))
     {
         dirtyFlag_[49] = true;
@@ -2244,6 +2797,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             metaDescription_=std::make_shared<std::string>(pJson[pMasqueradingVector[49]].asString());
         }
     }
+
     if(!pMasqueradingVector[50].empty() && pJson.isMember(pMasqueradingVector[50]))
     {
         dirtyFlag_[50] = true;
@@ -2252,6 +2806,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             leadTime_=std::make_shared<std::string>(pJson[pMasqueradingVector[50]].asString());
         }
     }
+
     if(!pMasqueradingVector[51].empty() && pJson.isMember(pMasqueradingVector[51]))
     {
         dirtyFlag_[51] = true;
@@ -2260,6 +2815,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[51]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[52].empty() && pJson.isMember(pMasqueradingVector[52]))
     {
         dirtyFlag_[52] = true;
@@ -2268,6 +2824,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[52]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2286,6 +2843,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[53].empty() && pJson.isMember(pMasqueradingVector[53]))
     {
         dirtyFlag_[53] = true;
@@ -2294,6 +2852,7 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[53]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2312,10 +2871,12 @@ void PosInventoryItems::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
 }
 
 void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         if(!pJson["id"].isNull())
@@ -2323,6 +2884,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
@@ -2331,6 +2893,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("name"))
     {
         dirtyFlag_[2] = true;
@@ -2339,6 +2902,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             name_=std::make_shared<std::string>(pJson["name"].asString());
         }
     }
+
     if(pJson.isMember("slug"))
     {
         dirtyFlag_[3] = true;
@@ -2347,6 +2911,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             slug_=std::make_shared<std::string>(pJson["slug"].asString());
         }
     }
+
     if(pJson.isMember("short_description"))
     {
         dirtyFlag_[4] = true;
@@ -2355,6 +2920,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             shortDescription_=std::make_shared<std::string>(pJson["short_description"].asString());
         }
     }
+
     if(pJson.isMember("full_description"))
     {
         dirtyFlag_[5] = true;
@@ -2363,6 +2929,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             fullDescription_=std::make_shared<std::string>(pJson["full_description"].asString());
         }
     }
+
     if(pJson.isMember("admin_comment"))
     {
         dirtyFlag_[6] = true;
@@ -2371,6 +2938,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             adminComment_=std::make_shared<std::string>(pJson["admin_comment"].asString());
         }
     }
+
     if(pJson.isMember("merchant_id"))
     {
         dirtyFlag_[7] = true;
@@ -2379,6 +2947,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             merchantId_=std::make_shared<std::string>(pJson["merchant_id"].asString());
         }
     }
+
     if(pJson.isMember("merchant_name"))
     {
         dirtyFlag_[8] = true;
@@ -2387,6 +2956,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             merchantName_=std::make_shared<std::string>(pJson["merchant_name"].asString());
         }
     }
+
     if(pJson.isMember("sku"))
     {
         dirtyFlag_[9] = true;
@@ -2395,6 +2965,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             sku_=std::make_shared<std::string>(pJson["sku"].asString());
         }
     }
+
     if(pJson.isMember("images"))
     {
         dirtyFlag_[10] = true;
@@ -2403,6 +2974,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             images_=std::make_shared<std::string>(pJson["images"].asString());
         }
     }
+
     if(pJson.isMember("stock_quantity"))
     {
         dirtyFlag_[11] = true;
@@ -2411,6 +2983,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             stockQuantity_=std::make_shared<int32_t>((int32_t)pJson["stock_quantity"].asInt64());
         }
     }
+
     if(pJson.isMember("old_selling_price"))
     {
         dirtyFlag_[12] = true;
@@ -2419,6 +2992,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             oldSellingPrice_=std::make_shared<std::string>(pJson["old_selling_price"].asString());
         }
     }
+
     if(pJson.isMember("selling_price"))
     {
         dirtyFlag_[13] = true;
@@ -2427,6 +3001,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             sellingPrice_=std::make_shared<std::string>(pJson["selling_price"].asString());
         }
     }
+
     if(pJson.isMember("cost_price"))
     {
         dirtyFlag_[14] = true;
@@ -2435,6 +3010,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             costPrice_=std::make_shared<std::string>(pJson["cost_price"].asString());
         }
     }
+
     if(pJson.isMember("weight"))
     {
         dirtyFlag_[15] = true;
@@ -2443,6 +3019,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             weight_=std::make_shared<std::string>(pJson["weight"].asString());
         }
     }
+
     if(pJson.isMember("is_free_shipping"))
     {
         dirtyFlag_[16] = true;
@@ -2451,6 +3028,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             isFreeShipping_=std::make_shared<bool>(pJson["is_free_shipping"].asBool());
         }
     }
+
     if(pJson.isMember("ship_separately"))
     {
         dirtyFlag_[17] = true;
@@ -2459,6 +3037,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             shipSeparately_=std::make_shared<bool>(pJson["ship_separately"].asBool());
         }
     }
+
     if(pJson.isMember("uom_code_id"))
     {
         dirtyFlag_[18] = true;
@@ -2467,6 +3046,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             uomCodeId_=std::make_shared<std::string>(pJson["uom_code_id"].asString());
         }
     }
+
     if(pJson.isMember("uom_name"))
     {
         dirtyFlag_[19] = true;
@@ -2475,6 +3055,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             uomName_=std::make_shared<std::string>(pJson["uom_name"].asString());
         }
     }
+
     if(pJson.isMember("category_id"))
     {
         dirtyFlag_[20] = true;
@@ -2483,6 +3064,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             categoryId_=std::make_shared<std::string>(pJson["category_id"].asString());
         }
     }
+
     if(pJson.isMember("category_name"))
     {
         dirtyFlag_[21] = true;
@@ -2491,6 +3073,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             categoryName_=std::make_shared<std::string>(pJson["category_name"].asString());
         }
     }
+
     if(pJson.isMember("category_slug"))
     {
         dirtyFlag_[22] = true;
@@ -2499,6 +3082,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             categorySlug_=std::make_shared<std::string>(pJson["category_slug"].asString());
         }
     }
+
     if(pJson.isMember("tags"))
     {
         dirtyFlag_[23] = true;
@@ -2507,6 +3091,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             tags_=std::make_shared<std::string>(pJson["tags"].asString());
         }
     }
+
     if(pJson.isMember("variants"))
     {
         dirtyFlag_[24] = true;
@@ -2515,6 +3100,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             variants_=std::make_shared<std::string>(pJson["variants"].asString());
         }
     }
+
     if(pJson.isMember("minimum_cart_quantity"))
     {
         dirtyFlag_[25] = true;
@@ -2523,6 +3109,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             minimumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson["minimum_cart_quantity"].asInt64());
         }
     }
+
     if(pJson.isMember("maximum_cart_quantity"))
     {
         dirtyFlag_[26] = true;
@@ -2531,6 +3118,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             maximumCartQuantity_=std::make_shared<int32_t>((int32_t)pJson["maximum_cart_quantity"].asInt64());
         }
     }
+
     if(pJson.isMember("branch_id"))
     {
         dirtyFlag_[27] = true;
@@ -2539,6 +3127,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             branchId_=std::make_shared<std::string>(pJson["branch_id"].asString());
         }
     }
+
     if(pJson.isMember("branch_name"))
     {
         dirtyFlag_[28] = true;
@@ -2547,6 +3136,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             branchName_=std::make_shared<std::string>(pJson["branch_name"].asString());
         }
     }
+
     if(pJson.isMember("shelf_location"))
     {
         dirtyFlag_[29] = true;
@@ -2555,6 +3145,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             shelfLocation_=std::make_shared<std::string>(pJson["shelf_location"].asString());
         }
     }
+
     if(pJson.isMember("is_published"))
     {
         dirtyFlag_[30] = true;
@@ -2563,6 +3154,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             isPublished_=std::make_shared<bool>(pJson["is_published"].asBool());
         }
     }
+
     if(pJson.isMember("allow_customer_reviews"))
     {
         dirtyFlag_[31] = true;
@@ -2571,6 +3163,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             allowCustomerReviews_=std::make_shared<bool>(pJson["allow_customer_reviews"].asBool());
         }
     }
+
     if(pJson.isMember("available_start_date"))
     {
         dirtyFlag_[32] = true;
@@ -2579,6 +3172,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["available_start_date"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2597,6 +3191,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("available_end_date"))
     {
         dirtyFlag_[33] = true;
@@ -2605,6 +3200,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["available_end_date"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2623,6 +3219,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("mark_as_new"))
     {
         dirtyFlag_[34] = true;
@@ -2631,6 +3228,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             markAsNew_=std::make_shared<bool>(pJson["mark_as_new"].asBool());
         }
     }
+
     if(pJson.isMember("disable_buy_button"))
     {
         dirtyFlag_[35] = true;
@@ -2639,6 +3237,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             disableBuyButton_=std::make_shared<bool>(pJson["disable_buy_button"].asBool());
         }
     }
+
     if(pJson.isMember("disable_wishlist_button"))
     {
         dirtyFlag_[36] = true;
@@ -2647,6 +3246,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             disableWishlistButton_=std::make_shared<bool>(pJson["disable_wishlist_button"].asBool());
         }
     }
+
     if(pJson.isMember("available_for_pre_order"))
     {
         dirtyFlag_[37] = true;
@@ -2655,6 +3255,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             availableForPreOrder_=std::make_shared<bool>(pJson["available_for_pre_order"].asBool());
         }
     }
+
     if(pJson.isMember("is_tax_exempt"))
     {
         dirtyFlag_[38] = true;
@@ -2663,6 +3264,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             isTaxExempt_=std::make_shared<bool>(pJson["is_tax_exempt"].asBool());
         }
     }
+
     if(pJson.isMember("is_not_returnable"))
     {
         dirtyFlag_[39] = true;
@@ -2671,6 +3273,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             isNotReturnable_=std::make_shared<bool>(pJson["is_not_returnable"].asBool());
         }
     }
+
     if(pJson.isMember("is_rental"))
     {
         dirtyFlag_[40] = true;
@@ -2679,6 +3282,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             isRental_=std::make_shared<bool>(pJson["is_rental"].asBool());
         }
     }
+
     if(pJson.isMember("is_service"))
     {
         dirtyFlag_[41] = true;
@@ -2687,6 +3291,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             isService_=std::make_shared<bool>(pJson["is_service"].asBool());
         }
     }
+
     if(pJson.isMember("rating"))
     {
         dirtyFlag_[42] = true;
@@ -2695,6 +3300,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             rating_=std::make_shared<int32_t>((int32_t)pJson["rating"].asInt64());
         }
     }
+
     if(pJson.isMember("reviews_count"))
     {
         dirtyFlag_[43] = true;
@@ -2703,6 +3309,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             reviewsCount_=std::make_shared<int32_t>((int32_t)pJson["reviews_count"].asInt64());
         }
     }
+
     if(pJson.isMember("product_attributes"))
     {
         dirtyFlag_[44] = true;
@@ -2711,6 +3318,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             productAttributes_=std::make_shared<std::string>(pJson["product_attributes"].asString());
         }
     }
+
     if(pJson.isMember("specifications"))
     {
         dirtyFlag_[45] = true;
@@ -2719,6 +3327,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             specifications_=std::make_shared<std::string>(pJson["specifications"].asString());
         }
     }
+
     if(pJson.isMember("bulk_pricing"))
     {
         dirtyFlag_[46] = true;
@@ -2727,6 +3336,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             bulkPricing_=std::make_shared<std::string>(pJson["bulk_pricing"].asString());
         }
     }
+
     if(pJson.isMember("meta_title"))
     {
         dirtyFlag_[47] = true;
@@ -2735,6 +3345,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             metaTitle_=std::make_shared<std::string>(pJson["meta_title"].asString());
         }
     }
+
     if(pJson.isMember("meta_keywords"))
     {
         dirtyFlag_[48] = true;
@@ -2743,6 +3354,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             metaKeywords_=std::make_shared<std::string>(pJson["meta_keywords"].asString());
         }
     }
+
     if(pJson.isMember("meta_description"))
     {
         dirtyFlag_[49] = true;
@@ -2751,6 +3363,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             metaDescription_=std::make_shared<std::string>(pJson["meta_description"].asString());
         }
     }
+
     if(pJson.isMember("lead_time"))
     {
         dirtyFlag_[50] = true;
@@ -2759,6 +3372,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             leadTime_=std::make_shared<std::string>(pJson["lead_time"].asString());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[51] = true;
@@ -2767,6 +3381,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[52] = true;
@@ -2775,6 +3390,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2793,6 +3409,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[53] = true;
@@ -2801,6 +3418,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -2819,6 +3437,7 @@ void PosInventoryItems::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 const std::string &PosInventoryItems::getValueOfId() const noexcept
@@ -4133,6 +4752,7 @@ void PosInventoryItems::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &PosInventoryItems::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -4190,12 +4810,14 @@ const std::vector<std::string> &PosInventoryItems::insertColumns() noexcept
         "tenant_id",
         "created_at",
         "updated_at"
+
     };
     return inCols;
 }
 
 void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -4207,6 +4829,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -4218,6 +4841,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getName())
@@ -4229,6 +4853,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getSlug())
@@ -4240,6 +4865,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getShortDescription())
@@ -4251,6 +4877,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getFullDescription())
@@ -4262,6 +4889,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getAdminComment())
@@ -4273,6 +4901,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getMerchantId())
@@ -4284,6 +4913,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getMerchantName())
@@ -4295,6 +4925,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getSku())
@@ -4306,6 +4937,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getImages())
@@ -4317,6 +4949,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getStockQuantity())
@@ -4328,6 +4961,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getOldSellingPrice())
@@ -4339,6 +4973,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getSellingPrice())
@@ -4350,6 +4985,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getCostPrice())
@@ -4361,6 +4997,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getWeight())
@@ -4372,6 +5009,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getIsFreeShipping())
@@ -4383,6 +5021,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[17])
     {
         if(getShipSeparately())
@@ -4394,6 +5033,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[18])
     {
         if(getUomCodeId())
@@ -4405,6 +5045,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[19])
     {
         if(getUomName())
@@ -4416,6 +5057,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[20])
     {
         if(getCategoryId())
@@ -4427,6 +5069,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[21])
     {
         if(getCategoryName())
@@ -4438,6 +5081,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[22])
     {
         if(getCategorySlug())
@@ -4449,6 +5093,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[23])
     {
         if(getTags())
@@ -4460,6 +5105,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[24])
     {
         if(getVariants())
@@ -4471,6 +5117,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[25])
     {
         if(getMinimumCartQuantity())
@@ -4482,6 +5129,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[26])
     {
         if(getMaximumCartQuantity())
@@ -4493,6 +5141,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[27])
     {
         if(getBranchId())
@@ -4504,6 +5153,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[28])
     {
         if(getBranchName())
@@ -4515,6 +5165,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[29])
     {
         if(getShelfLocation())
@@ -4526,6 +5177,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[30])
     {
         if(getIsPublished())
@@ -4537,6 +5189,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[31])
     {
         if(getAllowCustomerReviews())
@@ -4548,6 +5201,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[32])
     {
         if(getAvailableStartDate())
@@ -4559,6 +5213,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[33])
     {
         if(getAvailableEndDate())
@@ -4570,6 +5225,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[34])
     {
         if(getMarkAsNew())
@@ -4581,6 +5237,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[35])
     {
         if(getDisableBuyButton())
@@ -4592,6 +5249,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[36])
     {
         if(getDisableWishlistButton())
@@ -4603,6 +5261,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[37])
     {
         if(getAvailableForPreOrder())
@@ -4614,6 +5273,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[38])
     {
         if(getIsTaxExempt())
@@ -4625,6 +5285,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[39])
     {
         if(getIsNotReturnable())
@@ -4636,6 +5297,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[40])
     {
         if(getIsRental())
@@ -4647,6 +5309,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[41])
     {
         if(getIsService())
@@ -4658,6 +5321,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[42])
     {
         if(getRating())
@@ -4669,6 +5333,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[43])
     {
         if(getReviewsCount())
@@ -4680,6 +5345,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[44])
     {
         if(getProductAttributes())
@@ -4691,6 +5357,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[45])
     {
         if(getSpecifications())
@@ -4702,6 +5369,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[46])
     {
         if(getBulkPricing())
@@ -4713,6 +5381,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[47])
     {
         if(getMetaTitle())
@@ -4724,6 +5393,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[48])
     {
         if(getMetaKeywords())
@@ -4735,6 +5405,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[49])
     {
         if(getMetaDescription())
@@ -4746,6 +5417,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[50])
     {
         if(getLeadTime())
@@ -4757,6 +5429,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[51])
     {
         if(getTenantId())
@@ -4768,6 +5441,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[52])
     {
         if(getCreatedAt())
@@ -4779,6 +5453,7 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[53])
     {
         if(getUpdatedAt())
@@ -4790,232 +5465,289 @@ void PosInventoryItems::outputArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> PosInventoryItems::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     if(dirtyFlag_[9])
     {
         ret.push_back(getColumnName(9));
     }
+
     if(dirtyFlag_[10])
     {
         ret.push_back(getColumnName(10));
     }
+
     if(dirtyFlag_[11])
     {
         ret.push_back(getColumnName(11));
     }
+
     if(dirtyFlag_[12])
     {
         ret.push_back(getColumnName(12));
     }
+
     if(dirtyFlag_[13])
     {
         ret.push_back(getColumnName(13));
     }
+
     if(dirtyFlag_[14])
     {
         ret.push_back(getColumnName(14));
     }
+
     if(dirtyFlag_[15])
     {
         ret.push_back(getColumnName(15));
     }
+
     if(dirtyFlag_[16])
     {
         ret.push_back(getColumnName(16));
     }
+
     if(dirtyFlag_[17])
     {
         ret.push_back(getColumnName(17));
     }
+
     if(dirtyFlag_[18])
     {
         ret.push_back(getColumnName(18));
     }
+
     if(dirtyFlag_[19])
     {
         ret.push_back(getColumnName(19));
     }
+
     if(dirtyFlag_[20])
     {
         ret.push_back(getColumnName(20));
     }
+
     if(dirtyFlag_[21])
     {
         ret.push_back(getColumnName(21));
     }
+
     if(dirtyFlag_[22])
     {
         ret.push_back(getColumnName(22));
     }
+
     if(dirtyFlag_[23])
     {
         ret.push_back(getColumnName(23));
     }
+
     if(dirtyFlag_[24])
     {
         ret.push_back(getColumnName(24));
     }
+
     if(dirtyFlag_[25])
     {
         ret.push_back(getColumnName(25));
     }
+
     if(dirtyFlag_[26])
     {
         ret.push_back(getColumnName(26));
     }
+
     if(dirtyFlag_[27])
     {
         ret.push_back(getColumnName(27));
     }
+
     if(dirtyFlag_[28])
     {
         ret.push_back(getColumnName(28));
     }
+
     if(dirtyFlag_[29])
     {
         ret.push_back(getColumnName(29));
     }
+
     if(dirtyFlag_[30])
     {
         ret.push_back(getColumnName(30));
     }
+
     if(dirtyFlag_[31])
     {
         ret.push_back(getColumnName(31));
     }
+
     if(dirtyFlag_[32])
     {
         ret.push_back(getColumnName(32));
     }
+
     if(dirtyFlag_[33])
     {
         ret.push_back(getColumnName(33));
     }
+
     if(dirtyFlag_[34])
     {
         ret.push_back(getColumnName(34));
     }
+
     if(dirtyFlag_[35])
     {
         ret.push_back(getColumnName(35));
     }
+
     if(dirtyFlag_[36])
     {
         ret.push_back(getColumnName(36));
     }
+
     if(dirtyFlag_[37])
     {
         ret.push_back(getColumnName(37));
     }
+
     if(dirtyFlag_[38])
     {
         ret.push_back(getColumnName(38));
     }
+
     if(dirtyFlag_[39])
     {
         ret.push_back(getColumnName(39));
     }
+
     if(dirtyFlag_[40])
     {
         ret.push_back(getColumnName(40));
     }
+
     if(dirtyFlag_[41])
     {
         ret.push_back(getColumnName(41));
     }
+
     if(dirtyFlag_[42])
     {
         ret.push_back(getColumnName(42));
     }
+
     if(dirtyFlag_[43])
     {
         ret.push_back(getColumnName(43));
     }
+
     if(dirtyFlag_[44])
     {
         ret.push_back(getColumnName(44));
     }
+
     if(dirtyFlag_[45])
     {
         ret.push_back(getColumnName(45));
     }
+
     if(dirtyFlag_[46])
     {
         ret.push_back(getColumnName(46));
     }
+
     if(dirtyFlag_[47])
     {
         ret.push_back(getColumnName(47));
     }
+
     if(dirtyFlag_[48])
     {
         ret.push_back(getColumnName(48));
     }
+
     if(dirtyFlag_[49])
     {
         ret.push_back(getColumnName(49));
     }
+
     if(dirtyFlag_[50])
     {
         ret.push_back(getColumnName(50));
     }
+
     if(dirtyFlag_[51])
     {
         ret.push_back(getColumnName(51));
     }
+
     if(dirtyFlag_[52])
     {
         ret.push_back(getColumnName(52));
     }
+
     if(dirtyFlag_[53])
     {
         ret.push_back(getColumnName(53));
     }
+
     return ret;
 }
 
 void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -5027,6 +5759,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -5038,6 +5771,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getName())
@@ -5049,6 +5783,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getSlug())
@@ -5060,6 +5795,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getShortDescription())
@@ -5071,6 +5807,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getFullDescription())
@@ -5082,6 +5819,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getAdminComment())
@@ -5093,6 +5831,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getMerchantId())
@@ -5104,6 +5843,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getMerchantName())
@@ -5115,6 +5855,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getSku())
@@ -5126,6 +5867,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getImages())
@@ -5137,6 +5879,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getStockQuantity())
@@ -5148,6 +5891,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getOldSellingPrice())
@@ -5159,6 +5903,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getSellingPrice())
@@ -5170,6 +5915,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getCostPrice())
@@ -5181,6 +5927,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getWeight())
@@ -5192,6 +5939,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getIsFreeShipping())
@@ -5203,6 +5951,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[17])
     {
         if(getShipSeparately())
@@ -5214,6 +5963,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[18])
     {
         if(getUomCodeId())
@@ -5225,6 +5975,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[19])
     {
         if(getUomName())
@@ -5236,6 +5987,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[20])
     {
         if(getCategoryId())
@@ -5247,6 +5999,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[21])
     {
         if(getCategoryName())
@@ -5258,6 +6011,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[22])
     {
         if(getCategorySlug())
@@ -5269,6 +6023,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[23])
     {
         if(getTags())
@@ -5280,6 +6035,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[24])
     {
         if(getVariants())
@@ -5291,6 +6047,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[25])
     {
         if(getMinimumCartQuantity())
@@ -5302,6 +6059,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[26])
     {
         if(getMaximumCartQuantity())
@@ -5313,6 +6071,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[27])
     {
         if(getBranchId())
@@ -5324,6 +6083,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[28])
     {
         if(getBranchName())
@@ -5335,6 +6095,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[29])
     {
         if(getShelfLocation())
@@ -5346,6 +6107,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[30])
     {
         if(getIsPublished())
@@ -5357,6 +6119,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[31])
     {
         if(getAllowCustomerReviews())
@@ -5368,6 +6131,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[32])
     {
         if(getAvailableStartDate())
@@ -5379,6 +6143,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[33])
     {
         if(getAvailableEndDate())
@@ -5390,6 +6155,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[34])
     {
         if(getMarkAsNew())
@@ -5401,6 +6167,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[35])
     {
         if(getDisableBuyButton())
@@ -5412,6 +6179,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[36])
     {
         if(getDisableWishlistButton())
@@ -5423,6 +6191,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[37])
     {
         if(getAvailableForPreOrder())
@@ -5434,6 +6203,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[38])
     {
         if(getIsTaxExempt())
@@ -5445,6 +6215,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[39])
     {
         if(getIsNotReturnable())
@@ -5456,6 +6227,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[40])
     {
         if(getIsRental())
@@ -5467,6 +6239,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[41])
     {
         if(getIsService())
@@ -5478,6 +6251,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[42])
     {
         if(getRating())
@@ -5489,6 +6263,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[43])
     {
         if(getReviewsCount())
@@ -5500,6 +6275,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[44])
     {
         if(getProductAttributes())
@@ -5511,6 +6287,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[45])
     {
         if(getSpecifications())
@@ -5522,6 +6299,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[46])
     {
         if(getBulkPricing())
@@ -5533,6 +6311,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[47])
     {
         if(getMetaTitle())
@@ -5544,6 +6323,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[48])
     {
         if(getMetaKeywords())
@@ -5555,6 +6335,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[49])
     {
         if(getMetaDescription())
@@ -5566,6 +6347,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[50])
     {
         if(getLeadTime())
@@ -5577,6 +6359,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[51])
     {
         if(getTenantId())
@@ -5588,6 +6371,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[52])
     {
         if(getCreatedAt())
@@ -5599,6 +6383,7 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[53])
     {
         if(getUpdatedAt())
@@ -5610,442 +6395,606 @@ void PosInventoryItems::updateArgs(drogon::orm::internal::SqlBinder &binder) con
             binder << nullptr;
         }
     }
+
 }
 Json::Value PosInventoryItems::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getName())
     {
+
         ret["name"]=getValueOfName();
+
     }
     else
     {
         ret["name"]=Json::Value();
     }
+
     if(getSlug())
     {
+
         ret["slug"]=getValueOfSlug();
+
     }
     else
     {
         ret["slug"]=Json::Value();
     }
+
     if(getShortDescription())
     {
+
         ret["short_description"]=getValueOfShortDescription();
+
     }
     else
     {
         ret["short_description"]=Json::Value();
     }
+
     if(getFullDescription())
     {
+
         ret["full_description"]=getValueOfFullDescription();
+
     }
     else
     {
         ret["full_description"]=Json::Value();
     }
+
     if(getAdminComment())
     {
+
         ret["admin_comment"]=getValueOfAdminComment();
+
     }
     else
     {
         ret["admin_comment"]=Json::Value();
     }
+
     if(getMerchantId())
     {
+
         ret["merchant_id"]=getValueOfMerchantId();
+
     }
     else
     {
         ret["merchant_id"]=Json::Value();
     }
+
     if(getMerchantName())
     {
+
         ret["merchant_name"]=getValueOfMerchantName();
+
     }
     else
     {
         ret["merchant_name"]=Json::Value();
     }
+
     if(getSku())
     {
+
         ret["sku"]=getValueOfSku();
+
     }
     else
     {
         ret["sku"]=Json::Value();
     }
+
     if(getImages())
     {
+
         ret["images"]=getValueOfImages();
+
     }
     else
     {
         ret["images"]=Json::Value();
     }
+
     if(getStockQuantity())
     {
+
         ret["stock_quantity"]=getValueOfStockQuantity();
+
     }
     else
     {
         ret["stock_quantity"]=Json::Value();
     }
+
     if(getOldSellingPrice())
     {
+
         ret["old_selling_price"]=getValueOfOldSellingPrice();
+
     }
     else
     {
         ret["old_selling_price"]=Json::Value();
     }
+
     if(getSellingPrice())
     {
+
         ret["selling_price"]=getValueOfSellingPrice();
+
     }
     else
     {
         ret["selling_price"]=Json::Value();
     }
+
     if(getCostPrice())
     {
+
         ret["cost_price"]=getValueOfCostPrice();
+
     }
     else
     {
         ret["cost_price"]=Json::Value();
     }
+
     if(getWeight())
     {
+
         ret["weight"]=getValueOfWeight();
+
     }
     else
     {
         ret["weight"]=Json::Value();
     }
+
     if(getIsFreeShipping())
     {
+
         ret["is_free_shipping"]=getValueOfIsFreeShipping();
+
     }
     else
     {
         ret["is_free_shipping"]=Json::Value();
     }
+
     if(getShipSeparately())
     {
+
         ret["ship_separately"]=getValueOfShipSeparately();
+
     }
     else
     {
         ret["ship_separately"]=Json::Value();
     }
+
     if(getUomCodeId())
     {
+
         ret["uom_code_id"]=getValueOfUomCodeId();
+
     }
     else
     {
         ret["uom_code_id"]=Json::Value();
     }
+
     if(getUomName())
     {
+
         ret["uom_name"]=getValueOfUomName();
+
     }
     else
     {
         ret["uom_name"]=Json::Value();
     }
+
     if(getCategoryId())
     {
+
         ret["category_id"]=getValueOfCategoryId();
+
     }
     else
     {
         ret["category_id"]=Json::Value();
     }
+
     if(getCategoryName())
     {
+
         ret["category_name"]=getValueOfCategoryName();
+
     }
     else
     {
         ret["category_name"]=Json::Value();
     }
+
     if(getCategorySlug())
     {
+
         ret["category_slug"]=getValueOfCategorySlug();
+
     }
     else
     {
         ret["category_slug"]=Json::Value();
     }
+
     if(getTags())
     {
+
         ret["tags"]=getValueOfTags();
+
     }
     else
     {
         ret["tags"]=Json::Value();
     }
+
     if(getVariants())
     {
+
         ret["variants"]=getValueOfVariants();
+
     }
     else
     {
         ret["variants"]=Json::Value();
     }
+
     if(getMinimumCartQuantity())
     {
+
         ret["minimum_cart_quantity"]=getValueOfMinimumCartQuantity();
+
     }
     else
     {
         ret["minimum_cart_quantity"]=Json::Value();
     }
+
     if(getMaximumCartQuantity())
     {
+
         ret["maximum_cart_quantity"]=getValueOfMaximumCartQuantity();
+
     }
     else
     {
         ret["maximum_cart_quantity"]=Json::Value();
     }
+
     if(getBranchId())
     {
+
         ret["branch_id"]=getValueOfBranchId();
+
     }
     else
     {
         ret["branch_id"]=Json::Value();
     }
+
     if(getBranchName())
     {
+
         ret["branch_name"]=getValueOfBranchName();
+
     }
     else
     {
         ret["branch_name"]=Json::Value();
     }
+
     if(getShelfLocation())
     {
+
         ret["shelf_location"]=getValueOfShelfLocation();
+
     }
     else
     {
         ret["shelf_location"]=Json::Value();
     }
+
     if(getIsPublished())
     {
+
         ret["is_published"]=getValueOfIsPublished();
+
     }
     else
     {
         ret["is_published"]=Json::Value();
     }
+
     if(getAllowCustomerReviews())
     {
+
         ret["allow_customer_reviews"]=getValueOfAllowCustomerReviews();
+
     }
     else
     {
         ret["allow_customer_reviews"]=Json::Value();
     }
+
     if(getAvailableStartDate())
     {
+
         ret["available_start_date"]=getAvailableStartDate()->toDbStringLocal();
+
     }
     else
     {
         ret["available_start_date"]=Json::Value();
     }
+
     if(getAvailableEndDate())
     {
+
         ret["available_end_date"]=getAvailableEndDate()->toDbStringLocal();
+
     }
     else
     {
         ret["available_end_date"]=Json::Value();
     }
+
     if(getMarkAsNew())
     {
+
         ret["mark_as_new"]=getValueOfMarkAsNew();
+
     }
     else
     {
         ret["mark_as_new"]=Json::Value();
     }
+
     if(getDisableBuyButton())
     {
+
         ret["disable_buy_button"]=getValueOfDisableBuyButton();
+
     }
     else
     {
         ret["disable_buy_button"]=Json::Value();
     }
+
     if(getDisableWishlistButton())
     {
+
         ret["disable_wishlist_button"]=getValueOfDisableWishlistButton();
+
     }
     else
     {
         ret["disable_wishlist_button"]=Json::Value();
     }
+
     if(getAvailableForPreOrder())
     {
+
         ret["available_for_pre_order"]=getValueOfAvailableForPreOrder();
+
     }
     else
     {
         ret["available_for_pre_order"]=Json::Value();
     }
+
     if(getIsTaxExempt())
     {
+
         ret["is_tax_exempt"]=getValueOfIsTaxExempt();
+
     }
     else
     {
         ret["is_tax_exempt"]=Json::Value();
     }
+
     if(getIsNotReturnable())
     {
+
         ret["is_not_returnable"]=getValueOfIsNotReturnable();
+
     }
     else
     {
         ret["is_not_returnable"]=Json::Value();
     }
+
     if(getIsRental())
     {
+
         ret["is_rental"]=getValueOfIsRental();
+
     }
     else
     {
         ret["is_rental"]=Json::Value();
     }
+
     if(getIsService())
     {
+
         ret["is_service"]=getValueOfIsService();
+
     }
     else
     {
         ret["is_service"]=Json::Value();
     }
+
     if(getRating())
     {
+
         ret["rating"]=getValueOfRating();
+
     }
     else
     {
         ret["rating"]=Json::Value();
     }
+
     if(getReviewsCount())
     {
+
         ret["reviews_count"]=getValueOfReviewsCount();
+
     }
     else
     {
         ret["reviews_count"]=Json::Value();
     }
+
     if(getProductAttributes())
     {
+
         ret["product_attributes"]=getValueOfProductAttributes();
+
     }
     else
     {
         ret["product_attributes"]=Json::Value();
     }
+
     if(getSpecifications())
     {
+
         ret["specifications"]=getValueOfSpecifications();
+
     }
     else
     {
         ret["specifications"]=Json::Value();
     }
+
     if(getBulkPricing())
     {
+
         ret["bulk_pricing"]=getValueOfBulkPricing();
+
     }
     else
     {
         ret["bulk_pricing"]=Json::Value();
     }
+
     if(getMetaTitle())
     {
+
         ret["meta_title"]=getValueOfMetaTitle();
+
     }
     else
     {
         ret["meta_title"]=Json::Value();
     }
+
     if(getMetaKeywords())
     {
+
         ret["meta_keywords"]=getValueOfMetaKeywords();
+
     }
     else
     {
         ret["meta_keywords"]=Json::Value();
     }
+
     if(getMetaDescription())
     {
+
         ret["meta_description"]=getValueOfMetaDescription();
+
     }
     else
     {
         ret["meta_description"]=Json::Value();
     }
+
     if(getLeadTime())
     {
+
         ret["lead_time"]=getValueOfLeadTime();
+
     }
     else
     {
         ret["lead_time"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -6060,1355 +7009,1745 @@ Json::Value PosInventoryItems::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 54)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getName())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfName();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getSlug())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfSlug();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getShortDescription())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfShortDescription();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getFullDescription())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfFullDescription();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getAdminComment())
             {
+
                 ret[pMasqueradingVector[6]]=getValueOfAdminComment();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getMerchantId())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfMerchantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getMerchantName())
             {
+
                 ret[pMasqueradingVector[8]]=getValueOfMerchantName();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[9].empty())
         {
             if(getSku())
             {
+
                 ret[pMasqueradingVector[9]]=getValueOfSku();
+
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[10].empty())
         {
             if(getImages())
             {
+
                 ret[pMasqueradingVector[10]]=getValueOfImages();
+
             }
             else
             {
                 ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[11].empty())
         {
             if(getStockQuantity())
             {
+
                 ret[pMasqueradingVector[11]]=getValueOfStockQuantity();
+
             }
             else
             {
                 ret[pMasqueradingVector[11]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[12].empty())
         {
             if(getOldSellingPrice())
             {
+
                 ret[pMasqueradingVector[12]]=getValueOfOldSellingPrice();
+
             }
             else
             {
                 ret[pMasqueradingVector[12]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[13].empty())
         {
             if(getSellingPrice())
             {
+
                 ret[pMasqueradingVector[13]]=getValueOfSellingPrice();
+
             }
             else
             {
                 ret[pMasqueradingVector[13]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[14].empty())
         {
             if(getCostPrice())
             {
+
                 ret[pMasqueradingVector[14]]=getValueOfCostPrice();
+
             }
             else
             {
                 ret[pMasqueradingVector[14]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[15].empty())
         {
             if(getWeight())
             {
+
                 ret[pMasqueradingVector[15]]=getValueOfWeight();
+
             }
             else
             {
                 ret[pMasqueradingVector[15]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[16].empty())
         {
             if(getIsFreeShipping())
             {
+
                 ret[pMasqueradingVector[16]]=getValueOfIsFreeShipping();
+
             }
             else
             {
                 ret[pMasqueradingVector[16]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[17].empty())
         {
             if(getShipSeparately())
             {
+
                 ret[pMasqueradingVector[17]]=getValueOfShipSeparately();
+
             }
             else
             {
                 ret[pMasqueradingVector[17]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[18].empty())
         {
             if(getUomCodeId())
             {
+
                 ret[pMasqueradingVector[18]]=getValueOfUomCodeId();
+
             }
             else
             {
                 ret[pMasqueradingVector[18]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[19].empty())
         {
             if(getUomName())
             {
+
                 ret[pMasqueradingVector[19]]=getValueOfUomName();
+
             }
             else
             {
                 ret[pMasqueradingVector[19]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[20].empty())
         {
             if(getCategoryId())
             {
+
                 ret[pMasqueradingVector[20]]=getValueOfCategoryId();
+
             }
             else
             {
                 ret[pMasqueradingVector[20]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[21].empty())
         {
             if(getCategoryName())
             {
+
                 ret[pMasqueradingVector[21]]=getValueOfCategoryName();
+
             }
             else
             {
                 ret[pMasqueradingVector[21]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[22].empty())
         {
             if(getCategorySlug())
             {
+
                 ret[pMasqueradingVector[22]]=getValueOfCategorySlug();
+
             }
             else
             {
                 ret[pMasqueradingVector[22]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[23].empty())
         {
             if(getTags())
             {
+
                 ret[pMasqueradingVector[23]]=getValueOfTags();
+
             }
             else
             {
                 ret[pMasqueradingVector[23]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[24].empty())
         {
             if(getVariants())
             {
+
                 ret[pMasqueradingVector[24]]=getValueOfVariants();
+
             }
             else
             {
                 ret[pMasqueradingVector[24]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[25].empty())
         {
             if(getMinimumCartQuantity())
             {
+
                 ret[pMasqueradingVector[25]]=getValueOfMinimumCartQuantity();
+
             }
             else
             {
                 ret[pMasqueradingVector[25]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[26].empty())
         {
             if(getMaximumCartQuantity())
             {
+
                 ret[pMasqueradingVector[26]]=getValueOfMaximumCartQuantity();
+
             }
             else
             {
                 ret[pMasqueradingVector[26]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[27].empty())
         {
             if(getBranchId())
             {
+
                 ret[pMasqueradingVector[27]]=getValueOfBranchId();
+
             }
             else
             {
                 ret[pMasqueradingVector[27]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[28].empty())
         {
             if(getBranchName())
             {
+
                 ret[pMasqueradingVector[28]]=getValueOfBranchName();
+
             }
             else
             {
                 ret[pMasqueradingVector[28]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[29].empty())
         {
             if(getShelfLocation())
             {
+
                 ret[pMasqueradingVector[29]]=getValueOfShelfLocation();
+
             }
             else
             {
                 ret[pMasqueradingVector[29]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[30].empty())
         {
             if(getIsPublished())
             {
+
                 ret[pMasqueradingVector[30]]=getValueOfIsPublished();
+
             }
             else
             {
                 ret[pMasqueradingVector[30]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[31].empty())
         {
             if(getAllowCustomerReviews())
             {
+
                 ret[pMasqueradingVector[31]]=getValueOfAllowCustomerReviews();
+
             }
             else
             {
                 ret[pMasqueradingVector[31]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[32].empty())
         {
             if(getAvailableStartDate())
             {
+
                 ret[pMasqueradingVector[32]]=getAvailableStartDate()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[32]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[33].empty())
         {
             if(getAvailableEndDate())
             {
+
                 ret[pMasqueradingVector[33]]=getAvailableEndDate()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[33]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[34].empty())
         {
             if(getMarkAsNew())
             {
+
                 ret[pMasqueradingVector[34]]=getValueOfMarkAsNew();
+
             }
             else
             {
                 ret[pMasqueradingVector[34]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[35].empty())
         {
             if(getDisableBuyButton())
             {
+
                 ret[pMasqueradingVector[35]]=getValueOfDisableBuyButton();
+
             }
             else
             {
                 ret[pMasqueradingVector[35]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[36].empty())
         {
             if(getDisableWishlistButton())
             {
+
                 ret[pMasqueradingVector[36]]=getValueOfDisableWishlistButton();
+
             }
             else
             {
                 ret[pMasqueradingVector[36]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[37].empty())
         {
             if(getAvailableForPreOrder())
             {
+
                 ret[pMasqueradingVector[37]]=getValueOfAvailableForPreOrder();
+
             }
             else
             {
                 ret[pMasqueradingVector[37]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[38].empty())
         {
             if(getIsTaxExempt())
             {
+
                 ret[pMasqueradingVector[38]]=getValueOfIsTaxExempt();
+
             }
             else
             {
                 ret[pMasqueradingVector[38]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[39].empty())
         {
             if(getIsNotReturnable())
             {
+
                 ret[pMasqueradingVector[39]]=getValueOfIsNotReturnable();
+
             }
             else
             {
                 ret[pMasqueradingVector[39]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[40].empty())
         {
             if(getIsRental())
             {
+
                 ret[pMasqueradingVector[40]]=getValueOfIsRental();
+
             }
             else
             {
                 ret[pMasqueradingVector[40]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[41].empty())
         {
             if(getIsService())
             {
+
                 ret[pMasqueradingVector[41]]=getValueOfIsService();
+
             }
             else
             {
                 ret[pMasqueradingVector[41]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[42].empty())
         {
             if(getRating())
             {
+
                 ret[pMasqueradingVector[42]]=getValueOfRating();
+
             }
             else
             {
                 ret[pMasqueradingVector[42]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[43].empty())
         {
             if(getReviewsCount())
             {
+
                 ret[pMasqueradingVector[43]]=getValueOfReviewsCount();
+
             }
             else
             {
                 ret[pMasqueradingVector[43]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[44].empty())
         {
             if(getProductAttributes())
             {
+
                 ret[pMasqueradingVector[44]]=getValueOfProductAttributes();
+
             }
             else
             {
                 ret[pMasqueradingVector[44]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[45].empty())
         {
             if(getSpecifications())
             {
+
                 ret[pMasqueradingVector[45]]=getValueOfSpecifications();
+
             }
             else
             {
                 ret[pMasqueradingVector[45]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[46].empty())
         {
             if(getBulkPricing())
             {
+
                 ret[pMasqueradingVector[46]]=getValueOfBulkPricing();
+
             }
             else
             {
                 ret[pMasqueradingVector[46]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[47].empty())
         {
             if(getMetaTitle())
             {
+
                 ret[pMasqueradingVector[47]]=getValueOfMetaTitle();
+
             }
             else
             {
                 ret[pMasqueradingVector[47]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[48].empty())
         {
             if(getMetaKeywords())
             {
+
                 ret[pMasqueradingVector[48]]=getValueOfMetaKeywords();
+
             }
             else
             {
                 ret[pMasqueradingVector[48]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[49].empty())
         {
             if(getMetaDescription())
             {
+
                 ret[pMasqueradingVector[49]]=getValueOfMetaDescription();
+
             }
             else
             {
                 ret[pMasqueradingVector[49]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[50].empty())
         {
             if(getLeadTime())
             {
+
                 ret[pMasqueradingVector[50]]=getValueOfLeadTime();
+
             }
             else
             {
                 ret[pMasqueradingVector[50]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[51].empty())
         {
             if(getTenantId())
             {
+
                 ret[pMasqueradingVector[51]]=getValueOfTenantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[51]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[52].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[52]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[52]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[53].empty())
         {
             if(getUpdatedAt())
             {
+
                 ret[pMasqueradingVector[53]]=getUpdatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[53]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getName())
     {
+
         ret["name"]=getValueOfName();
+
     }
     else
     {
         ret["name"]=Json::Value();
     }
+
     if(getSlug())
     {
+
         ret["slug"]=getValueOfSlug();
+
     }
     else
     {
         ret["slug"]=Json::Value();
     }
+
     if(getShortDescription())
     {
+
         ret["short_description"]=getValueOfShortDescription();
+
     }
     else
     {
         ret["short_description"]=Json::Value();
     }
+
     if(getFullDescription())
     {
+
         ret["full_description"]=getValueOfFullDescription();
+
     }
     else
     {
         ret["full_description"]=Json::Value();
     }
+
     if(getAdminComment())
     {
+
         ret["admin_comment"]=getValueOfAdminComment();
+
     }
     else
     {
         ret["admin_comment"]=Json::Value();
     }
+
     if(getMerchantId())
     {
+
         ret["merchant_id"]=getValueOfMerchantId();
+
     }
     else
     {
         ret["merchant_id"]=Json::Value();
     }
+
     if(getMerchantName())
     {
+
         ret["merchant_name"]=getValueOfMerchantName();
+
     }
     else
     {
         ret["merchant_name"]=Json::Value();
     }
+
     if(getSku())
     {
+
         ret["sku"]=getValueOfSku();
+
     }
     else
     {
         ret["sku"]=Json::Value();
     }
+
     if(getImages())
     {
+
         ret["images"]=getValueOfImages();
+
     }
     else
     {
         ret["images"]=Json::Value();
     }
+
     if(getStockQuantity())
     {
+
         ret["stock_quantity"]=getValueOfStockQuantity();
+
     }
     else
     {
         ret["stock_quantity"]=Json::Value();
     }
+
     if(getOldSellingPrice())
     {
+
         ret["old_selling_price"]=getValueOfOldSellingPrice();
+
     }
     else
     {
         ret["old_selling_price"]=Json::Value();
     }
+
     if(getSellingPrice())
     {
+
         ret["selling_price"]=getValueOfSellingPrice();
+
     }
     else
     {
         ret["selling_price"]=Json::Value();
     }
+
     if(getCostPrice())
     {
+
         ret["cost_price"]=getValueOfCostPrice();
+
     }
     else
     {
         ret["cost_price"]=Json::Value();
     }
+
     if(getWeight())
     {
+
         ret["weight"]=getValueOfWeight();
+
     }
     else
     {
         ret["weight"]=Json::Value();
     }
+
     if(getIsFreeShipping())
     {
+
         ret["is_free_shipping"]=getValueOfIsFreeShipping();
+
     }
     else
     {
         ret["is_free_shipping"]=Json::Value();
     }
+
     if(getShipSeparately())
     {
+
         ret["ship_separately"]=getValueOfShipSeparately();
+
     }
     else
     {
         ret["ship_separately"]=Json::Value();
     }
+
     if(getUomCodeId())
     {
+
         ret["uom_code_id"]=getValueOfUomCodeId();
+
     }
     else
     {
         ret["uom_code_id"]=Json::Value();
     }
+
     if(getUomName())
     {
+
         ret["uom_name"]=getValueOfUomName();
+
     }
     else
     {
         ret["uom_name"]=Json::Value();
     }
+
     if(getCategoryId())
     {
+
         ret["category_id"]=getValueOfCategoryId();
+
     }
     else
     {
         ret["category_id"]=Json::Value();
     }
+
     if(getCategoryName())
     {
+
         ret["category_name"]=getValueOfCategoryName();
+
     }
     else
     {
         ret["category_name"]=Json::Value();
     }
+
     if(getCategorySlug())
     {
+
         ret["category_slug"]=getValueOfCategorySlug();
+
     }
     else
     {
         ret["category_slug"]=Json::Value();
     }
+
     if(getTags())
     {
+
         ret["tags"]=getValueOfTags();
+
     }
     else
     {
         ret["tags"]=Json::Value();
     }
+
     if(getVariants())
     {
+
         ret["variants"]=getValueOfVariants();
+
     }
     else
     {
         ret["variants"]=Json::Value();
     }
+
     if(getMinimumCartQuantity())
     {
+
         ret["minimum_cart_quantity"]=getValueOfMinimumCartQuantity();
+
     }
     else
     {
         ret["minimum_cart_quantity"]=Json::Value();
     }
+
     if(getMaximumCartQuantity())
     {
+
         ret["maximum_cart_quantity"]=getValueOfMaximumCartQuantity();
+
     }
     else
     {
         ret["maximum_cart_quantity"]=Json::Value();
     }
+
     if(getBranchId())
     {
+
         ret["branch_id"]=getValueOfBranchId();
+
     }
     else
     {
         ret["branch_id"]=Json::Value();
     }
+
     if(getBranchName())
     {
+
         ret["branch_name"]=getValueOfBranchName();
+
     }
     else
     {
         ret["branch_name"]=Json::Value();
     }
+
     if(getShelfLocation())
     {
+
         ret["shelf_location"]=getValueOfShelfLocation();
+
     }
     else
     {
         ret["shelf_location"]=Json::Value();
     }
+
     if(getIsPublished())
     {
+
         ret["is_published"]=getValueOfIsPublished();
+
     }
     else
     {
         ret["is_published"]=Json::Value();
     }
+
     if(getAllowCustomerReviews())
     {
+
         ret["allow_customer_reviews"]=getValueOfAllowCustomerReviews();
+
     }
     else
     {
         ret["allow_customer_reviews"]=Json::Value();
     }
+
     if(getAvailableStartDate())
     {
+
         ret["available_start_date"]=getAvailableStartDate()->toDbStringLocal();
+
     }
     else
     {
         ret["available_start_date"]=Json::Value();
     }
+
     if(getAvailableEndDate())
     {
+
         ret["available_end_date"]=getAvailableEndDate()->toDbStringLocal();
+
     }
     else
     {
         ret["available_end_date"]=Json::Value();
     }
+
     if(getMarkAsNew())
     {
+
         ret["mark_as_new"]=getValueOfMarkAsNew();
+
     }
     else
     {
         ret["mark_as_new"]=Json::Value();
     }
+
     if(getDisableBuyButton())
     {
+
         ret["disable_buy_button"]=getValueOfDisableBuyButton();
+
     }
     else
     {
         ret["disable_buy_button"]=Json::Value();
     }
+
     if(getDisableWishlistButton())
     {
+
         ret["disable_wishlist_button"]=getValueOfDisableWishlistButton();
+
     }
     else
     {
         ret["disable_wishlist_button"]=Json::Value();
     }
+
     if(getAvailableForPreOrder())
     {
+
         ret["available_for_pre_order"]=getValueOfAvailableForPreOrder();
+
     }
     else
     {
         ret["available_for_pre_order"]=Json::Value();
     }
+
     if(getIsTaxExempt())
     {
+
         ret["is_tax_exempt"]=getValueOfIsTaxExempt();
+
     }
     else
     {
         ret["is_tax_exempt"]=Json::Value();
     }
+
     if(getIsNotReturnable())
     {
+
         ret["is_not_returnable"]=getValueOfIsNotReturnable();
+
     }
     else
     {
         ret["is_not_returnable"]=Json::Value();
     }
+
     if(getIsRental())
     {
+
         ret["is_rental"]=getValueOfIsRental();
+
     }
     else
     {
         ret["is_rental"]=Json::Value();
     }
+
     if(getIsService())
     {
+
         ret["is_service"]=getValueOfIsService();
+
     }
     else
     {
         ret["is_service"]=Json::Value();
     }
+
     if(getRating())
     {
+
         ret["rating"]=getValueOfRating();
+
     }
     else
     {
         ret["rating"]=Json::Value();
     }
+
     if(getReviewsCount())
     {
+
         ret["reviews_count"]=getValueOfReviewsCount();
+
     }
     else
     {
         ret["reviews_count"]=Json::Value();
     }
+
     if(getProductAttributes())
     {
+
         ret["product_attributes"]=getValueOfProductAttributes();
+
     }
     else
     {
         ret["product_attributes"]=Json::Value();
     }
+
     if(getSpecifications())
     {
+
         ret["specifications"]=getValueOfSpecifications();
+
     }
     else
     {
         ret["specifications"]=Json::Value();
     }
+
     if(getBulkPricing())
     {
+
         ret["bulk_pricing"]=getValueOfBulkPricing();
+
     }
     else
     {
         ret["bulk_pricing"]=Json::Value();
     }
+
     if(getMetaTitle())
     {
+
         ret["meta_title"]=getValueOfMetaTitle();
+
     }
     else
     {
         ret["meta_title"]=Json::Value();
     }
+
     if(getMetaKeywords())
     {
+
         ret["meta_keywords"]=getValueOfMetaKeywords();
+
     }
     else
     {
         ret["meta_keywords"]=Json::Value();
     }
+
     if(getMetaDescription())
     {
+
         ret["meta_description"]=getValueOfMetaDescription();
+
     }
     else
     {
         ret["meta_description"]=Json::Value();
     }
+
     if(getLeadTime())
     {
+
         ret["lead_time"]=getValueOfLeadTime();
+
     }
     else
     {
         ret["lead_time"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool PosInventoryItems::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     else
     {
         err="The id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     else
     {
         err="The business_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("name"))
     {
         if(!validJsonOfField(2, "name", pJson["name"], err, true))
             return false;
     }
+
     if(pJson.isMember("slug"))
     {
         if(!validJsonOfField(3, "slug", pJson["slug"], err, true))
             return false;
     }
+
     if(pJson.isMember("short_description"))
     {
         if(!validJsonOfField(4, "short_description", pJson["short_description"], err, true))
             return false;
     }
+
     if(pJson.isMember("full_description"))
     {
         if(!validJsonOfField(5, "full_description", pJson["full_description"], err, true))
             return false;
     }
+
     if(pJson.isMember("admin_comment"))
     {
         if(!validJsonOfField(6, "admin_comment", pJson["admin_comment"], err, true))
             return false;
     }
+
     if(pJson.isMember("merchant_id"))
     {
         if(!validJsonOfField(7, "merchant_id", pJson["merchant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The merchant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("merchant_name"))
     {
         if(!validJsonOfField(8, "merchant_name", pJson["merchant_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("sku"))
     {
         if(!validJsonOfField(9, "sku", pJson["sku"], err, true))
             return false;
     }
+
     if(pJson.isMember("images"))
     {
         if(!validJsonOfField(10, "images", pJson["images"], err, true))
             return false;
     }
+
     if(pJson.isMember("stock_quantity"))
     {
         if(!validJsonOfField(11, "stock_quantity", pJson["stock_quantity"], err, true))
             return false;
     }
+
     if(pJson.isMember("old_selling_price"))
     {
         if(!validJsonOfField(12, "old_selling_price", pJson["old_selling_price"], err, true))
             return false;
     }
+
     if(pJson.isMember("selling_price"))
     {
         if(!validJsonOfField(13, "selling_price", pJson["selling_price"], err, true))
             return false;
     }
+
     if(pJson.isMember("cost_price"))
     {
         if(!validJsonOfField(14, "cost_price", pJson["cost_price"], err, true))
             return false;
     }
+
     if(pJson.isMember("weight"))
     {
         if(!validJsonOfField(15, "weight", pJson["weight"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_free_shipping"))
     {
         if(!validJsonOfField(16, "is_free_shipping", pJson["is_free_shipping"], err, true))
             return false;
     }
+
     if(pJson.isMember("ship_separately"))
     {
         if(!validJsonOfField(17, "ship_separately", pJson["ship_separately"], err, true))
             return false;
     }
+
     if(pJson.isMember("uom_code_id"))
     {
         if(!validJsonOfField(18, "uom_code_id", pJson["uom_code_id"], err, true))
             return false;
     }
+
     else
     {
         err="The uom_code_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("uom_name"))
     {
         if(!validJsonOfField(19, "uom_name", pJson["uom_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("category_id"))
     {
         if(!validJsonOfField(20, "category_id", pJson["category_id"], err, true))
             return false;
     }
+
     else
     {
         err="The category_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("category_name"))
     {
         if(!validJsonOfField(21, "category_name", pJson["category_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("category_slug"))
     {
         if(!validJsonOfField(22, "category_slug", pJson["category_slug"], err, true))
             return false;
     }
+
     if(pJson.isMember("tags"))
     {
         if(!validJsonOfField(23, "tags", pJson["tags"], err, true))
             return false;
     }
+
     if(pJson.isMember("variants"))
     {
         if(!validJsonOfField(24, "variants", pJson["variants"], err, true))
             return false;
     }
+
     if(pJson.isMember("minimum_cart_quantity"))
     {
         if(!validJsonOfField(25, "minimum_cart_quantity", pJson["minimum_cart_quantity"], err, true))
             return false;
     }
+
     if(pJson.isMember("maximum_cart_quantity"))
     {
         if(!validJsonOfField(26, "maximum_cart_quantity", pJson["maximum_cart_quantity"], err, true))
             return false;
     }
+
     if(pJson.isMember("branch_id"))
     {
         if(!validJsonOfField(27, "branch_id", pJson["branch_id"], err, true))
             return false;
     }
+
     else
     {
         err="The branch_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("branch_name"))
     {
         if(!validJsonOfField(28, "branch_name", pJson["branch_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("shelf_location"))
     {
         if(!validJsonOfField(29, "shelf_location", pJson["shelf_location"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_published"))
     {
         if(!validJsonOfField(30, "is_published", pJson["is_published"], err, true))
             return false;
     }
+
     if(pJson.isMember("allow_customer_reviews"))
     {
         if(!validJsonOfField(31, "allow_customer_reviews", pJson["allow_customer_reviews"], err, true))
             return false;
     }
+
     if(pJson.isMember("available_start_date"))
     {
         if(!validJsonOfField(32, "available_start_date", pJson["available_start_date"], err, true))
             return false;
     }
+
     else
     {
         err="The available_start_date column cannot be null";
         return false;
     }
+
     if(pJson.isMember("available_end_date"))
     {
         if(!validJsonOfField(33, "available_end_date", pJson["available_end_date"], err, true))
             return false;
     }
+
     else
     {
         err="The available_end_date column cannot be null";
         return false;
     }
+
     if(pJson.isMember("mark_as_new"))
     {
         if(!validJsonOfField(34, "mark_as_new", pJson["mark_as_new"], err, true))
             return false;
     }
+
     if(pJson.isMember("disable_buy_button"))
     {
         if(!validJsonOfField(35, "disable_buy_button", pJson["disable_buy_button"], err, true))
             return false;
     }
+
     if(pJson.isMember("disable_wishlist_button"))
     {
         if(!validJsonOfField(36, "disable_wishlist_button", pJson["disable_wishlist_button"], err, true))
             return false;
     }
+
     if(pJson.isMember("available_for_pre_order"))
     {
         if(!validJsonOfField(37, "available_for_pre_order", pJson["available_for_pre_order"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_tax_exempt"))
     {
         if(!validJsonOfField(38, "is_tax_exempt", pJson["is_tax_exempt"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_not_returnable"))
     {
         if(!validJsonOfField(39, "is_not_returnable", pJson["is_not_returnable"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_rental"))
     {
         if(!validJsonOfField(40, "is_rental", pJson["is_rental"], err, true))
             return false;
     }
+
     if(pJson.isMember("is_service"))
     {
         if(!validJsonOfField(41, "is_service", pJson["is_service"], err, true))
             return false;
     }
+
     if(pJson.isMember("rating"))
     {
         if(!validJsonOfField(42, "rating", pJson["rating"], err, true))
             return false;
     }
+
     if(pJson.isMember("reviews_count"))
     {
         if(!validJsonOfField(43, "reviews_count", pJson["reviews_count"], err, true))
             return false;
     }
+
     if(pJson.isMember("product_attributes"))
     {
         if(!validJsonOfField(44, "product_attributes", pJson["product_attributes"], err, true))
             return false;
     }
+
     if(pJson.isMember("specifications"))
     {
         if(!validJsonOfField(45, "specifications", pJson["specifications"], err, true))
             return false;
     }
+
     if(pJson.isMember("bulk_pricing"))
     {
         if(!validJsonOfField(46, "bulk_pricing", pJson["bulk_pricing"], err, true))
             return false;
     }
+
     if(pJson.isMember("meta_title"))
     {
         if(!validJsonOfField(47, "meta_title", pJson["meta_title"], err, true))
             return false;
     }
+
     if(pJson.isMember("meta_keywords"))
     {
         if(!validJsonOfField(48, "meta_keywords", pJson["meta_keywords"], err, true))
             return false;
     }
+
     if(pJson.isMember("meta_description"))
     {
         if(!validJsonOfField(49, "meta_description", pJson["meta_description"], err, true))
             return false;
     }
+
     if(pJson.isMember("lead_time"))
     {
         if(!validJsonOfField(50, "lead_time", pJson["lead_time"], err, true))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(51, "tenant_id", pJson["tenant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The tenant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(52, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(53, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -7421,6 +8760,7 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -7428,12 +8768,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[0] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -7441,12 +8784,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[1] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -7454,7 +8800,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -7462,7 +8810,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -7470,7 +8820,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -7478,7 +8830,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -7486,7 +8840,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -7494,12 +8850,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[7] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -7507,7 +8866,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
@@ -7515,7 +8876,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[10].empty())
       {
           if(pJson.isMember(pMasqueradingVector[10]))
@@ -7523,7 +8886,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[11].empty())
       {
           if(pJson.isMember(pMasqueradingVector[11]))
@@ -7531,7 +8896,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[12].empty())
       {
           if(pJson.isMember(pMasqueradingVector[12]))
@@ -7539,7 +8906,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[13].empty())
       {
           if(pJson.isMember(pMasqueradingVector[13]))
@@ -7547,7 +8916,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[14].empty())
       {
           if(pJson.isMember(pMasqueradingVector[14]))
@@ -7555,7 +8926,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[15].empty())
       {
           if(pJson.isMember(pMasqueradingVector[15]))
@@ -7563,7 +8936,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[16].empty())
       {
           if(pJson.isMember(pMasqueradingVector[16]))
@@ -7571,7 +8946,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[17].empty())
       {
           if(pJson.isMember(pMasqueradingVector[17]))
@@ -7579,7 +8956,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(17, pMasqueradingVector[17], pJson[pMasqueradingVector[17]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[18].empty())
       {
           if(pJson.isMember(pMasqueradingVector[18]))
@@ -7587,12 +8966,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(18, pMasqueradingVector[18], pJson[pMasqueradingVector[18]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[18] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[19].empty())
       {
           if(pJson.isMember(pMasqueradingVector[19]))
@@ -7600,7 +8982,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(19, pMasqueradingVector[19], pJson[pMasqueradingVector[19]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[20].empty())
       {
           if(pJson.isMember(pMasqueradingVector[20]))
@@ -7608,12 +8992,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(20, pMasqueradingVector[20], pJson[pMasqueradingVector[20]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[20] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[21].empty())
       {
           if(pJson.isMember(pMasqueradingVector[21]))
@@ -7621,7 +9008,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(21, pMasqueradingVector[21], pJson[pMasqueradingVector[21]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[22].empty())
       {
           if(pJson.isMember(pMasqueradingVector[22]))
@@ -7629,7 +9018,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(22, pMasqueradingVector[22], pJson[pMasqueradingVector[22]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[23].empty())
       {
           if(pJson.isMember(pMasqueradingVector[23]))
@@ -7637,7 +9028,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(23, pMasqueradingVector[23], pJson[pMasqueradingVector[23]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[24].empty())
       {
           if(pJson.isMember(pMasqueradingVector[24]))
@@ -7645,7 +9038,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(24, pMasqueradingVector[24], pJson[pMasqueradingVector[24]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[25].empty())
       {
           if(pJson.isMember(pMasqueradingVector[25]))
@@ -7653,7 +9048,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(25, pMasqueradingVector[25], pJson[pMasqueradingVector[25]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[26].empty())
       {
           if(pJson.isMember(pMasqueradingVector[26]))
@@ -7661,7 +9058,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(26, pMasqueradingVector[26], pJson[pMasqueradingVector[26]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[27].empty())
       {
           if(pJson.isMember(pMasqueradingVector[27]))
@@ -7669,12 +9068,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(27, pMasqueradingVector[27], pJson[pMasqueradingVector[27]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[27] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[28].empty())
       {
           if(pJson.isMember(pMasqueradingVector[28]))
@@ -7682,7 +9084,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(28, pMasqueradingVector[28], pJson[pMasqueradingVector[28]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[29].empty())
       {
           if(pJson.isMember(pMasqueradingVector[29]))
@@ -7690,7 +9094,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(29, pMasqueradingVector[29], pJson[pMasqueradingVector[29]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[30].empty())
       {
           if(pJson.isMember(pMasqueradingVector[30]))
@@ -7698,7 +9104,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(30, pMasqueradingVector[30], pJson[pMasqueradingVector[30]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[31].empty())
       {
           if(pJson.isMember(pMasqueradingVector[31]))
@@ -7706,7 +9114,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(31, pMasqueradingVector[31], pJson[pMasqueradingVector[31]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[32].empty())
       {
           if(pJson.isMember(pMasqueradingVector[32]))
@@ -7714,12 +9124,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(32, pMasqueradingVector[32], pJson[pMasqueradingVector[32]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[32] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[33].empty())
       {
           if(pJson.isMember(pMasqueradingVector[33]))
@@ -7727,12 +9140,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(33, pMasqueradingVector[33], pJson[pMasqueradingVector[33]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[33] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[34].empty())
       {
           if(pJson.isMember(pMasqueradingVector[34]))
@@ -7740,7 +9156,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(34, pMasqueradingVector[34], pJson[pMasqueradingVector[34]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[35].empty())
       {
           if(pJson.isMember(pMasqueradingVector[35]))
@@ -7748,7 +9166,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(35, pMasqueradingVector[35], pJson[pMasqueradingVector[35]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[36].empty())
       {
           if(pJson.isMember(pMasqueradingVector[36]))
@@ -7756,7 +9176,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(36, pMasqueradingVector[36], pJson[pMasqueradingVector[36]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[37].empty())
       {
           if(pJson.isMember(pMasqueradingVector[37]))
@@ -7764,7 +9186,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(37, pMasqueradingVector[37], pJson[pMasqueradingVector[37]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[38].empty())
       {
           if(pJson.isMember(pMasqueradingVector[38]))
@@ -7772,7 +9196,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(38, pMasqueradingVector[38], pJson[pMasqueradingVector[38]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[39].empty())
       {
           if(pJson.isMember(pMasqueradingVector[39]))
@@ -7780,7 +9206,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(39, pMasqueradingVector[39], pJson[pMasqueradingVector[39]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[40].empty())
       {
           if(pJson.isMember(pMasqueradingVector[40]))
@@ -7788,7 +9216,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(40, pMasqueradingVector[40], pJson[pMasqueradingVector[40]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[41].empty())
       {
           if(pJson.isMember(pMasqueradingVector[41]))
@@ -7796,7 +9226,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(41, pMasqueradingVector[41], pJson[pMasqueradingVector[41]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[42].empty())
       {
           if(pJson.isMember(pMasqueradingVector[42]))
@@ -7804,7 +9236,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(42, pMasqueradingVector[42], pJson[pMasqueradingVector[42]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[43].empty())
       {
           if(pJson.isMember(pMasqueradingVector[43]))
@@ -7812,7 +9246,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(43, pMasqueradingVector[43], pJson[pMasqueradingVector[43]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[44].empty())
       {
           if(pJson.isMember(pMasqueradingVector[44]))
@@ -7820,7 +9256,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(44, pMasqueradingVector[44], pJson[pMasqueradingVector[44]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[45].empty())
       {
           if(pJson.isMember(pMasqueradingVector[45]))
@@ -7828,7 +9266,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(45, pMasqueradingVector[45], pJson[pMasqueradingVector[45]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[46].empty())
       {
           if(pJson.isMember(pMasqueradingVector[46]))
@@ -7836,7 +9276,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(46, pMasqueradingVector[46], pJson[pMasqueradingVector[46]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[47].empty())
       {
           if(pJson.isMember(pMasqueradingVector[47]))
@@ -7844,7 +9286,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(47, pMasqueradingVector[47], pJson[pMasqueradingVector[47]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[48].empty())
       {
           if(pJson.isMember(pMasqueradingVector[48]))
@@ -7852,7 +9296,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(48, pMasqueradingVector[48], pJson[pMasqueradingVector[48]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[49].empty())
       {
           if(pJson.isMember(pMasqueradingVector[49]))
@@ -7860,7 +9306,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(49, pMasqueradingVector[49], pJson[pMasqueradingVector[49]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[50].empty())
       {
           if(pJson.isMember(pMasqueradingVector[50]))
@@ -7868,7 +9316,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(50, pMasqueradingVector[50], pJson[pMasqueradingVector[50]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[51].empty())
       {
           if(pJson.isMember(pMasqueradingVector[51]))
@@ -7876,12 +9326,15 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(51, pMasqueradingVector[51], pJson[pMasqueradingVector[51]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[51] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[52].empty())
       {
           if(pJson.isMember(pMasqueradingVector[52]))
@@ -7889,7 +9342,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(52, pMasqueradingVector[52], pJson[pMasqueradingVector[52]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[53].empty())
       {
           if(pJson.isMember(pMasqueradingVector[53]))
@@ -7897,7 +9352,9 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
               if(!validJsonOfField(53, pMasqueradingVector[53], pJson[pMasqueradingVector[53]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -7908,281 +9365,337 @@ bool PosInventoryItems::validateMasqueradedJsonForCreation(const Json::Value &pJ
 }
 bool PosInventoryItems::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("name"))
     {
         if(!validJsonOfField(2, "name", pJson["name"], err, false))
             return false;
     }
+
     if(pJson.isMember("slug"))
     {
         if(!validJsonOfField(3, "slug", pJson["slug"], err, false))
             return false;
     }
+
     if(pJson.isMember("short_description"))
     {
         if(!validJsonOfField(4, "short_description", pJson["short_description"], err, false))
             return false;
     }
+
     if(pJson.isMember("full_description"))
     {
         if(!validJsonOfField(5, "full_description", pJson["full_description"], err, false))
             return false;
     }
+
     if(pJson.isMember("admin_comment"))
     {
         if(!validJsonOfField(6, "admin_comment", pJson["admin_comment"], err, false))
             return false;
     }
+
     if(pJson.isMember("merchant_id"))
     {
         if(!validJsonOfField(7, "merchant_id", pJson["merchant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("merchant_name"))
     {
         if(!validJsonOfField(8, "merchant_name", pJson["merchant_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("sku"))
     {
         if(!validJsonOfField(9, "sku", pJson["sku"], err, false))
             return false;
     }
+
     if(pJson.isMember("images"))
     {
         if(!validJsonOfField(10, "images", pJson["images"], err, false))
             return false;
     }
+
     if(pJson.isMember("stock_quantity"))
     {
         if(!validJsonOfField(11, "stock_quantity", pJson["stock_quantity"], err, false))
             return false;
     }
+
     if(pJson.isMember("old_selling_price"))
     {
         if(!validJsonOfField(12, "old_selling_price", pJson["old_selling_price"], err, false))
             return false;
     }
+
     if(pJson.isMember("selling_price"))
     {
         if(!validJsonOfField(13, "selling_price", pJson["selling_price"], err, false))
             return false;
     }
+
     if(pJson.isMember("cost_price"))
     {
         if(!validJsonOfField(14, "cost_price", pJson["cost_price"], err, false))
             return false;
     }
+
     if(pJson.isMember("weight"))
     {
         if(!validJsonOfField(15, "weight", pJson["weight"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_free_shipping"))
     {
         if(!validJsonOfField(16, "is_free_shipping", pJson["is_free_shipping"], err, false))
             return false;
     }
+
     if(pJson.isMember("ship_separately"))
     {
         if(!validJsonOfField(17, "ship_separately", pJson["ship_separately"], err, false))
             return false;
     }
+
     if(pJson.isMember("uom_code_id"))
     {
         if(!validJsonOfField(18, "uom_code_id", pJson["uom_code_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("uom_name"))
     {
         if(!validJsonOfField(19, "uom_name", pJson["uom_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("category_id"))
     {
         if(!validJsonOfField(20, "category_id", pJson["category_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("category_name"))
     {
         if(!validJsonOfField(21, "category_name", pJson["category_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("category_slug"))
     {
         if(!validJsonOfField(22, "category_slug", pJson["category_slug"], err, false))
             return false;
     }
+
     if(pJson.isMember("tags"))
     {
         if(!validJsonOfField(23, "tags", pJson["tags"], err, false))
             return false;
     }
+
     if(pJson.isMember("variants"))
     {
         if(!validJsonOfField(24, "variants", pJson["variants"], err, false))
             return false;
     }
+
     if(pJson.isMember("minimum_cart_quantity"))
     {
         if(!validJsonOfField(25, "minimum_cart_quantity", pJson["minimum_cart_quantity"], err, false))
             return false;
     }
+
     if(pJson.isMember("maximum_cart_quantity"))
     {
         if(!validJsonOfField(26, "maximum_cart_quantity", pJson["maximum_cart_quantity"], err, false))
             return false;
     }
+
     if(pJson.isMember("branch_id"))
     {
         if(!validJsonOfField(27, "branch_id", pJson["branch_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("branch_name"))
     {
         if(!validJsonOfField(28, "branch_name", pJson["branch_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("shelf_location"))
     {
         if(!validJsonOfField(29, "shelf_location", pJson["shelf_location"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_published"))
     {
         if(!validJsonOfField(30, "is_published", pJson["is_published"], err, false))
             return false;
     }
+
     if(pJson.isMember("allow_customer_reviews"))
     {
         if(!validJsonOfField(31, "allow_customer_reviews", pJson["allow_customer_reviews"], err, false))
             return false;
     }
+
     if(pJson.isMember("available_start_date"))
     {
         if(!validJsonOfField(32, "available_start_date", pJson["available_start_date"], err, false))
             return false;
     }
+
     if(pJson.isMember("available_end_date"))
     {
         if(!validJsonOfField(33, "available_end_date", pJson["available_end_date"], err, false))
             return false;
     }
+
     if(pJson.isMember("mark_as_new"))
     {
         if(!validJsonOfField(34, "mark_as_new", pJson["mark_as_new"], err, false))
             return false;
     }
+
     if(pJson.isMember("disable_buy_button"))
     {
         if(!validJsonOfField(35, "disable_buy_button", pJson["disable_buy_button"], err, false))
             return false;
     }
+
     if(pJson.isMember("disable_wishlist_button"))
     {
         if(!validJsonOfField(36, "disable_wishlist_button", pJson["disable_wishlist_button"], err, false))
             return false;
     }
+
     if(pJson.isMember("available_for_pre_order"))
     {
         if(!validJsonOfField(37, "available_for_pre_order", pJson["available_for_pre_order"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_tax_exempt"))
     {
         if(!validJsonOfField(38, "is_tax_exempt", pJson["is_tax_exempt"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_not_returnable"))
     {
         if(!validJsonOfField(39, "is_not_returnable", pJson["is_not_returnable"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_rental"))
     {
         if(!validJsonOfField(40, "is_rental", pJson["is_rental"], err, false))
             return false;
     }
+
     if(pJson.isMember("is_service"))
     {
         if(!validJsonOfField(41, "is_service", pJson["is_service"], err, false))
             return false;
     }
+
     if(pJson.isMember("rating"))
     {
         if(!validJsonOfField(42, "rating", pJson["rating"], err, false))
             return false;
     }
+
     if(pJson.isMember("reviews_count"))
     {
         if(!validJsonOfField(43, "reviews_count", pJson["reviews_count"], err, false))
             return false;
     }
+
     if(pJson.isMember("product_attributes"))
     {
         if(!validJsonOfField(44, "product_attributes", pJson["product_attributes"], err, false))
             return false;
     }
+
     if(pJson.isMember("specifications"))
     {
         if(!validJsonOfField(45, "specifications", pJson["specifications"], err, false))
             return false;
     }
+
     if(pJson.isMember("bulk_pricing"))
     {
         if(!validJsonOfField(46, "bulk_pricing", pJson["bulk_pricing"], err, false))
             return false;
     }
+
     if(pJson.isMember("meta_title"))
     {
         if(!validJsonOfField(47, "meta_title", pJson["meta_title"], err, false))
             return false;
     }
+
     if(pJson.isMember("meta_keywords"))
     {
         if(!validJsonOfField(48, "meta_keywords", pJson["meta_keywords"], err, false))
             return false;
     }
+
     if(pJson.isMember("meta_description"))
     {
         if(!validJsonOfField(49, "meta_description", pJson["meta_description"], err, false))
             return false;
     }
+
     if(pJson.isMember("lead_time"))
     {
         if(!validJsonOfField(50, "lead_time", pJson["lead_time"], err, false))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(51, "tenant_id", pJson["tenant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(52, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(53, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool PosInventoryItems::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -8195,281 +9708,337 @@ bool PosInventoryItems::validateMasqueradedJsonForUpdate(const Json::Value &pJso
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
       {
           if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
       {
           if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
       {
           if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
       {
           if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
       {
           if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
       {
           if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
       {
           if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[17].empty() && pJson.isMember(pMasqueradingVector[17]))
       {
           if(!validJsonOfField(17, pMasqueradingVector[17], pJson[pMasqueradingVector[17]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[18].empty() && pJson.isMember(pMasqueradingVector[18]))
       {
           if(!validJsonOfField(18, pMasqueradingVector[18], pJson[pMasqueradingVector[18]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[19].empty() && pJson.isMember(pMasqueradingVector[19]))
       {
           if(!validJsonOfField(19, pMasqueradingVector[19], pJson[pMasqueradingVector[19]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[20].empty() && pJson.isMember(pMasqueradingVector[20]))
       {
           if(!validJsonOfField(20, pMasqueradingVector[20], pJson[pMasqueradingVector[20]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[21].empty() && pJson.isMember(pMasqueradingVector[21]))
       {
           if(!validJsonOfField(21, pMasqueradingVector[21], pJson[pMasqueradingVector[21]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[22].empty() && pJson.isMember(pMasqueradingVector[22]))
       {
           if(!validJsonOfField(22, pMasqueradingVector[22], pJson[pMasqueradingVector[22]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[23].empty() && pJson.isMember(pMasqueradingVector[23]))
       {
           if(!validJsonOfField(23, pMasqueradingVector[23], pJson[pMasqueradingVector[23]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[24].empty() && pJson.isMember(pMasqueradingVector[24]))
       {
           if(!validJsonOfField(24, pMasqueradingVector[24], pJson[pMasqueradingVector[24]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[25].empty() && pJson.isMember(pMasqueradingVector[25]))
       {
           if(!validJsonOfField(25, pMasqueradingVector[25], pJson[pMasqueradingVector[25]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[26].empty() && pJson.isMember(pMasqueradingVector[26]))
       {
           if(!validJsonOfField(26, pMasqueradingVector[26], pJson[pMasqueradingVector[26]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[27].empty() && pJson.isMember(pMasqueradingVector[27]))
       {
           if(!validJsonOfField(27, pMasqueradingVector[27], pJson[pMasqueradingVector[27]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[28].empty() && pJson.isMember(pMasqueradingVector[28]))
       {
           if(!validJsonOfField(28, pMasqueradingVector[28], pJson[pMasqueradingVector[28]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[29].empty() && pJson.isMember(pMasqueradingVector[29]))
       {
           if(!validJsonOfField(29, pMasqueradingVector[29], pJson[pMasqueradingVector[29]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[30].empty() && pJson.isMember(pMasqueradingVector[30]))
       {
           if(!validJsonOfField(30, pMasqueradingVector[30], pJson[pMasqueradingVector[30]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[31].empty() && pJson.isMember(pMasqueradingVector[31]))
       {
           if(!validJsonOfField(31, pMasqueradingVector[31], pJson[pMasqueradingVector[31]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[32].empty() && pJson.isMember(pMasqueradingVector[32]))
       {
           if(!validJsonOfField(32, pMasqueradingVector[32], pJson[pMasqueradingVector[32]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[33].empty() && pJson.isMember(pMasqueradingVector[33]))
       {
           if(!validJsonOfField(33, pMasqueradingVector[33], pJson[pMasqueradingVector[33]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[34].empty() && pJson.isMember(pMasqueradingVector[34]))
       {
           if(!validJsonOfField(34, pMasqueradingVector[34], pJson[pMasqueradingVector[34]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[35].empty() && pJson.isMember(pMasqueradingVector[35]))
       {
           if(!validJsonOfField(35, pMasqueradingVector[35], pJson[pMasqueradingVector[35]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[36].empty() && pJson.isMember(pMasqueradingVector[36]))
       {
           if(!validJsonOfField(36, pMasqueradingVector[36], pJson[pMasqueradingVector[36]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[37].empty() && pJson.isMember(pMasqueradingVector[37]))
       {
           if(!validJsonOfField(37, pMasqueradingVector[37], pJson[pMasqueradingVector[37]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[38].empty() && pJson.isMember(pMasqueradingVector[38]))
       {
           if(!validJsonOfField(38, pMasqueradingVector[38], pJson[pMasqueradingVector[38]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[39].empty() && pJson.isMember(pMasqueradingVector[39]))
       {
           if(!validJsonOfField(39, pMasqueradingVector[39], pJson[pMasqueradingVector[39]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[40].empty() && pJson.isMember(pMasqueradingVector[40]))
       {
           if(!validJsonOfField(40, pMasqueradingVector[40], pJson[pMasqueradingVector[40]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[41].empty() && pJson.isMember(pMasqueradingVector[41]))
       {
           if(!validJsonOfField(41, pMasqueradingVector[41], pJson[pMasqueradingVector[41]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[42].empty() && pJson.isMember(pMasqueradingVector[42]))
       {
           if(!validJsonOfField(42, pMasqueradingVector[42], pJson[pMasqueradingVector[42]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[43].empty() && pJson.isMember(pMasqueradingVector[43]))
       {
           if(!validJsonOfField(43, pMasqueradingVector[43], pJson[pMasqueradingVector[43]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[44].empty() && pJson.isMember(pMasqueradingVector[44]))
       {
           if(!validJsonOfField(44, pMasqueradingVector[44], pJson[pMasqueradingVector[44]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[45].empty() && pJson.isMember(pMasqueradingVector[45]))
       {
           if(!validJsonOfField(45, pMasqueradingVector[45], pJson[pMasqueradingVector[45]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[46].empty() && pJson.isMember(pMasqueradingVector[46]))
       {
           if(!validJsonOfField(46, pMasqueradingVector[46], pJson[pMasqueradingVector[46]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[47].empty() && pJson.isMember(pMasqueradingVector[47]))
       {
           if(!validJsonOfField(47, pMasqueradingVector[47], pJson[pMasqueradingVector[47]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[48].empty() && pJson.isMember(pMasqueradingVector[48]))
       {
           if(!validJsonOfField(48, pMasqueradingVector[48], pJson[pMasqueradingVector[48]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[49].empty() && pJson.isMember(pMasqueradingVector[49]))
       {
           if(!validJsonOfField(49, pMasqueradingVector[49], pJson[pMasqueradingVector[49]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[50].empty() && pJson.isMember(pMasqueradingVector[50]))
       {
           if(!validJsonOfField(50, pMasqueradingVector[50], pJson[pMasqueradingVector[50]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[51].empty() && pJson.isMember(pMasqueradingVector[51]))
       {
           if(!validJsonOfField(51, pMasqueradingVector[51], pJson[pMasqueradingVector[51]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[52].empty() && pJson.isMember(pMasqueradingVector[52]))
       {
           if(!validJsonOfField(52, pMasqueradingVector[52], pJson[pMasqueradingVector[52]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[53].empty() && pJson.isMember(pMasqueradingVector[53]))
       {
           if(!validJsonOfField(53, pMasqueradingVector[53], pJson[pMasqueradingVector[53]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -8486,732 +10055,950 @@ bool PosInventoryItems::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 200)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 200)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 200)";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 200)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 200)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 200)";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 500)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 500)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 500)";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 250)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 250)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 250)";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 150)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 150)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 150)";
                 return false;
             }
+
             break;
+
         case 9:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 20)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 20)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 20)";
                 return false;
             }
+
             break;
+
         case 10:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 11:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 12:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 13:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 14:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 15:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 16:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 17:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 18:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 19:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 20:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 21:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 22:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 150)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 150)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 150)";
                 return false;
             }
+
             break;
+
         case 23:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 24:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 25:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 26:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 27:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 28:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 50)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 50)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 50)";
                 return false;
             }
+
             break;
+
         case 29:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 150)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 150)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 150)";
                 return false;
             }
+
             break;
+
         case 30:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 31:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 32:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 33:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 34:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 35:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 36:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 37:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 38:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 39:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 40:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 41:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 42:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 43:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 44:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 45:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 46:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 47:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 48:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 49:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 150)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 150)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 150)";
                 return false;
             }
+
             break;
+
         case 50:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 100)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 100)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 100)";
                 return false;
             }
+
             break;
+
         case 51:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 52:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 53:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+

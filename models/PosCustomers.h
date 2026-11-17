@@ -1,3 +1,4 @@
+
 /**
  *
  *  PosCustomers.h
@@ -39,6 +40,8 @@ namespace drogon_model
 namespace DataSupportDb
 {
 
+
+
 class PosCustomers
 {
   public:
@@ -65,14 +68,19 @@ class PosCustomers
         static const std::string _tenant_id;
         static const std::string _created_at;
         static const std::string _updated_at;
+
     };
 
     static const int primaryKeyNumber;
     static const std::string tableName;
     static const bool hasPrimaryKey;
+
     static const std::string primaryKeyName;
+
     using PrimaryKeyType = std::string;
     const PrimaryKeyType &getPrimaryKey() const;
+
+
 
     /**
      * @brief constructor
@@ -316,6 +324,7 @@ class PosCustomers
     void setUpdatedAtToNull() noexcept;
 
 
+
     static size_t getColumnNumber() noexcept {  return 21;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
@@ -323,6 +332,7 @@ class PosCustomers
     std::string toString() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+
   private:
     friend drogon::orm::Mapper<PosCustomers>;
     friend drogon::orm::BaseBuilder<PosCustomers, true, true>;
@@ -359,6 +369,7 @@ class PosCustomers
     std::shared_ptr<int32_t> tenantId_;
     std::shared_ptr<::trantor::Date> createdAt_;
     std::shared_ptr<::trantor::Date> updatedAt_;
+
     struct MetaData
     {
         const std::string colName_;
@@ -374,13 +385,19 @@ class PosCustomers
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
+
         static const std::string sql="select * from " + tableName + " where id = $1";
+
+
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
+
         static const std::string sql="delete from " + tableName + " where id = $1";
+
+
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -388,46 +405,55 @@ class PosCustomers
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
+
         if(dirtyFlag_[0])
         {
             sql += "id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[1])
         {
             sql += "business_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[2])
         {
             sql += "username,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[3])
         {
             sql += "first_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[4])
         {
             sql += "last_name,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[5])
         {
             sql += "phone_number,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[6])
         {
             sql += "email,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[7])
         {
             sql += "rank_id,";
             ++parametersCount;
         }
+
         if(dirtyFlag_[8])
         {
             sql += "rank_name,";
@@ -435,22 +461,26 @@ class PosCustomers
         }
         sql += "total_amount_spent,";
         ++parametersCount;
+
         if(!dirtyFlag_[9])
         {
             needSelection=true;
         }
         sql += "number_of_visits,";
         ++parametersCount;
+
         if(!dirtyFlag_[10])
         {
             needSelection=true;
         }
         sql += "loyalty_points,";
         ++parametersCount;
+
         if(!dirtyFlag_[11])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[12])
         {
             sql += "default_region,";
@@ -458,34 +488,40 @@ class PosCustomers
         }
         sql += "credit_limit,";
         ++parametersCount;
+
         if(!dirtyFlag_[13])
         {
             needSelection=true;
         }
         sql += "wallet_balance,";
         ++parametersCount;
+
         if(!dirtyFlag_[14])
         {
             needSelection=true;
         }
         sql += "default_credit_term_in_days,";
         ++parametersCount;
+
         if(!dirtyFlag_[15])
         {
             needSelection=true;
         }
         sql += "is_credit_allowed,";
         ++parametersCount;
+
         if(!dirtyFlag_[16])
         {
             needSelection=true;
         }
         sql += "blocked_from_credit,";
         ++parametersCount;
+
         if(!dirtyFlag_[17])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[18])
         {
             sql += "tenant_id,";
@@ -493,15 +529,18 @@ class PosCustomers
         }
         sql += "created_at,";
         ++parametersCount;
+
         if(!dirtyFlag_[19])
         {
             needSelection=true;
         }
+
         if(dirtyFlag_[20])
         {
             sql += "updated_at,";
             ++parametersCount;
         }
+
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -510,154 +549,229 @@ class PosCustomers
         else
             sql += ") values (";
 
+
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
+
         if(dirtyFlag_[0])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[1])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[2])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[3])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[4])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[5])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[6])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[7])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[8])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[9])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[10])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[11])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[12])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[13])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[14])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[15])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[16])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[17])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[18])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(dirtyFlag_[19])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         else
         {
             sql +="default,";
         }
+
         if(dirtyFlag_[20])
         {
+
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);
+
         }
+
         if(parametersCount > 0)
         {
             sql.resize(sql.length() - 1);
         }
+
         if(needSelection)
         {
             sql.append(") returning *");
@@ -666,9 +780,11 @@ class PosCustomers
         {
             sql.append(1, ')');
         }
+
         LOG_TRACE << sql;
         return sql;
     }
 };
 } // namespace DataSupportDb
+
 } // namespace drogon_model

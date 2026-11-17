@@ -1,3 +1,4 @@
+
 /**
  *
  *  PosCoupons.cc
@@ -6,32 +7,58 @@
  */
 
 #include "PosCoupons.h"
+
 #include <drogon/utils/Utilities.h>
+
 #include <string>
+
 
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::DataSupportDb;
 
+
+
 const std::string PosCoupons::Cols::_id = "\"id\"";
+
 const std::string PosCoupons::Cols::_business_id = "\"business_id\"";
+
 const std::string PosCoupons::Cols::_coupon_value = "\"coupon_value\"";
+
 const std::string PosCoupons::Cols::_minimum_order_limit = "\"minimum_order_limit\"";
+
 const std::string PosCoupons::Cols::_maximum_order_limit = "\"maximum_order_limit\"";
+
 const std::string PosCoupons::Cols::_coupon_identifier = "\"coupon_identifier\"";
+
 const std::string PosCoupons::Cols::_valid_till = "\"valid_till\"";
+
 const std::string PosCoupons::Cols::_usage_quota = "\"usage_quota\"";
+
 const std::string PosCoupons::Cols::_usage_count = "\"usage_count\"";
+
 const std::string PosCoupons::Cols::_status = "\"status\"";
+
 const std::string PosCoupons::Cols::_use_percentage = "\"use_percentage\"";
+
 const std::string PosCoupons::Cols::_branch_id = "\"branch_id\"";
+
 const std::string PosCoupons::Cols::_branch_name = "\"branch_name\"";
+
 const std::string PosCoupons::Cols::_assignments = "\"assignments\"";
+
 const std::string PosCoupons::Cols::_tenant_id = "\"tenant_id\"";
+
 const std::string PosCoupons::Cols::_created_at = "\"created_at\"";
+
 const std::string PosCoupons::Cols::_updated_at = "\"updated_at\"";
+
+
 const std::string PosCoupons::primaryKeyName = "id";
+
+
 const bool PosCoupons::hasPrimaryKey = true;
+
 const std::string PosCoupons::tableName = "\"pos_coupons\"";
 
 const std::vector<typename PosCoupons::MetaData> PosCoupons::metaData_={
@@ -52,6 +79,7 @@ const std::vector<typename PosCoupons::MetaData> PosCoupons::metaData_={
 {"tenant_id","int32_t","integer",4,0,0,1},
 {"created_at","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"updated_at","::trantor::Date","timestamp without time zone",0,0,0,0}
+
 };
 const std::string &PosCoupons::getColumnName(size_t index) noexcept(false)
 {
@@ -62,35 +90,55 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
 {
     if(indexOffset < 0)
     {
+
         if(!r["id"].isNull())
         {
+
             id_=std::make_shared<std::string>(r["id"].as<std::string>());
+
         }
+
         if(!r["business_id"].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r["business_id"].as<std::string>());
+
         }
+
         if(!r["coupon_value"].isNull())
         {
+
             couponValue_=std::make_shared<std::string>(r["coupon_value"].as<std::string>());
+
         }
+
         if(!r["minimum_order_limit"].isNull())
         {
+
             minimumOrderLimit_=std::make_shared<std::string>(r["minimum_order_limit"].as<std::string>());
+
         }
+
         if(!r["maximum_order_limit"].isNull())
         {
+
             maximumOrderLimit_=std::make_shared<std::string>(r["maximum_order_limit"].as<std::string>());
+
         }
+
         if(!r["coupon_identifier"].isNull())
         {
+
             couponIdentifier_=std::make_shared<std::string>(r["coupon_identifier"].as<std::string>());
+
         }
+
         if(!r["valid_till"].isNull())
         {
             auto timeStr = r["valid_till"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -108,43 +156,69 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
                 validTill_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["usage_quota"].isNull())
         {
+
             usageQuota_=std::make_shared<int32_t>(r["usage_quota"].as<int32_t>());
+
         }
+
         if(!r["usage_count"].isNull())
         {
+
             usageCount_=std::make_shared<int32_t>(r["usage_count"].as<int32_t>());
+
         }
+
         if(!r["status"].isNull())
         {
+
             status_=std::make_shared<int32_t>(r["status"].as<int32_t>());
+
         }
+
         if(!r["use_percentage"].isNull())
         {
+
             usePercentage_=std::make_shared<bool>(r["use_percentage"].as<bool>());
+
         }
+
         if(!r["branch_id"].isNull())
         {
+
             branchId_=std::make_shared<std::string>(r["branch_id"].as<std::string>());
+
         }
+
         if(!r["branch_name"].isNull())
         {
+
             branchName_=std::make_shared<std::string>(r["branch_name"].as<std::string>());
+
         }
+
         if(!r["assignments"].isNull())
         {
+
             assignments_=std::make_shared<std::string>(r["assignments"].as<std::string>());
+
         }
+
         if(!r["tenant_id"].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r["tenant_id"].as<int32_t>());
+
         }
+
         if(!r["created_at"].isNull())
         {
             auto timeStr = r["created_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -162,11 +236,13 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         if(!r["updated_at"].isNull())
         {
             auto timeStr = r["updated_at"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -184,6 +260,7 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
     else
     {
@@ -194,42 +271,62 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
             return;
         }
         size_t index;
+
         index = offset + 0;
         if(!r[index].isNull())
         {
+
             id_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 1;
         if(!r[index].isNull())
         {
+
             businessId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 2;
         if(!r[index].isNull())
         {
+
             couponValue_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 3;
         if(!r[index].isNull())
         {
+
             minimumOrderLimit_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 4;
         if(!r[index].isNull())
         {
+
             maximumOrderLimit_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 5;
         if(!r[index].isNull())
         {
+
             couponIdentifier_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 6;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -247,52 +344,78 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
                 validTill_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 7;
         if(!r[index].isNull())
         {
+
             usageQuota_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 8;
         if(!r[index].isNull())
         {
+
             usageCount_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 9;
         if(!r[index].isNull())
         {
+
             status_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 10;
         if(!r[index].isNull())
         {
+
             usePercentage_=std::make_shared<bool>(r[index].as<bool>());
+
         }
+
         index = offset + 11;
         if(!r[index].isNull())
         {
+
             branchId_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 12;
         if(!r[index].isNull())
         {
+
             branchName_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 13;
         if(!r[index].isNull())
         {
+
             assignments_=std::make_shared<std::string>(r[index].as<std::string>());
+
         }
+
         index = offset + 14;
         if(!r[index].isNull())
         {
+
             tenantId_=std::make_shared<int32_t>(r[index].as<int32_t>());
+
         }
+
         index = offset + 15;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -310,12 +433,14 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
                 createdAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
         index = offset + 16;
         if(!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -333,6 +458,7 @@ PosCoupons::PosCoupons(const Row &r, const ssize_t indexOffset) noexcept
                 updatedAt_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
             }
         }
+
     }
 
 }
@@ -344,6 +470,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
@@ -352,6 +479,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -360,6 +488,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -368,6 +497,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             couponValue_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -376,6 +506,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             minimumOrderLimit_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -384,6 +515,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             maximumOrderLimit_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -392,6 +524,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             couponIdentifier_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -400,6 +533,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             auto timeStr = pJson[pMasqueradingVector[6]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -418,6 +552,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             }
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -426,6 +561,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             usageQuota_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -434,6 +570,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             usageCount_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[8]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -442,6 +579,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[9]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -450,6 +588,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             usePercentage_=std::make_shared<bool>(pJson[pMasqueradingVector[10]].asBool());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -458,6 +597,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             branchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -466,6 +606,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             branchName_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -474,6 +615,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             assignments_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -482,6 +624,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[14]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -490,6 +633,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             auto timeStr = pJson[pMasqueradingVector[15]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -508,6 +652,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             }
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -516,6 +661,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             auto timeStr = pJson[pMasqueradingVector[16]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -534,10 +680,12 @@ PosCoupons::PosCoupons(const Json::Value &pJson, const std::vector<std::string> 
             }
         }
     }
+
 }
 
 PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         dirtyFlag_[0]=true;
@@ -546,6 +694,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1]=true;
@@ -554,6 +703,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("coupon_value"))
     {
         dirtyFlag_[2]=true;
@@ -562,6 +712,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             couponValue_=std::make_shared<std::string>(pJson["coupon_value"].asString());
         }
     }
+
     if(pJson.isMember("minimum_order_limit"))
     {
         dirtyFlag_[3]=true;
@@ -570,6 +721,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             minimumOrderLimit_=std::make_shared<std::string>(pJson["minimum_order_limit"].asString());
         }
     }
+
     if(pJson.isMember("maximum_order_limit"))
     {
         dirtyFlag_[4]=true;
@@ -578,6 +730,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             maximumOrderLimit_=std::make_shared<std::string>(pJson["maximum_order_limit"].asString());
         }
     }
+
     if(pJson.isMember("coupon_identifier"))
     {
         dirtyFlag_[5]=true;
@@ -586,6 +739,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             couponIdentifier_=std::make_shared<std::string>(pJson["coupon_identifier"].asString());
         }
     }
+
     if(pJson.isMember("valid_till"))
     {
         dirtyFlag_[6]=true;
@@ -594,6 +748,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["valid_till"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -612,6 +767,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("usage_quota"))
     {
         dirtyFlag_[7]=true;
@@ -620,6 +776,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             usageQuota_=std::make_shared<int32_t>((int32_t)pJson["usage_quota"].asInt64());
         }
     }
+
     if(pJson.isMember("usage_count"))
     {
         dirtyFlag_[8]=true;
@@ -628,6 +785,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             usageCount_=std::make_shared<int32_t>((int32_t)pJson["usage_count"].asInt64());
         }
     }
+
     if(pJson.isMember("status"))
     {
         dirtyFlag_[9]=true;
@@ -636,6 +794,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
+
     if(pJson.isMember("use_percentage"))
     {
         dirtyFlag_[10]=true;
@@ -644,6 +803,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             usePercentage_=std::make_shared<bool>(pJson["use_percentage"].asBool());
         }
     }
+
     if(pJson.isMember("branch_id"))
     {
         dirtyFlag_[11]=true;
@@ -652,6 +812,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             branchId_=std::make_shared<std::string>(pJson["branch_id"].asString());
         }
     }
+
     if(pJson.isMember("branch_name"))
     {
         dirtyFlag_[12]=true;
@@ -660,6 +821,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             branchName_=std::make_shared<std::string>(pJson["branch_name"].asString());
         }
     }
+
     if(pJson.isMember("assignments"))
     {
         dirtyFlag_[13]=true;
@@ -668,6 +830,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             assignments_=std::make_shared<std::string>(pJson["assignments"].asString());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[14]=true;
@@ -676,6 +839,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[15]=true;
@@ -684,6 +848,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -702,6 +867,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[16]=true;
@@ -710,6 +876,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -728,6 +895,7 @@ PosCoupons::PosCoupons(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
@@ -738,6 +906,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
+
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         if(!pJson[pMasqueradingVector[0]].isNull())
@@ -745,6 +914,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             id_=std::make_shared<std::string>(pJson[pMasqueradingVector[0]].asString());
         }
     }
+
     if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
@@ -753,6 +923,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             businessId_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
+
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
@@ -761,6 +932,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             couponValue_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
+
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
@@ -769,6 +941,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             minimumOrderLimit_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
+
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
@@ -777,6 +950,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             maximumOrderLimit_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
+
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
@@ -785,6 +959,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             couponIdentifier_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
+
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
     {
         dirtyFlag_[6] = true;
@@ -793,6 +968,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[6]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -811,6 +987,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
     {
         dirtyFlag_[7] = true;
@@ -819,6 +996,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             usageQuota_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[7]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
     {
         dirtyFlag_[8] = true;
@@ -827,6 +1005,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             usageCount_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[8]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
     {
         dirtyFlag_[9] = true;
@@ -835,6 +1014,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             status_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[9]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
     {
         dirtyFlag_[10] = true;
@@ -843,6 +1023,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             usePercentage_=std::make_shared<bool>(pJson[pMasqueradingVector[10]].asBool());
         }
     }
+
     if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
     {
         dirtyFlag_[11] = true;
@@ -851,6 +1032,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             branchId_=std::make_shared<std::string>(pJson[pMasqueradingVector[11]].asString());
         }
     }
+
     if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
     {
         dirtyFlag_[12] = true;
@@ -859,6 +1041,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             branchName_=std::make_shared<std::string>(pJson[pMasqueradingVector[12]].asString());
         }
     }
+
     if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
     {
         dirtyFlag_[13] = true;
@@ -867,6 +1050,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             assignments_=std::make_shared<std::string>(pJson[pMasqueradingVector[13]].asString());
         }
     }
+
     if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
     {
         dirtyFlag_[14] = true;
@@ -875,6 +1059,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             tenantId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[14]].asInt64());
         }
     }
+
     if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
     {
         dirtyFlag_[15] = true;
@@ -883,6 +1068,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[15]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -901,6 +1087,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
     if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
     {
         dirtyFlag_[16] = true;
@@ -909,6 +1096,7 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             auto timeStr = pJson[pMasqueradingVector[16]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -927,10 +1115,12 @@ void PosCoupons::updateByMasqueradedJson(const Json::Value &pJson,
             }
         }
     }
+
 }
 
 void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
 {
+
     if(pJson.isMember("id"))
     {
         if(!pJson["id"].isNull())
@@ -938,6 +1128,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<std::string>(pJson["id"].asString());
         }
     }
+
     if(pJson.isMember("business_id"))
     {
         dirtyFlag_[1] = true;
@@ -946,6 +1137,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             businessId_=std::make_shared<std::string>(pJson["business_id"].asString());
         }
     }
+
     if(pJson.isMember("coupon_value"))
     {
         dirtyFlag_[2] = true;
@@ -954,6 +1146,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             couponValue_=std::make_shared<std::string>(pJson["coupon_value"].asString());
         }
     }
+
     if(pJson.isMember("minimum_order_limit"))
     {
         dirtyFlag_[3] = true;
@@ -962,6 +1155,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             minimumOrderLimit_=std::make_shared<std::string>(pJson["minimum_order_limit"].asString());
         }
     }
+
     if(pJson.isMember("maximum_order_limit"))
     {
         dirtyFlag_[4] = true;
@@ -970,6 +1164,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             maximumOrderLimit_=std::make_shared<std::string>(pJson["maximum_order_limit"].asString());
         }
     }
+
     if(pJson.isMember("coupon_identifier"))
     {
         dirtyFlag_[5] = true;
@@ -978,6 +1173,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             couponIdentifier_=std::make_shared<std::string>(pJson["coupon_identifier"].asString());
         }
     }
+
     if(pJson.isMember("valid_till"))
     {
         dirtyFlag_[6] = true;
@@ -986,6 +1182,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["valid_till"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1004,6 +1201,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("usage_quota"))
     {
         dirtyFlag_[7] = true;
@@ -1012,6 +1210,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             usageQuota_=std::make_shared<int32_t>((int32_t)pJson["usage_quota"].asInt64());
         }
     }
+
     if(pJson.isMember("usage_count"))
     {
         dirtyFlag_[8] = true;
@@ -1020,6 +1219,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             usageCount_=std::make_shared<int32_t>((int32_t)pJson["usage_count"].asInt64());
         }
     }
+
     if(pJson.isMember("status"))
     {
         dirtyFlag_[9] = true;
@@ -1028,6 +1228,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             status_=std::make_shared<int32_t>((int32_t)pJson["status"].asInt64());
         }
     }
+
     if(pJson.isMember("use_percentage"))
     {
         dirtyFlag_[10] = true;
@@ -1036,6 +1237,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             usePercentage_=std::make_shared<bool>(pJson["use_percentage"].asBool());
         }
     }
+
     if(pJson.isMember("branch_id"))
     {
         dirtyFlag_[11] = true;
@@ -1044,6 +1246,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             branchId_=std::make_shared<std::string>(pJson["branch_id"].asString());
         }
     }
+
     if(pJson.isMember("branch_name"))
     {
         dirtyFlag_[12] = true;
@@ -1052,6 +1255,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             branchName_=std::make_shared<std::string>(pJson["branch_name"].asString());
         }
     }
+
     if(pJson.isMember("assignments"))
     {
         dirtyFlag_[13] = true;
@@ -1060,6 +1264,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             assignments_=std::make_shared<std::string>(pJson["assignments"].asString());
         }
     }
+
     if(pJson.isMember("tenant_id"))
     {
         dirtyFlag_[14] = true;
@@ -1068,6 +1273,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             tenantId_=std::make_shared<int32_t>((int32_t)pJson["tenant_id"].asInt64());
         }
     }
+
     if(pJson.isMember("created_at"))
     {
         dirtyFlag_[15] = true;
@@ -1076,6 +1282,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["created_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1094,6 +1301,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
     if(pJson.isMember("updated_at"))
     {
         dirtyFlag_[16] = true;
@@ -1102,6 +1310,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             auto timeStr = pJson["updated_at"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
+            stm.tm_isdst = -1;
             auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
@@ -1120,6 +1329,7 @@ void PosCoupons::updateByJson(const Json::Value &pJson) noexcept(false)
             }
         }
     }
+
 }
 
 const std::string &PosCoupons::getValueOfId() const noexcept
@@ -1525,6 +1735,7 @@ void PosCoupons::updateId(const uint64_t id)
 {
 }
 
+
 const std::vector<std::string> &PosCoupons::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
@@ -1545,12 +1756,14 @@ const std::vector<std::string> &PosCoupons::insertColumns() noexcept
         "tenant_id",
         "created_at",
         "updated_at"
+
     };
     return inCols;
 }
 
 void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1562,6 +1775,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1573,6 +1787,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getCouponValue())
@@ -1584,6 +1799,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getMinimumOrderLimit())
@@ -1595,6 +1811,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getMaximumOrderLimit())
@@ -1606,6 +1823,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getCouponIdentifier())
@@ -1617,6 +1835,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getValidTill())
@@ -1628,6 +1847,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getUsageQuota())
@@ -1639,6 +1859,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getUsageCount())
@@ -1650,6 +1871,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getStatus())
@@ -1661,6 +1883,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getUsePercentage())
@@ -1672,6 +1895,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getBranchId())
@@ -1683,6 +1907,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getBranchName())
@@ -1694,6 +1919,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getAssignments())
@@ -1705,6 +1931,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getTenantId())
@@ -1716,6 +1943,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getCreatedAt())
@@ -1727,6 +1955,7 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getUpdatedAt())
@@ -1738,84 +1967,104 @@ void PosCoupons::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 
 const std::vector<std::string> PosCoupons::updateColumns() const
 {
     std::vector<std::string> ret;
+
     if(dirtyFlag_[0])
     {
         ret.push_back(getColumnName(0));
     }
+
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
+
     if(dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
+
     if(dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
+
     if(dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
+
     if(dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
+
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
     }
+
     if(dirtyFlag_[7])
     {
         ret.push_back(getColumnName(7));
     }
+
     if(dirtyFlag_[8])
     {
         ret.push_back(getColumnName(8));
     }
+
     if(dirtyFlag_[9])
     {
         ret.push_back(getColumnName(9));
     }
+
     if(dirtyFlag_[10])
     {
         ret.push_back(getColumnName(10));
     }
+
     if(dirtyFlag_[11])
     {
         ret.push_back(getColumnName(11));
     }
+
     if(dirtyFlag_[12])
     {
         ret.push_back(getColumnName(12));
     }
+
     if(dirtyFlag_[13])
     {
         ret.push_back(getColumnName(13));
     }
+
     if(dirtyFlag_[14])
     {
         ret.push_back(getColumnName(14));
     }
+
     if(dirtyFlag_[15])
     {
         ret.push_back(getColumnName(15));
     }
+
     if(dirtyFlag_[16])
     {
         ret.push_back(getColumnName(16));
     }
+
     return ret;
 }
 
 void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
+
     if(dirtyFlag_[0])
     {
         if(getId())
@@ -1827,6 +2076,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[1])
     {
         if(getBusinessId())
@@ -1838,6 +2088,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[2])
     {
         if(getCouponValue())
@@ -1849,6 +2100,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[3])
     {
         if(getMinimumOrderLimit())
@@ -1860,6 +2112,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[4])
     {
         if(getMaximumOrderLimit())
@@ -1871,6 +2124,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[5])
     {
         if(getCouponIdentifier())
@@ -1882,6 +2136,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[6])
     {
         if(getValidTill())
@@ -1893,6 +2148,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[7])
     {
         if(getUsageQuota())
@@ -1904,6 +2160,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[8])
     {
         if(getUsageCount())
@@ -1915,6 +2172,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[9])
     {
         if(getStatus())
@@ -1926,6 +2184,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[10])
     {
         if(getUsePercentage())
@@ -1937,6 +2196,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[11])
     {
         if(getBranchId())
@@ -1948,6 +2208,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[12])
     {
         if(getBranchName())
@@ -1959,6 +2220,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[13])
     {
         if(getAssignments())
@@ -1970,6 +2232,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[14])
     {
         if(getTenantId())
@@ -1981,6 +2244,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[15])
     {
         if(getCreatedAt())
@@ -1992,6 +2256,7 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
     if(dirtyFlag_[16])
     {
         if(getUpdatedAt())
@@ -2003,146 +2268,199 @@ void PosCoupons::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+
 }
 Json::Value PosCoupons::toJson() const
 {
     Json::Value ret;
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getCouponValue())
     {
+
         ret["coupon_value"]=getValueOfCouponValue();
+
     }
     else
     {
         ret["coupon_value"]=Json::Value();
     }
+
     if(getMinimumOrderLimit())
     {
+
         ret["minimum_order_limit"]=getValueOfMinimumOrderLimit();
+
     }
     else
     {
         ret["minimum_order_limit"]=Json::Value();
     }
+
     if(getMaximumOrderLimit())
     {
+
         ret["maximum_order_limit"]=getValueOfMaximumOrderLimit();
+
     }
     else
     {
         ret["maximum_order_limit"]=Json::Value();
     }
+
     if(getCouponIdentifier())
     {
+
         ret["coupon_identifier"]=getValueOfCouponIdentifier();
+
     }
     else
     {
         ret["coupon_identifier"]=Json::Value();
     }
+
     if(getValidTill())
     {
+
         ret["valid_till"]=getValidTill()->toDbStringLocal();
+
     }
     else
     {
         ret["valid_till"]=Json::Value();
     }
+
     if(getUsageQuota())
     {
+
         ret["usage_quota"]=getValueOfUsageQuota();
+
     }
     else
     {
         ret["usage_quota"]=Json::Value();
     }
+
     if(getUsageCount())
     {
+
         ret["usage_count"]=getValueOfUsageCount();
+
     }
     else
     {
         ret["usage_count"]=Json::Value();
     }
+
     if(getStatus())
     {
+
         ret["status"]=getValueOfStatus();
+
     }
     else
     {
         ret["status"]=Json::Value();
     }
+
     if(getUsePercentage())
     {
+
         ret["use_percentage"]=getValueOfUsePercentage();
+
     }
     else
     {
         ret["use_percentage"]=Json::Value();
     }
+
     if(getBranchId())
     {
+
         ret["branch_id"]=getValueOfBranchId();
+
     }
     else
     {
         ret["branch_id"]=Json::Value();
     }
+
     if(getBranchName())
     {
+
         ret["branch_name"]=getValueOfBranchName();
+
     }
     else
     {
         ret["branch_name"]=Json::Value();
     }
+
     if(getAssignments())
     {
+
         ret["assignments"]=getValueOfAssignments();
+
     }
     else
     {
         ret["assignments"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
@@ -2157,447 +2475,574 @@ Json::Value PosCoupons::toMasqueradedJson(
     Json::Value ret;
     if(pMasqueradingVector.size() == 17)
     {
+
         if(!pMasqueradingVector[0].empty())
         {
             if(getId())
             {
+
                 ret[pMasqueradingVector[0]]=getValueOfId();
+
             }
             else
             {
                 ret[pMasqueradingVector[0]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[1].empty())
         {
             if(getBusinessId())
             {
+
                 ret[pMasqueradingVector[1]]=getValueOfBusinessId();
+
             }
             else
             {
                 ret[pMasqueradingVector[1]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[2].empty())
         {
             if(getCouponValue())
             {
+
                 ret[pMasqueradingVector[2]]=getValueOfCouponValue();
+
             }
             else
             {
                 ret[pMasqueradingVector[2]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[3].empty())
         {
             if(getMinimumOrderLimit())
             {
+
                 ret[pMasqueradingVector[3]]=getValueOfMinimumOrderLimit();
+
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[4].empty())
         {
             if(getMaximumOrderLimit())
             {
+
                 ret[pMasqueradingVector[4]]=getValueOfMaximumOrderLimit();
+
             }
             else
             {
                 ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[5].empty())
         {
             if(getCouponIdentifier())
             {
+
                 ret[pMasqueradingVector[5]]=getValueOfCouponIdentifier();
+
             }
             else
             {
                 ret[pMasqueradingVector[5]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[6].empty())
         {
             if(getValidTill())
             {
+
                 ret[pMasqueradingVector[6]]=getValidTill()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[7].empty())
         {
             if(getUsageQuota())
             {
+
                 ret[pMasqueradingVector[7]]=getValueOfUsageQuota();
+
             }
             else
             {
                 ret[pMasqueradingVector[7]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[8].empty())
         {
             if(getUsageCount())
             {
+
                 ret[pMasqueradingVector[8]]=getValueOfUsageCount();
+
             }
             else
             {
                 ret[pMasqueradingVector[8]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[9].empty())
         {
             if(getStatus())
             {
+
                 ret[pMasqueradingVector[9]]=getValueOfStatus();
+
             }
             else
             {
                 ret[pMasqueradingVector[9]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[10].empty())
         {
             if(getUsePercentage())
             {
+
                 ret[pMasqueradingVector[10]]=getValueOfUsePercentage();
+
             }
             else
             {
                 ret[pMasqueradingVector[10]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[11].empty())
         {
             if(getBranchId())
             {
+
                 ret[pMasqueradingVector[11]]=getValueOfBranchId();
+
             }
             else
             {
                 ret[pMasqueradingVector[11]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[12].empty())
         {
             if(getBranchName())
             {
+
                 ret[pMasqueradingVector[12]]=getValueOfBranchName();
+
             }
             else
             {
                 ret[pMasqueradingVector[12]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[13].empty())
         {
             if(getAssignments())
             {
+
                 ret[pMasqueradingVector[13]]=getValueOfAssignments();
+
             }
             else
             {
                 ret[pMasqueradingVector[13]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[14].empty())
         {
             if(getTenantId())
             {
+
                 ret[pMasqueradingVector[14]]=getValueOfTenantId();
+
             }
             else
             {
                 ret[pMasqueradingVector[14]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[15].empty())
         {
             if(getCreatedAt())
             {
+
                 ret[pMasqueradingVector[15]]=getCreatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[15]]=Json::Value();
             }
         }
+
         if(!pMasqueradingVector[16].empty())
         {
             if(getUpdatedAt())
             {
+
                 ret[pMasqueradingVector[16]]=getUpdatedAt()->toDbStringLocal();
+
             }
             else
             {
                 ret[pMasqueradingVector[16]]=Json::Value();
             }
         }
+
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
+
     if(getId())
     {
+
         ret["id"]=getValueOfId();
+
     }
     else
     {
         ret["id"]=Json::Value();
     }
+
     if(getBusinessId())
     {
+
         ret["business_id"]=getValueOfBusinessId();
+
     }
     else
     {
         ret["business_id"]=Json::Value();
     }
+
     if(getCouponValue())
     {
+
         ret["coupon_value"]=getValueOfCouponValue();
+
     }
     else
     {
         ret["coupon_value"]=Json::Value();
     }
+
     if(getMinimumOrderLimit())
     {
+
         ret["minimum_order_limit"]=getValueOfMinimumOrderLimit();
+
     }
     else
     {
         ret["minimum_order_limit"]=Json::Value();
     }
+
     if(getMaximumOrderLimit())
     {
+
         ret["maximum_order_limit"]=getValueOfMaximumOrderLimit();
+
     }
     else
     {
         ret["maximum_order_limit"]=Json::Value();
     }
+
     if(getCouponIdentifier())
     {
+
         ret["coupon_identifier"]=getValueOfCouponIdentifier();
+
     }
     else
     {
         ret["coupon_identifier"]=Json::Value();
     }
+
     if(getValidTill())
     {
+
         ret["valid_till"]=getValidTill()->toDbStringLocal();
+
     }
     else
     {
         ret["valid_till"]=Json::Value();
     }
+
     if(getUsageQuota())
     {
+
         ret["usage_quota"]=getValueOfUsageQuota();
+
     }
     else
     {
         ret["usage_quota"]=Json::Value();
     }
+
     if(getUsageCount())
     {
+
         ret["usage_count"]=getValueOfUsageCount();
+
     }
     else
     {
         ret["usage_count"]=Json::Value();
     }
+
     if(getStatus())
     {
+
         ret["status"]=getValueOfStatus();
+
     }
     else
     {
         ret["status"]=Json::Value();
     }
+
     if(getUsePercentage())
     {
+
         ret["use_percentage"]=getValueOfUsePercentage();
+
     }
     else
     {
         ret["use_percentage"]=Json::Value();
     }
+
     if(getBranchId())
     {
+
         ret["branch_id"]=getValueOfBranchId();
+
     }
     else
     {
         ret["branch_id"]=Json::Value();
     }
+
     if(getBranchName())
     {
+
         ret["branch_name"]=getValueOfBranchName();
+
     }
     else
     {
         ret["branch_name"]=Json::Value();
     }
+
     if(getAssignments())
     {
+
         ret["assignments"]=getValueOfAssignments();
+
     }
     else
     {
         ret["assignments"]=Json::Value();
     }
+
     if(getTenantId())
     {
+
         ret["tenant_id"]=getValueOfTenantId();
+
     }
     else
     {
         ret["tenant_id"]=Json::Value();
     }
+
     if(getCreatedAt())
     {
+
         ret["created_at"]=getCreatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["created_at"]=Json::Value();
     }
+
     if(getUpdatedAt())
     {
+
         ret["updated_at"]=getUpdatedAt()->toDbStringLocal();
+
     }
     else
     {
         ret["updated_at"]=Json::Value();
     }
+
     return ret;
 }
 
 bool PosCoupons::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+
     else
     {
         err="The id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, true))
             return false;
     }
+
     else
     {
         err="The business_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("coupon_value"))
     {
         if(!validJsonOfField(2, "coupon_value", pJson["coupon_value"], err, true))
             return false;
     }
+
     if(pJson.isMember("minimum_order_limit"))
     {
         if(!validJsonOfField(3, "minimum_order_limit", pJson["minimum_order_limit"], err, true))
             return false;
     }
+
     if(pJson.isMember("maximum_order_limit"))
     {
         if(!validJsonOfField(4, "maximum_order_limit", pJson["maximum_order_limit"], err, true))
             return false;
     }
+
     if(pJson.isMember("coupon_identifier"))
     {
         if(!validJsonOfField(5, "coupon_identifier", pJson["coupon_identifier"], err, true))
             return false;
     }
+
     if(pJson.isMember("valid_till"))
     {
         if(!validJsonOfField(6, "valid_till", pJson["valid_till"], err, true))
             return false;
     }
+
     else
     {
         err="The valid_till column cannot be null";
         return false;
     }
+
     if(pJson.isMember("usage_quota"))
     {
         if(!validJsonOfField(7, "usage_quota", pJson["usage_quota"], err, true))
             return false;
     }
+
     if(pJson.isMember("usage_count"))
     {
         if(!validJsonOfField(8, "usage_count", pJson["usage_count"], err, true))
             return false;
     }
+
     if(pJson.isMember("status"))
     {
         if(!validJsonOfField(9, "status", pJson["status"], err, true))
             return false;
     }
+
     if(pJson.isMember("use_percentage"))
     {
         if(!validJsonOfField(10, "use_percentage", pJson["use_percentage"], err, true))
             return false;
     }
+
     if(pJson.isMember("branch_id"))
     {
         if(!validJsonOfField(11, "branch_id", pJson["branch_id"], err, true))
             return false;
     }
+
     else
     {
         err="The branch_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("branch_name"))
     {
         if(!validJsonOfField(12, "branch_name", pJson["branch_name"], err, true))
             return false;
     }
+
     if(pJson.isMember("assignments"))
     {
         if(!validJsonOfField(13, "assignments", pJson["assignments"], err, true))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(14, "tenant_id", pJson["tenant_id"], err, true))
             return false;
     }
+
     else
     {
         err="The tenant_id column cannot be null";
         return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(15, "created_at", pJson["created_at"], err, true))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(16, "updated_at", pJson["updated_at"], err, true))
             return false;
     }
+
     return true;
 }
 bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
@@ -2610,6 +3055,7 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty())
       {
           if(pJson.isMember(pMasqueradingVector[0]))
@@ -2617,12 +3063,15 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[0] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[1].empty())
       {
           if(pJson.isMember(pMasqueradingVector[1]))
@@ -2630,12 +3079,15 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[1] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[2].empty())
       {
           if(pJson.isMember(pMasqueradingVector[2]))
@@ -2643,7 +3095,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[3].empty())
       {
           if(pJson.isMember(pMasqueradingVector[3]))
@@ -2651,7 +3105,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[4].empty())
       {
           if(pJson.isMember(pMasqueradingVector[4]))
@@ -2659,7 +3115,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[5].empty())
       {
           if(pJson.isMember(pMasqueradingVector[5]))
@@ -2667,7 +3125,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[6].empty())
       {
           if(pJson.isMember(pMasqueradingVector[6]))
@@ -2675,12 +3135,15 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[6] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[7].empty())
       {
           if(pJson.isMember(pMasqueradingVector[7]))
@@ -2688,7 +3151,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[8].empty())
       {
           if(pJson.isMember(pMasqueradingVector[8]))
@@ -2696,7 +3161,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[9].empty())
       {
           if(pJson.isMember(pMasqueradingVector[9]))
@@ -2704,7 +3171,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[10].empty())
       {
           if(pJson.isMember(pMasqueradingVector[10]))
@@ -2712,7 +3181,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[11].empty())
       {
           if(pJson.isMember(pMasqueradingVector[11]))
@@ -2720,12 +3191,15 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[11] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[12].empty())
       {
           if(pJson.isMember(pMasqueradingVector[12]))
@@ -2733,7 +3207,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[13].empty())
       {
           if(pJson.isMember(pMasqueradingVector[13]))
@@ -2741,7 +3217,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[14].empty())
       {
           if(pJson.isMember(pMasqueradingVector[14]))
@@ -2749,12 +3227,15 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, true))
                   return false;
           }
+
         else
         {
             err="The " + pMasqueradingVector[14] + " column cannot be null";
             return false;
         }
+
       }
+
       if(!pMasqueradingVector[15].empty())
       {
           if(pJson.isMember(pMasqueradingVector[15]))
@@ -2762,7 +3243,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, true))
                   return false;
           }
+
       }
+
       if(!pMasqueradingVector[16].empty())
       {
           if(pJson.isMember(pMasqueradingVector[16]))
@@ -2770,7 +3253,9 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, true))
                   return false;
           }
+
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2781,96 +3266,115 @@ bool PosCoupons::validateMasqueradedJsonForCreation(const Json::Value &pJson,
 }
 bool PosCoupons::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
+
     if(pJson.isMember("id"))
     {
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
     if(pJson.isMember("business_id"))
     {
         if(!validJsonOfField(1, "business_id", pJson["business_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("coupon_value"))
     {
         if(!validJsonOfField(2, "coupon_value", pJson["coupon_value"], err, false))
             return false;
     }
+
     if(pJson.isMember("minimum_order_limit"))
     {
         if(!validJsonOfField(3, "minimum_order_limit", pJson["minimum_order_limit"], err, false))
             return false;
     }
+
     if(pJson.isMember("maximum_order_limit"))
     {
         if(!validJsonOfField(4, "maximum_order_limit", pJson["maximum_order_limit"], err, false))
             return false;
     }
+
     if(pJson.isMember("coupon_identifier"))
     {
         if(!validJsonOfField(5, "coupon_identifier", pJson["coupon_identifier"], err, false))
             return false;
     }
+
     if(pJson.isMember("valid_till"))
     {
         if(!validJsonOfField(6, "valid_till", pJson["valid_till"], err, false))
             return false;
     }
+
     if(pJson.isMember("usage_quota"))
     {
         if(!validJsonOfField(7, "usage_quota", pJson["usage_quota"], err, false))
             return false;
     }
+
     if(pJson.isMember("usage_count"))
     {
         if(!validJsonOfField(8, "usage_count", pJson["usage_count"], err, false))
             return false;
     }
+
     if(pJson.isMember("status"))
     {
         if(!validJsonOfField(9, "status", pJson["status"], err, false))
             return false;
     }
+
     if(pJson.isMember("use_percentage"))
     {
         if(!validJsonOfField(10, "use_percentage", pJson["use_percentage"], err, false))
             return false;
     }
+
     if(pJson.isMember("branch_id"))
     {
         if(!validJsonOfField(11, "branch_id", pJson["branch_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("branch_name"))
     {
         if(!validJsonOfField(12, "branch_name", pJson["branch_name"], err, false))
             return false;
     }
+
     if(pJson.isMember("assignments"))
     {
         if(!validJsonOfField(13, "assignments", pJson["assignments"], err, false))
             return false;
     }
+
     if(pJson.isMember("tenant_id"))
     {
         if(!validJsonOfField(14, "tenant_id", pJson["tenant_id"], err, false))
             return false;
     }
+
     if(pJson.isMember("created_at"))
     {
         if(!validJsonOfField(15, "created_at", pJson["created_at"], err, false))
             return false;
     }
+
     if(pJson.isMember("updated_at"))
     {
         if(!validJsonOfField(16, "updated_at", pJson["updated_at"], err, false))
             return false;
     }
+
     return true;
 }
 bool PosCoupons::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
@@ -2883,96 +3387,115 @@ bool PosCoupons::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
         return false;
     }
     try {
+
       if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
       {
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
+
     else
     {
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
       {
           if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
       {
           if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
       {
           if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
       {
           if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[8].empty() && pJson.isMember(pMasqueradingVector[8]))
       {
           if(!validJsonOfField(8, pMasqueradingVector[8], pJson[pMasqueradingVector[8]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[9].empty() && pJson.isMember(pMasqueradingVector[9]))
       {
           if(!validJsonOfField(9, pMasqueradingVector[9], pJson[pMasqueradingVector[9]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[10].empty() && pJson.isMember(pMasqueradingVector[10]))
       {
           if(!validJsonOfField(10, pMasqueradingVector[10], pJson[pMasqueradingVector[10]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[11].empty() && pJson.isMember(pMasqueradingVector[11]))
       {
           if(!validJsonOfField(11, pMasqueradingVector[11], pJson[pMasqueradingVector[11]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[12].empty() && pJson.isMember(pMasqueradingVector[12]))
       {
           if(!validJsonOfField(12, pMasqueradingVector[12], pJson[pMasqueradingVector[12]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[13].empty() && pJson.isMember(pMasqueradingVector[13]))
       {
           if(!validJsonOfField(13, pMasqueradingVector[13], pJson[pMasqueradingVector[13]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[14].empty() && pJson.isMember(pMasqueradingVector[14]))
       {
           if(!validJsonOfField(14, pMasqueradingVector[14], pJson[pMasqueradingVector[14]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[15].empty() && pJson.isMember(pMasqueradingVector[15]))
       {
           if(!validJsonOfField(15, pMasqueradingVector[15], pJson[pMasqueradingVector[15]], err, false))
               return false;
       }
+
       if(!pMasqueradingVector[16].empty() && pJson.isMember(pMasqueradingVector[16]))
       {
           if(!validJsonOfField(16, pMasqueradingVector[16], pJson[pMasqueradingVector[16]], err, false))
               return false;
       }
+
     }
     catch(const Json::LogicError &e)
     {
@@ -2989,217 +3512,287 @@ bool PosCoupons::validJsonOfField(size_t index,
 {
     switch(index)
     {
+
         case 0:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 1:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 2:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 3:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 4:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 5:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 10)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 10)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 10)";
                 return false;
             }
+
             break;
+
         case 6:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 7:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 8:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 9:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 10:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isBool())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 11:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 12:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
-            if(pJson.isString() && std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-                .from_bytes(pJson.asCString()).size() > 200)
+
+            if(pJson.isString() && drogon::utils::utf8Length(pJson.asCString()) > 200)
             {
                 err="String length exceeds limit for the " +
                     fieldName +
                     " field (the maximum value is 200)";
                 return false;
             }
+
             break;
+
         case 13:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 14:
+
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
                 return false;
             }
+
             if(!pJson.isInt())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 15:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         case 16:
+
             if(pJson.isNull())
             {
                 return true;
             }
+
             if(!pJson.isString())
             {
                 err="Type error in the "+fieldName+" field";
                 return false;
             }
+
             break;
+
         default:
             err="Internal error in the server";
             return false;
     }
     return true;
 }
+
